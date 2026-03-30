@@ -8,7 +8,19 @@ import { listWorkflowSummaries } from "../../workflows/registry.js";
 export function registerListCommand(program: Command): void {
   program
     .command("list")
-    .description("List available PigeonGov workflows")
+    .description(
+      `List all available PigeonGov workflows (34 across 13 domains).
+
+  Shows every workflow grouped by domain (tax, immigration, healthcare,
+  benefits, education, etc.) with status badges. In --json mode, returns
+  { workflows: [...] } with id, domain, title, status, and tags.
+
+  Use this as the first step to discover workflow IDs for 'start' and 'fill'.
+
+  Examples:
+    $ pigeongov list                    # human-readable grouped output
+    $ pigeongov list --json             # structured JSON array`,
+    )
     .action(() => {
       const workflows = listWorkflowSummaries();
       if (isJsonMode()) {

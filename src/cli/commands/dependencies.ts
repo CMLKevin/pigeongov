@@ -23,7 +23,20 @@ export function registerDependenciesCommand(program: Command): void {
   program
     .command("dependencies <workflowId>")
     .alias("deps")
-    .description("Show cross-agency dependency graph for a workflow")
+    .description(
+      `Show cross-agency dependency graph for a workflow.
+
+  Reveals which workflows trigger, require, affect, or invalidate other
+  workflows. For example, filing immigration/i-130 triggers downstream
+  workflows like i-485. Shows both upstream (what this depends on) and
+  downstream (what depends on this) relationships with depth levels.
+
+  Relationship types: triggers, requires, affects, invalidates.
+
+  Examples:
+    $ pigeongov dependencies immigration/i-130
+    $ pigeongov deps tax/1040 --json`,
+    )
     .action((workflowId: string) => {
       const chain = getDependencies(workflowId);
 

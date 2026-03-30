@@ -17,7 +17,19 @@ function range(min: number, max: number): string {
 export function registerCostCommand(program: Command): void {
   program
     .command("cost [workflowId]")
-    .description("Estimate costs for a government workflow — DIY vs attorney")
+    .description(
+      `Estimate costs for a government workflow — DIY vs attorney.
+
+  Without a workflowId, lists all workflows with cost data. With a
+  workflowId, shows a detailed breakdown: filing fees, biometrics,
+  attorney fees, and total savings from DIY. Returns diyTotal,
+  withAttorneyTotal, and savings in --json mode.
+
+  Examples:
+    $ pigeongov cost                          # list available estimates
+    $ pigeongov cost immigration/i-130        # detailed breakdown
+    $ pigeongov cost immigration/i-130 --json # structured output`,
+    )
     .action((workflowId?: string) => {
       // No workflow specified — list available
       if (!workflowId) {

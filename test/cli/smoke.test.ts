@@ -45,7 +45,7 @@ describe("CLI command registration", () => {
       "start", "workflows", "schemas", "doctor", "tui", "serve",
       "drafts", "vault", "profile", "deadlines", "fees", "glossary",
       "plugins", "scaffold", "testdata", "completions", "stats",
-      "life-event", "screen", "merge",
+      "life-event", "screen", "merge", "guide", "example",
     ];
     for (const cmd of expectedCommands) {
       expect(output).toContain(cmd);
@@ -255,5 +255,55 @@ describe("Fill workflow end-to-end", () => {
     if (result.stdout) {
       expect(result.stdout).toContain("workflowId");
     }
+  });
+});
+
+describe("Guide command", () => {
+  test("guide produces output mentioning pipeline", () => {
+    const output = run("guide");
+    expect(output.toLowerCase()).toContain("pipeline");
+  });
+
+  test("guide fill produces output mentioning start and --data", () => {
+    const output = run("guide fill");
+    expect(output).toContain("start");
+    expect(output).toContain("--data");
+  });
+
+  test("guide --json returns structured data with pipeline", () => {
+    const data = runJson("guide") as { pipeline: string[] };
+    expect(data.pipeline).toBeDefined();
+    expect(data.pipeline.length).toBeGreaterThan(0);
+  });
+
+  test("guide screen mentions input format", () => {
+    const output = run("guide screen");
+    expect(output).toContain("householdSize");
+    expect(output).toContain("citizenshipStatus");
+  });
+
+  test("guide unknown-topic fails gracefully", () => {
+    const { exitCode } = tryRun("guide nonexistent-topic");
+    expect(exitCode).not.toBe(0);
+  });
+});
+
+describe("Example command", () => {
+  test("example tax/1040 --json returns valid JSON with workflowId", () => {
+    const data = runJson("example tax/1040") as { workflowId: string; exampleInput: unknown };
+    expect(data.workflowId).toBe("tax/1040");
+    expect(data.exampleInput).toBeDefined();
+  });
+
+  test("example without args lists available examples", () => {
+    const data = runJson("example") as { availableExamples: string[] };
+    expect(data.availableExamples).toBeDefined();
+    expect(data.availableExamples).toContain("tax/1040");
+  });
+
+  test("example for unknown workflow falls back to starter data", () => {
+    const data = runJson("example healthcare/aca-enrollment") as { note: string; exampleInput: unknown };
+    expect(data.exampleInput).toBeDefined();
+    expect(data.note).toContain("starter data");
   });
 });

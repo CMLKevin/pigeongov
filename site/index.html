@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#6c3aed" />
-    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows across 13 domains. Zero cloud uploads." />
+    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows, 24 MCP tools, cross-agency intelligence. Zero cloud uploads." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov</title>
     <link rel="stylesheet" href="/styles.css" />
@@ -43,7 +43,8 @@
               <span class="hero-stat-pill"><span class="stat-num">34</span> workflows</span>
               <span class="hero-stat-pill"><span class="stat-num">13</span> domains</span>
               <span class="hero-stat-pill"><span class="stat-num">0</span> cloud uploads</span>
-              <span class="hero-stat-pill"><span class="stat-num">20</span> MCP tools</span>
+              <span class="hero-stat-pill"><span class="stat-num">24</span> MCP tools</span>
+              <span class="hero-stat-pill"><span class="stat-num">4</span> intelligence tools</span>
             </div>
 
             <div class="hero-actions">
@@ -236,6 +237,111 @@
           </div>
         </section>
 
+        <!-- ══ Intelligence Layer ══ -->
+        <section class="intel-section">
+          <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
+            <h2>The government intelligence layer.</h2>
+            <p class="section-sub">
+              Forms are the beginning. The hard part is knowing which forms matter,
+              what they cost, how they connect, and where the cliffs are.
+            </p>
+
+            <div class="intel-grid">
+
+              <!-- Terminal 1: Dependencies -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">dependencies</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">dependencies</span> <span class="string">immigration/naturalization</span>
+  <span class="ok">&rarr;</span> <span class="command">identity/voter-registration</span>
+    <span class="dim">Naturalized citizens become eligible to vote</span>
+  <span class="ok">&rarr;</span> <span class="command">identity/passport</span>
+    <span class="dim">Can apply for US passport</span>
+  <span class="ok">&rarr;</span> <span class="command">tax/1040</span>
+    <span class="dim">Changes tax filing requirements</span>
+  <span class="yellow">~</span> <span class="command">benefits/snap</span>
+    <span class="dim">Removes 5-year waiting period</span></div>
+              </div>
+
+              <!-- Terminal 2: Benefits Cliff -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">benefits cliff</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">cliff</span> <span class="flag">--income</span> <span class="string">28000</span> <span class="flag">--household</span> <span class="string">4</span>
+<span class="cyan">Current Benefits:</span>
+  <span class="ok">&#x25cf;</span> SNAP          $345/mo
+  <span class="ok">&#x25cf;</span> Medicaid      $600/mo
+  <span class="ok">&#x25cf;</span> WIC           $75/mo
+
+<span class="cyan">Cliff Points:</span>
+  <span class="deadline">!</span> At $32,150 &rarr; lose SNAP <span class="deadline">(-$4,140/yr)</span>
+  <span class="deadline">!</span> At $34,279 &rarr; lose Medicaid <span class="deadline">(-$7,200/yr)</span>
+
+<span class="ok">Safe raise target:</span> <span class="ok">$42,000</span></div>
+              </div>
+
+              <!-- Terminal 3: Cost Estimator -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">cost estimator</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">cost</span> <span class="string">immigration/naturalization</span>
+
+<span class="cyan">DIY (with PigeonGov):</span> <span class="ok">$770 - $790</span>
+<span class="cyan">With attorney:</span>        <span class="yellow">$2,270 - $8,290</span>
+
+<span class="ok">You save: ~$4,500</span></div>
+              </div>
+
+              <!-- Terminal 4: USCIS Tracker -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">case tracker</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">track</span> <span class="string">WAC2590123456</span>
+
+<span class="cyan">Receipt:</span> WAC2590123456
+<span class="cyan">Status:</span>  <span class="ok">Case Was Approved</span>
+
+<span class="heading">Processing Time Estimates:</span>
+  50%: 6.5 months
+  75%: 9.0 months
+  90%: 12.0 months</div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Manifesto ══ -->
+        <section class="manifesto-section">
+          <div class="content-wrap manifesto-content">
+            <div class="stripe-bar"></div>
+            <p class="manifesto-line">Free. Open source. No upsells. No dark patterns.</p>
+            <p class="manifesto-line">No $60 to file what should cost $0.</p>
+            <p class="manifesto-sub">
+              TurboTax charges $120 and sells your data. We charge $0 and keep nothing.
+              Government forms belong to the public. The tools to fill them should too.
+            </p>
+            <div class="stripe-bar"></div>
+          </div>
+        </section>
+
         <!-- ══ Workflow Domains ══ -->
         <section class="section-gradient" id="catalog">
           <div class="content-wrap">
@@ -267,7 +373,8 @@
                 <p>
                   One <code style="font-family: var(--mono); color: var(--purple);">npx pigeongov serve</code> gives any MCP-compatible agent
                   access to all 34 workflows, eligibility screening, life event planning,
-                  and form validation. JSON in, JSON out. Deterministic exit codes.
+                  form validation, dependency graphs, benefits cliff analysis, cost estimation,
+                  and USCIS case tracking. JSON in, JSON out. Deterministic exit codes.
                 </p>
                 <p>
                   Works with Claude Code, Codex, or any agent that speaks MCP.
@@ -275,9 +382,10 @@
                   and <a href="/llms.txt" style="color: var(--purple);">llms.txt</a> for discovery.
                 </p>
                 <div class="agent-pills">
-                  <span class="agent-pill pill-purple">20 MCP tools</span>
+                  <span class="agent-pill pill-purple">24 MCP tools</span>
                   <span class="agent-pill pill-pink-soft">JSON output</span>
                   <span class="agent-pill pill-cyan-soft">Structured errors</span>
+                  <span class="agent-pill pill-green-soft">Agent guide mode</span>
                 </div>
               </div>
               <div class="terminal-window">
@@ -290,20 +398,20 @@
                 <div class="terminal-body"><span class="comment"># Add PigeonGov to Claude Code</span>
 <span class="prompt">$</span> <span class="command">claude</span> <span class="flag">mcp add</span> <span class="string">pigeongov</span> -- npx pigeongov serve
 
-<span class="comment"># Or Codex</span>
-<span class="prompt">$</span> <span class="command">codex</span> <span class="flag">mcp add</span> <span class="string">pigeongov</span> -- npx pigeongov serve
+<span class="comment"># The agent guide gives your AI the full pipeline:</span>
+<span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">guide</span>
 
-<span class="comment"># Or use the remote endpoint</span>
-<span class="prompt">$</span> <span class="command">curl</span> <span class="string">https://pigeongov.vercel.app/mcp</span>
+<span class="ok">Agent Pipeline:</span>
+  <span class="dim">1.</span> <span class="command">list</span>      <span class="dim">Browse available workflows</span>
+  <span class="dim">2.</span> <span class="command">start</span>     <span class="dim">Get starter data for a workflow</span>
+  <span class="dim">3.</span> <span class="command">fill</span>      <span class="dim">Fill with user data &rarr; validated bundle</span>
+  <span class="dim">4.</span> <span class="command">review</span>    <span class="dim">Check flags and suggestions</span>
 
-<span class="comment"># Then just ask your agent:</span>
-<span class="prompt">$</span> <span class="command">claude</span> <span class="string">"help me file my taxes"</span>
-
-<span class="ok">Claude will automatically:</span>
-  <span class="dim">1. List available tax workflows</span>
-  <span class="dim">2. Start the 1040 fill flow</span>
-  <span class="dim">3. Validate the bundle</span>
-  <span class="dim">4. Flag anything that needs review</span></div>
+<span class="comment"># Plus intelligence tools:</span>
+  <span class="command">dependencies</span>  <span class="dim">Cross-agency dependency graph</span>
+  <span class="command">cliff</span>         <span class="dim">Benefits cliff calculator</span>
+  <span class="command">cost</span>          <span class="dim">DIY vs. attorney cost estimator</span>
+  <span class="command">track</span>         <span class="dim">USCIS case status tracker</span></div>
               </div>
             </div>
           </div>
@@ -314,6 +422,7 @@
           <div class="content-wrap">
             <div class="stripe-bar-wide"></div>
             <h2>Everything stays on your machine.</h2>
+            <p class="privacy-sub">Your SSN, your income, your immigration status &mdash; none of it leaves your terminal. Ever.</p>
             <div class="privacy-points">
               <div class="privacy-point">
                 <span class="privacy-icon">&#x1F512;</span>

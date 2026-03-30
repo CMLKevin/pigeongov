@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#7c3aed" />
-    <meta name="description" content="PigeonGov documentation — CLI reference, workflow catalog, MCP tools, tax engine, and developer guides." />
+    <meta name="description" content="PigeonGov v0.3.0 documentation — CLI reference, workflow catalog, 24 MCP tools, intelligence layer, and developer guides." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov Docs</title>
     <link rel="stylesheet" href="/styles.css" />
@@ -199,6 +199,24 @@
 
   <span class="command">pigeongov glossary</span> <span class="string">&lt;term&gt;</span>
   <span class="dim">Look up government terminology with official definitions and sources.</span>
+
+  <span class="command">pigeongov dependencies</span> <span class="string">&lt;workflow-id&gt;</span>
+  <span class="dim">Show cross-agency dependency graph for a workflow.</span>
+
+  <span class="command">pigeongov cliff</span> <span class="flag">--income &lt;n&gt; --household &lt;n&gt;</span>
+  <span class="dim">Calculate benefits cliff points and safe raise targets.</span>
+
+  <span class="command">pigeongov cost</span> <span class="string">&lt;workflow-id&gt;</span>
+  <span class="dim">Estimate DIY vs. attorney costs for a workflow.</span>
+
+  <span class="command">pigeongov track</span> <span class="string">&lt;receipt-number&gt;</span>
+  <span class="dim">Track USCIS case status with processing time estimates.</span>
+
+  <span class="command">pigeongov guide</span>
+  <span class="dim">Print the agent integration guide with pipeline steps.</span>
+
+  <span class="command">pigeongov example</span> <span class="string">&lt;workflow-id&gt;</span>
+  <span class="dim">Show a complete example bundle for a workflow.</span>
 
 <span class="heading">Workspace &amp; Data</span>
 
@@ -533,6 +551,110 @@
 <span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">screen</span> <span class="flag">--json</span></div>
             </div>
 
+            <h3>Cross-Agency Dependency Graph</h3>
+            <p>
+              Government workflows don't exist in isolation. Naturalization triggers voter registration,
+              passport eligibility, tax filing changes, and benefits waiting period removal. The dependency
+              graph maps these connections so you never miss a downstream action.
+            </p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">dependencies</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">dependencies</span> <span class="string">immigration/naturalization</span>
+
+  <span class="ok">&rarr;</span> <span class="command">identity/voter-registration</span>
+    <span class="dim">Naturalized citizens become eligible to vote</span>
+  <span class="ok">&rarr;</span> <span class="command">identity/passport</span>
+    <span class="dim">Can apply for US passport</span>
+  <span class="ok">&rarr;</span> <span class="command">tax/1040</span>
+    <span class="dim">Changes tax filing requirements</span>
+  <span class="yellow">~</span> <span class="command">benefits/snap</span>
+    <span class="dim">Removes 5-year waiting period</span>
+
+<span class="dim">Legend:</span> <span class="ok">&rarr;</span> <span class="dim">triggers</span>  <span class="yellow">~</span> <span class="dim">may affect</span></div>
+            </div>
+
+            <h3>Benefits Cliff Calculator</h3>
+            <p>
+              A raise can cost you money. The cliff calculator shows exactly where your benefits
+              drop off and calculates the "safe raise target" &mdash; the income level where you
+              come out ahead even after losing benefits. Uses current FPL thresholds and
+              program-specific phase-out rules.
+            </p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">benefits cliff</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">cliff</span> <span class="flag">--income</span> <span class="string">28000</span> <span class="flag">--household</span> <span class="string">4</span>
+
+<span class="cyan">Current Benefits:</span>
+  <span class="ok">&#x25cf;</span> SNAP          $345/mo
+  <span class="ok">&#x25cf;</span> Medicaid      $600/mo
+  <span class="ok">&#x25cf;</span> WIC           $75/mo
+
+<span class="cyan">Cliff Points:</span>
+  <span class="deadline">!</span> At $32,150 &rarr; lose SNAP <span class="deadline">(-$4,140/yr)</span>
+  <span class="deadline">!</span> At $34,279 &rarr; lose Medicaid <span class="deadline">(-$7,200/yr)</span>
+
+<span class="ok">Safe raise target:</span> <span class="ok">$42,000</span>
+
+<span class="comment"># JSON output for agents</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">cliff</span> <span class="flag">--income</span> <span class="string">28000</span> <span class="flag">--household</span> <span class="string">4</span> <span class="flag">--json</span></div>
+            </div>
+
+            <h3>USCIS Case Tracker</h3>
+            <p>
+              Track any USCIS case by receipt number. Returns current status and processing time
+              estimates at the 50th, 75th, and 90th percentiles for the relevant service center.
+              <strong>Note:</strong> This is the only PigeonGov command that makes a network call.
+              It queries USCIS public APIs &mdash; no PII is sent, only the receipt number.
+            </p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">case tracker</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">track</span> <span class="string">WAC2590123456</span>
+
+<span class="cyan">Receipt:</span> WAC2590123456
+<span class="cyan">Status:</span>  <span class="ok">Case Was Approved</span>
+
+<span class="heading">Processing Time Estimates:</span>
+  50%: 6.5 months
+  75%: 9.0 months
+  90%: 12.0 months</div>
+            </div>
+
+            <h3>Cost Estimator</h3>
+            <p>
+              Compare DIY costs (filing fees, biometrics, postage) against typical attorney fees
+              for any workflow. Helps users make informed decisions about when professional help
+              is worth it and when PigeonGov can save thousands.
+            </p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">cost estimator</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">cost</span> <span class="string">immigration/naturalization</span>
+
+<span class="cyan">DIY (with PigeonGov):</span> <span class="ok">$770 - $790</span>
+<span class="cyan">With attorney:</span>        <span class="yellow">$2,270 - $8,290</span>
+
+<span class="ok">You save: ~$4,500</span></div>
+            </div>
+
             <h3>Deduction Optimizer</h3>
             <p>
               Identifies missed deductions based on your income profile, employment type,
@@ -582,7 +704,7 @@
   <span class="deadline">10</span>  <span class="command">timeout</span>           <span class="dim">Operation timed out.</span></div>
             </div>
 
-            <h3>MCP tools (20)</h3>
+            <h3>MCP tools (24)</h3>
             <div class="terminal-window docs-terminal">
               <div class="terminal-titlebar">
                 <div class="terminal-dot red"></div>
@@ -614,7 +736,47 @@
   <span class="command">fees</span>                  <span class="dim">Get filing fees and processing times.</span>
   <span class="command">glossary</span>              <span class="dim">Look up government terminology.</span>
   <span class="command">plan-life-event</span>       <span class="dim">Get prioritized workflow plan for a life event.</span>
-  <span class="command">screen-eligibility</span>    <span class="dim">Run eligibility screening for a benefits workflow.</span></div>
+  <span class="command">screen-eligibility</span>    <span class="dim">Run eligibility screening for a benefits workflow.</span>
+  <span class="command">get-dependencies</span>      <span class="dim">Get cross-agency dependency graph for a workflow.</span>
+  <span class="command">calculate-cliff</span>       <span class="dim">Calculate benefits cliff points and safe raise targets.</span>
+  <span class="command">track-case</span>            <span class="dim">Track USCIS case status by receipt number.</span>
+  <span class="command">estimate-cost</span>         <span class="dim">Compare DIY vs. attorney costs for a workflow.</span></div>
+            </div>
+
+            <h3>Agent guide</h3>
+            <p>
+              The <code>pigeongov guide</code> command prints the recommended agent pipeline.
+              Point your agent at PigeonGov and it follows this flow automatically:
+            </p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">agent guide</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">guide</span>
+
+<span class="heading">Agent Pipeline</span>
+
+  <span class="cyan">1. Discover</span>
+     <span class="command">list-workflows</span> <span class="dim">&rarr; browse available workflows by domain</span>
+
+  <span class="cyan">2. Initialize</span>
+     <span class="command">start-workflow</span> <span class="dim">&rarr; get starter data with field schema</span>
+
+  <span class="cyan">3. Fill</span>
+     <span class="command">fill-workflow</span>  <span class="dim">&rarr; populate with user data, get validated bundle</span>
+
+  <span class="cyan">4. Review</span>
+     <span class="command">review-workflow</span> <span class="dim">&rarr; check flags, suggestions, and next steps</span>
+
+<span class="heading">Intelligence (optional)</span>
+
+  <span class="command">get-dependencies</span>  <span class="dim">&rarr; what else does this workflow trigger?</span>
+  <span class="command">calculate-cliff</span>   <span class="dim">&rarr; will a raise cost them benefits?</span>
+  <span class="command">estimate-cost</span>     <span class="dim">&rarr; DIY vs. attorney cost comparison</span>
+  <span class="command">track-case</span>        <span class="dim">&rarr; check USCIS case status</span></div>
             </div>
 
             <h3>Agent discovery</h3>
