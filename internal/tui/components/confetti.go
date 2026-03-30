@@ -34,8 +34,8 @@ type ConfettiModel struct {
 	rng       *rand.Rand
 }
 
-// confettiTickMsg drives the confetti animation.
-type confettiTickMsg time.Time
+// ConfettiTickMsg drives the confetti animation.
+type ConfettiTickMsg time.Time
 
 // NewConfettiModel creates a confetti burst originating from the centre.
 func NewConfettiModel(width, height int) ConfettiModel {
@@ -82,7 +82,7 @@ func NewConfettiModel(width, height int) ConfettiModel {
 // ConfettiTickCmd returns the tick command for confetti animation.
 func ConfettiTickCmd() tea.Cmd {
 	return tea.Tick(time.Second/60, func(t time.Time) tea.Msg {
-		return confettiTickMsg(t)
+		return ConfettiTickMsg(t)
 	})
 }
 
@@ -92,7 +92,7 @@ func (c ConfettiModel) Update(msg tea.Msg) (ConfettiModel, tea.Cmd) {
 		return c, nil
 	}
 
-	if _, ok := msg.(confettiTickMsg); !ok {
+	if _, ok := msg.(ConfettiTickMsg); !ok {
 		return c, nil
 	}
 
