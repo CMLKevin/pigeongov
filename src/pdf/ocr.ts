@@ -1,40 +1,40 @@
 /**
- * OCR module stub.
+ * OCR module backed by Tesseract.js.
  *
- * Provides an interface for Tesseract.js-based OCR as a fallback when
- * text-layer PDF extraction returns nothing useful. Tesseract.js is NOT
- * an installed dependency yet -- this module checks availability at
- * runtime and throws a clear error if it is absent.
+ * Provides text extraction from images as a fallback when a PDF's text
+ * layer is empty or too short to be useful. Tesseract.js is a real
+ * dependency — the availability check exists so callers can gracefully
+ * degrade if the post-install build was skipped or something went awry.
  */
 
-let _tesseractAvailable: boolean | undefined;
+import type Tesseract from "tesseract.js";
+
+let tesseractAvailable: boolean | null = null;
 
 /**
  * Check whether `tesseract.js` can be dynamically imported in the
  * current environment. The result is cached after the first call.
  */
 export function hasTesseract(): boolean {
-  if (_tesseractAvailable !== undefined) {
-    return _tesseractAvailable;
-  }
-
+  if (tesseractAvailable !== null) return tesseractAvailable;
   try {
-    // Attempt a synchronous require-resolve check.
-    // We intentionally avoid top-level import so the rest of the PDF
-    // pipeline never blows up when Tesseract is missing.
+    // tesseract.js is now a real dependency — this should always succeed
+    // unless something catastrophic happened during install.
     require.resolve("tesseract.js");
-    _tesseractAvailable = true;
+    tesseractAvailable = true;
   } catch {
-    _tesseractAvailable = false;
+    tesseractAvailable = false;
   }
-
-  return _tesseractAvailable;
+  return tesseractAvailable;
 }
 
 /**
  * Extract text from an image buffer using Tesseract.js OCR.
  *
- * @throws If `tesseract.js` is not installed.
+ * Creates a short-lived worker, runs recognition, and tears it down.
+ * Callers should check `hasTesseract()` first if they want to avoid
+ * the error path, but this also throws a clear message if the module
+ * is somehow missing.
  */
 export async function ocrExtractText(imageBytes: Uint8Array): Promise<string> {
   if (!hasTesseract()) {
@@ -43,19 +43,15 @@ export async function ocrExtractText(imageBytes: Uint8Array): Promise<string> {
     );
   }
 
-  // Dynamic import so the module is only loaded when actually called.
-  // The module may not be installed, so we use a runtime-only path.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-  const Tesseract = (await Function('return import("tesseract.js")')()) as {
-    createWorker: (lang: string) => Promise<{
-      recognize: (input: Uint8Array) => Promise<{ data: { text: string } }>;
-      terminate: () => Promise<void>;
-    }>;
-  };
-  const worker = await Tesseract.createWorker("eng");
+  // Dynamic import so the (fairly large) WASM payload only loads when
+  // OCR is actually invoked — not on every CLI startup.
+  const { createWorker } = (await import("tesseract.js")) as typeof Tesseract;
+  const worker = await createWorker("eng");
   try {
-    const { data } = await worker.recognize(imageBytes);
-    return data.text;
+    const {
+      data: { text },
+    } = await worker.recognize(imageBytes);
+    return text;
   } finally {
     await worker.terminate();
   }

@@ -22,6 +22,8 @@ import { registerGlossaryCommand } from "./commands/glossary.js";
 import { registerPluginCommand } from "./commands/plugin.js";
 import { registerScaffoldCommand } from "./commands/scaffold.js";
 import { registerTestdataCommand } from "./commands/testdata.js";
+import { registerCompletionsCommand } from "./commands/completions.js";
+import { registerStatsCommand } from "./commands/stats.js";
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command();
@@ -79,6 +81,8 @@ export async function runCli(argv: string[]): Promise<void> {
   registerPluginCommand(program);
   registerScaffoldCommand(program);
   registerTestdataCommand(program);
+  registerCompletionsCommand(program);
+  registerStatsCommand(program);
 
   await program.parseAsync(argv);
 }

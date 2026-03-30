@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d5b5e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1e1e2e" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows across 13 domains." />
+    <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
@@ -10,7 +14,10 @@
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="/">PigeonGov</a>
-        <nav class="nav">
+        <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="nav" id="main-nav">
           <a href="/planner/">Planner</a>
           <a href="/review/">Reviewer</a>
           <a href="/docs/">Docs</a>
@@ -21,78 +28,153 @@
       <main>
         <section class="hero">
           <div>
-            <p class="eyebrow">Local-first government forms copilot</p>
+            <p class="eyebrow">Local-first government workflows platform</p>
             <h1>Plan, review, and validate government paperwork without leaving your machine.</h1>
             <p class="lede">
               PigeonGov is a privacy-first CLI, TUI, and MCP product for US government forms.
-              It helps with taxes, immigration packets, unemployment claims, healthcare enrollment,
-              business licenses, and permit planning while keeping the final review in human hands.
+              34 workflows across tax, immigration, healthcare, education, benefits, veterans,
+              legal, estate, identity, retirement, and more &mdash; all processed locally.
             </p>
             <div class="hero-actions">
               <a class="button primary" href="/planner/">Open Planner</a>
               <a class="button secondary" href="/docs/">Read Docs</a>
+              <a class="button accent" href="#life-events">Life Events</a>
             </div>
             <pre class="terminal"><code>$ npx pigeongov workflows list
-$ npx pigeongov fill immigration/family-visa-intake --json
+$ npx pigeongov fill tax/1040 --json
+$ npx pigeongov life-event job-loss
+$ npx pigeongov screen benefits/snap
 $ claude mcp add pigeongov -- npx pigeongov serve</code></pre>
           </div>
           <div class="hero-panel">
             <div class="metric-card">
-              <span>Surfaces</span>
-              <strong>CLI + TUI + MCP + Web</strong>
+              <span>Active workflows</span>
+              <strong>34</strong>
             </div>
             <div class="metric-card">
-              <span>Supported deep workflows</span>
-              <strong>Tax, immigration, healthcare, unemployment</strong>
+              <span>Government domains</span>
+              <strong>13</strong>
+            </div>
+            <div class="metric-card">
+              <span>State tax calculators</span>
+              <strong>10 states + 9 no-tax</strong>
             </div>
             <div class="metric-card">
               <span>Privacy model</span>
-              <strong>Local-first. No cloud storage. No submission.</strong>
+              <strong>Local-first. No cloud. No telemetry.</strong>
             </div>
           </div>
         </section>
 
-        <section class="section">
+        <!-- Workflow Catalog -->
+        <section class="section" id="catalog">
           <div class="section-header">
             <p class="eyebrow">Workflow catalog</p>
-            <h2>Government paperwork where structure actually matters</h2>
+            <h2>34 workflows across 13 government domains</h2>
           </div>
-          <div id="workflow-grid" class="workflow-grid"></div>
+          <div class="catalog-toolbar">
+            <input type="search" id="catalog-search" placeholder="Search workflows..." aria-label="Search workflows" />
+            <div class="catalog-filters" id="catalog-filters"></div>
+          </div>
+          <div id="workflow-catalog" class="workflow-catalog"></div>
         </section>
 
-        <section class="section split">
+        <!-- Life Event Engine -->
+        <section class="section" id="life-events">
+          <div class="section-header">
+            <p class="eyebrow">Life Event Engine</p>
+            <h2>What just happened? Get an action plan.</h2>
+            <p class="lede">Major life changes trigger cascading government paperwork. PigeonGov maps the workflows you need, in priority order, with deadlines.</p>
+          </div>
+          <div id="life-event-grid" class="life-event-grid"></div>
+        </section>
+
+        <!-- Eligibility Screener -->
+        <section class="section" id="screener">
+          <div class="section-header">
+            <p class="eyebrow">Eligibility Screener</p>
+            <h2>Find out what you qualify for</h2>
+            <p class="lede">
+              Answer a few household questions and PigeonGov screens you across SNAP, Medicaid,
+              Section 8, WIC, LIHEAP, and SSDI. No data leaves your machine.
+            </p>
+          </div>
+          <div class="cta-row">
+            <a class="button primary" href="/planner/">Try the Screener</a>
+            <code class="inline-code">npx pigeongov screen benefits/snap</code>
+          </div>
+        </section>
+
+        <!-- Decision Support -->
+        <section class="section split" id="decision-support">
+          <div class="card">
+            <p class="eyebrow">Decision support</p>
+            <h3>What-if scenarios &amp; optimization</h3>
+            <p>
+              Run hypothetical tax scenarios, estimate audit risk, find missed deductions,
+              and optimize retirement contributions &mdash; all with deterministic local math.
+            </p>
+            <ul class="feature-list">
+              <li>What-if scenario engine for tax planning</li>
+              <li>Audit risk scorer with IRS DIF heuristics</li>
+              <li>Missed deduction detector</li>
+              <li>Contribution optimizer (401k, IRA, HSA)</li>
+            </ul>
+          </div>
           <div class="card">
             <p class="eyebrow">Agent-ready</p>
-            <h3>One core engine, two interfaces</h3>
+            <h3>One engine, every surface</h3>
             <p>
               Humans use the CLI and Bubble Tea TUI. Agents use the same workflows over MCP with structured
               outputs, starter data, flagged fields, and review summaries.
             </p>
             <ul class="feature-list">
-              <li>Structured workflow registry</li>
-              <li>Stable machine JSON output</li>
+              <li>20 MCP tools for agent integration</li>
+              <li>Stable machine JSON output with exit codes</li>
               <li>Flag explanations and evidence checklists</li>
-              <li>Shared local packet review model</li>
+              <li>Life event planning and eligibility screening</li>
             </ul>
-          </div>
-          <div class="card">
-            <p class="eyebrow">Browser tools</p>
-            <h3>Planner + packet reviewer at the root site</h3>
-            <p>
-              The root deployment includes a client-side planner and bundle reviewer so people can explore
-              workflows in the browser without turning the product into a hosted filing service.
-            </p>
-            <div class="callout">
-              <strong>Important:</strong> PigeonGov does not submit to agencies. It prepares structured bundles
-              and review artifacts so a human can finish the job.
-            </div>
           </div>
         </section>
 
-        <section class="section">
+        <!-- State Tax Coverage -->
+        <section class="section" id="state-taxes">
+          <div class="section-header">
+            <p class="eyebrow">State tax coverage</p>
+            <h2>10 state calculators. 9 no-income-tax states recognized.</h2>
+          </div>
+          <div class="state-grid">
+            <div class="state-chip state-implemented">CA</div>
+            <div class="state-chip state-implemented">NY</div>
+            <div class="state-chip state-implemented">IL</div>
+            <div class="state-chip state-implemented">PA</div>
+            <div class="state-chip state-implemented">NC</div>
+            <div class="state-chip state-implemented">MI</div>
+            <div class="state-chip state-implemented">GA</div>
+            <div class="state-chip state-implemented">VA</div>
+            <div class="state-chip state-implemented">NJ</div>
+            <div class="state-chip state-implemented">OH</div>
+            <div class="state-chip state-notax">AK</div>
+            <div class="state-chip state-notax">FL</div>
+            <div class="state-chip state-notax">NV</div>
+            <div class="state-chip state-notax">NH</div>
+            <div class="state-chip state-notax">SD</div>
+            <div class="state-chip state-notax">TN</div>
+            <div class="state-chip state-notax">TX</div>
+            <div class="state-chip state-notax">WA</div>
+            <div class="state-chip state-notax">WY</div>
+          </div>
+          <p class="state-legend">
+            <span class="legend-dot state-implemented"></span> Full calculator
+            <span class="legend-dot state-notax"></span> No income tax (returns $0)
+          </p>
+        </section>
+
+        <!-- Connect an Agent -->
+        <section class="section" id="agents">
           <div class="section-header">
             <p class="eyebrow">Connect an agent</p>
-            <h2>Preserve the MCP endpoint, add a real product site</h2>
+            <h2>MCP endpoint, CLI, or REST API</h2>
           </div>
           <div class="agent-grid">
             <div class="card">
@@ -109,8 +191,45 @@ $ claude mcp add pigeongov -- npx pigeongov serve</code></pre>
             </div>
           </div>
         </section>
+
+        <!-- For Developers -->
+        <section class="section" id="developers">
+          <div class="section-header">
+            <p class="eyebrow">For developers</p>
+            <h2>Extend, integrate, and build on PigeonGov</h2>
+          </div>
+          <div class="dev-grid">
+            <div class="card compact">
+              <h3>Plugin System</h3>
+              <p>Scaffold custom workflows with <code>pigeongov scaffold</code> and register them as plugins.</p>
+            </div>
+            <div class="card compact">
+              <h3>REST API</h3>
+              <p>Run <code>pigeongov serve --http</code> for a local HTTP server at <code>127.0.0.1:3847</code>.</p>
+            </div>
+            <div class="card compact">
+              <h3>MCP Server</h3>
+              <p>20 tools: list, describe, fill, validate, review, build-packet, explain-flag, screen, life-event, deadlines, fees, glossary.</p>
+            </div>
+            <div class="card compact">
+              <h3>OpenAPI &amp; Agent Specs</h3>
+              <p><a href="/agents.json">agents.json</a> and <a href="/llms.txt">llms.txt</a> for agent discovery. Structured JSON output with deterministic exit codes.</p>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer class="site-footer">
+        <div class="footer-links">
+          <a href="https://github.com/pigeongov/pigeongov">GitHub</a>
+          <a href="/docs/">Documentation</a>
+          <a href="/agents.json">agents.json</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="/privacy">Privacy Policy</a>
+        </div>
+        <p class="footer-note">Built with privacy in mind. No telemetry. No cloud uploads. All processing happens on your machine.</p>
+      </footer>
     </div>
     <script type="module" src="/app.js"></script>
   </body>
-  </html>
+</html>

@@ -19,6 +19,7 @@ import {
   type PdfReadResult,
   type PdfSource,
 } from "./shared.js";
+import { hasTesseract, ocrExtractText } from "./ocr.js";
 
 function toBytes(source: PdfSource): Uint8Array {
   if (typeof source === "string") {
@@ -310,7 +311,25 @@ export async function readPdfDocument(
       pageNumber: page.num,
       text: normalizePdfText(page.text),
     }));
-    const rawText = normalizePdfText(textResult.text);
+    let rawText = normalizePdfText(textResult.text);
+    let ocrUsed = false;
+
+    // If the native text layer is suspiciously short and Tesseract is
+    // available, fall back to OCR. This handles scanned PDFs that are
+    // essentially images with no embedded text.
+    const OCR_THRESHOLD = 50;
+    if (rawText.length < OCR_THRESHOLD && hasTesseract()) {
+      try {
+        const ocrText = await ocrExtractText(bytes);
+        if (ocrText.trim().length > rawText.length) {
+          rawText = normalizePdfText(ocrText);
+          ocrUsed = true;
+        }
+      } catch {
+        // OCR failed — proceed with whatever text we managed to extract.
+      }
+    }
+
     const detection = detectDocumentType(rawText, options.typeHint);
     const sourceFileName = normalizeSourceName(options, fileName);
     const flaggedFields: ValidationFlag[] = [];
@@ -357,6 +376,7 @@ export async function readPdfDocument(
         textPages,
         flaggedFields,
         document,
+        ocrUsed,
       };
       if (sourceFileName) {
         result.sourceFileName = sourceFileName;
@@ -395,6 +415,7 @@ export async function readPdfDocument(
         textPages,
         flaggedFields,
         document,
+        ocrUsed,
       };
       if (sourceFileName) {
         result.sourceFileName = sourceFileName;
@@ -433,6 +454,7 @@ export async function readPdfDocument(
         textPages,
         flaggedFields,
         document,
+        ocrUsed,
       };
       if (sourceFileName) {
         result.sourceFileName = sourceFileName;
@@ -458,6 +480,7 @@ export async function readPdfDocument(
       textPages,
       flaggedFields,
       document,
+      ocrUsed,
     };
     if (sourceFileName) {
       result.sourceFileName = sourceFileName;

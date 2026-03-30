@@ -42,6 +42,7 @@
     "commander": "^14.0.3",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^2.4.5",
+    "tesseract.js": "^7.0.0",
     "xmcp": "^0.6.5",
     "zod": "^4.1.12"
   },
