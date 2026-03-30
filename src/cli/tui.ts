@@ -158,13 +158,26 @@ export async function launchTui(options: LaunchTuiOptions): Promise<void> {
       reject(error);
     });
 
-    child.on("exit", (code) => {
+    child.on("exit", (code, signal) => {
       if (code === 0) {
         resolve();
         return;
       }
 
-      reject(new Error(`PigeonGov TUI exited with code ${code ?? 1}.`));
+      // Check if stderr had a TTY error (common when running outside a real terminal)
+      const exitCode = code ?? 1;
+      if (exitCode === 1 && !process.stdin.isTTY) {
+        reject(
+          new Error(
+            "The PigeonGov TUI requires an interactive terminal (TTY). " +
+            "It cannot run in piped, redirected, or sandboxed shells. " +
+            "Run it directly in your terminal: pigeongov tui",
+          ),
+        );
+        return;
+      }
+
+      reject(new Error(`PigeonGov TUI exited with code ${exitCode}${signal ? ` (signal: ${signal})` : ""}.`));
     });
   });
 }

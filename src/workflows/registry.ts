@@ -131,8 +131,63 @@ export function getWorkflowStarterData(workflowId: string) {
 export function buildWorkflowBundle(workflowId: string, data: unknown): WorkflowBundle {
   const normalizedId = normalizeWorkflowId(workflowId);
   const definition = workflowDefinitions[normalizedId];
-  const parsed = definition.inputSchema.parse(data);
-  return definition.buildBundle(parsed as never);
+  const parseResult = definition.inputSchema.safeParse(data);
+
+  if (parseResult.success) {
+    return definition.buildBundle(parseResult.data as never);
+  }
+
+  // Schema validation failed — try building with raw data anyway.
+  // Many workflows can still produce a partial bundle with warnings.
+  try {
+    const bundle = definition.buildBundle(data as never);
+    // Add parse errors as flagged fields
+    for (const issue of parseResult.error.issues) {
+      bundle.validation.flaggedFields.push({
+        field: issue.path.join("."),
+        severity: "error",
+        message: issue.message,
+        source: "schema-validation",
+      });
+    }
+    return bundle;
+  } catch {
+    // buildBundle also crashed — return an error bundle
+    const summary = definition.summary;
+    return {
+      workflowId: summary.id,
+      domain: summary.domain,
+      title: summary.title,
+      summary: summary.summary,
+      household: [],
+      evidence: [],
+      answers: typeof data === "object" && data !== null ? (data as Record<string, unknown>) : {},
+      derived: {},
+      validation: {
+        checks: [],
+        flaggedFields: parseResult.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          severity: "error" as const,
+          message: issue.message,
+          source: "schema-validation",
+        })),
+      },
+      review: {
+        headline: `${summary.title} — input validation failed`,
+        notes: [
+          `${parseResult.error.issues.length} field(s) need attention before this workflow can be completed.`,
+        ],
+        flaggedFields: parseResult.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          severity: "error" as const,
+          message: issue.message,
+          source: "schema-validation",
+        })),
+      },
+      outputArtifacts: [],
+      provenance: ["workflow-registry"],
+    };
+  }
 }
 
 export function validateWorkflowBundle(bundle: WorkflowBundle) {

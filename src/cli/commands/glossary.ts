@@ -28,30 +28,44 @@ export function registerGlossaryCommand(program: Command): void {
         }
 
         if (exact) {
-          console.log(chalk.bold(exact.term) + (exact.abbreviation ? chalk.dim(` (${exact.abbreviation})`) : ""));
-          console.log(chalk.cyan(`[${exact.domain}]`));
-          console.log();
-          console.log(exact.definition);
+          console.log("");
+          console.log(
+            `  ${chalk.bold(exact.term)}` +
+              (exact.abbreviation ? chalk.dim(` (${exact.abbreviation})`) : "") +
+              `  ${chalk.cyan(`[${exact.domain}]`)}`,
+          );
+          console.log(chalk.dim(`  ${"─".repeat(50)}`));
+          console.log(`  ${exact.definition}`);
           if (exact.officialDefinition) {
-            console.log();
-            console.log(chalk.dim(`Official: ${exact.officialDefinition}`));
+            console.log("");
+            console.log(`  ${chalk.dim.italic(`Official: ${exact.officialDefinition}`)}`);
           }
           if (exact.source) {
-            console.log(chalk.dim(`Source: ${exact.source}`));
+            console.log(`  ${chalk.dim(`Source: ${exact.source}`)}`);
           }
           if (exact.relatedTerms && exact.relatedTerms.length > 0) {
-            console.log();
-            console.log(chalk.dim(`Related: ${exact.relatedTerms.join(", ")}`));
+            console.log("");
+            console.log(
+              `  ${chalk.dim("Related:")} ${exact.relatedTerms.map((t) => chalk.cyan(t)).join(chalk.dim(", "))}`,
+            );
           }
+          console.log("");
         } else {
           const results = searchTerms(term);
           if (results.length === 0) {
-            console.log(chalk.dim(`No terms found matching "${term}".`));
+            console.log(chalk.dim(`  No terms found matching "${term}".`));
           } else {
-            console.log(chalk.dim(`No exact match for "${term}". Similar terms:\n`));
+            console.log("");
+            console.log(chalk.dim(`  No exact match for "${term}". Similar terms:`));
+            console.log("");
             for (const entry of results) {
-              console.log(`  ${chalk.bold(entry.term)}${entry.abbreviation ? chalk.dim(` (${entry.abbreviation})`) : ""}  ${chalk.cyan(`[${entry.domain}]`)}`);
+              console.log(
+                `    ${chalk.cyan("\u25b8")} ${chalk.bold(entry.term)}` +
+                  (entry.abbreviation ? chalk.dim(` (${entry.abbreviation})`) : "") +
+                  `  ${chalk.dim(`[${entry.domain}]`)}`,
+              );
             }
+            console.log("");
           }
         }
         return;
@@ -68,7 +82,7 @@ export function registerGlossaryCommand(program: Command): void {
       }
 
       if (entries.length === 0) {
-        console.log(chalk.dim("No glossary entries found."));
+        console.log(chalk.dim("  No glossary entries found."));
         return;
       }
 
@@ -83,14 +97,21 @@ export function registerGlossaryCommand(program: Command): void {
         }
       }
 
+      console.log("");
+      console.log(chalk.bold("  Glossary"));
+      console.log("");
+
       for (const [domain, domainEntries] of grouped) {
-        console.log(chalk.cyan.bold(`\n${domain.toUpperCase()}`));
-        console.log(chalk.dim("─".repeat(40)));
+        console.log(`  ${chalk.cyan.bold(domain.toUpperCase())}`);
+        console.log(chalk.dim(`  ${"─".repeat(40)}`));
         for (const entry of domainEntries) {
           const abbr = entry.abbreviation ? chalk.dim(` (${entry.abbreviation})`) : "";
-          console.log(`  ${chalk.bold(entry.term)}${abbr}`);
+          console.log(`    ${chalk.white(entry.term)}${abbr}`);
         }
+        console.log("");
       }
-      console.log();
+
+      console.log(chalk.dim(`  ${entries.length} terms. Lookup: pigeongov glossary <term>`));
+      console.log("");
     });
 }

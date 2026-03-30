@@ -81,19 +81,19 @@ export const zipCodeSchema = z
 
 export const addressSchema = z
   .object({
-    street1: z.string().trim().min(1).describe("Street address line 1"),
+    street1: z.string().trim().describe("Street address line 1"),
     street2: z.string().trim().optional().describe("Street address line 2"),
-    city: z.string().trim().min(1).describe("City"),
+    city: z.string().trim().describe("City"),
     state: stateCodeSchema,
-    zipCode: zipCodeSchema,
+    zipCode: z.string().trim().describe("ZIP code"),
   })
   .strict()
   .describe("Mailing address");
 
 export const personIdentitySchema = z
   .object({
-    firstName: z.string().trim().min(1).describe("First name"),
-    lastName: z.string().trim().min(1).describe("Last name"),
+    firstName: z.string().trim().describe("First name"),
+    lastName: z.string().trim().describe("Last name"),
     ssn: ssnSchema,
     address: addressSchema,
   })
@@ -102,9 +102,9 @@ export const personIdentitySchema = z
 
 export const dependentSchema = z
   .object({
-    name: z.string().trim().min(1).describe("Dependent name"),
+    name: z.string().trim().describe("Dependent name"),
     ssn: ssnSchema,
-    relationship: z.string().trim().min(1).describe("Relationship to taxpayer"),
+    relationship: z.string().trim().describe("Relationship to taxpayer"),
     childTaxCreditEligible: z.boolean().describe("Child tax credit eligibility"),
     eitcEligible: z.boolean().optional().describe("Earned income credit eligibility"),
   })
