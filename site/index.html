@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#7c3aed" />
+    <meta name="theme-color" content="#6c3aed" />
     <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows across 13 domains. Zero cloud uploads." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov</title>
@@ -14,7 +14,7 @@
 
       <!-- ── Nav ── -->
       <header class="topbar">
-        <a class="brand" href="/">pigeongov</a>
+        <a class="brand" href="/">pigeongov<span class="cursor">_</span></a>
         <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
@@ -30,7 +30,9 @@
         <!-- ══ Hero ══ -->
         <section class="hero-section">
           <div class="content-wrap hero-content">
-            <h1>Government paperwork, without the paperwork.</h1>
+            <div class="stripe-bar"></div>
+            <h1>Government paperwork,<br>without the paperwork.</h1>
+            <div class="stripe-bar"></div>
             <p class="hero-subtitle">
               A delightful terminal tool that turns scary government forms into
               guided workflows. Fill forms, check eligibility, plan for life events
@@ -63,26 +65,26 @@
 
 <span class="cyan">Action Plan</span> <span class="dim">(6 workflows)</span>
 
-<span class="yellow">--- Phase 1: Immediate (this week) ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 1: Immediate (this week) &#x2500;&#x2500;&#x2500;</span>
 
-  <span class="ok">&gt;</span> <span class="command">unemployment/claim-intake</span> <span class="deadline">(!) [DEADLINE: 7 days]</span>
+  <span class="ok">&gt;</span> <span class="command">unemployment/claim-intake</span> <span class="deadline">(!)  [DEADLINE: 7 days]</span>
     <span class="dim">File unemployment claim immediately</span>
 
-  <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!) [DEADLINE: 60 days]</span>
-    <span class="dim">Enroll in ACA marketplace &mdash; loss of coverage is a qualifying event</span>
+  <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!)  [DEADLINE: 60 days]</span>
+    <span class="dim">Enroll in ACA marketplace</span>
 
-<span class="yellow">--- Phase 2: This month ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 2: This month &#x2500;&#x2500;&#x2500;</span>
 
   <span class="ok">&gt;</span> <span class="command">benefits/snap</span>
-    <span class="dim">Income drop may qualify your household for food assistance</span>
+    <span class="dim">Income drop may qualify your household</span>
 
   <span class="ok">&gt;</span> <span class="command">benefits/medicaid</span>
-    <span class="dim">Income-based Medicaid eligibility &mdash; check before marketplace</span>
+    <span class="dim">Check Medicaid eligibility before marketplace</span>
 
-<span class="yellow">--- Phase 3: When ready ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 3: When ready &#x2500;&#x2500;&#x2500;</span>
 
   <span class="ok">&gt;</span> <span class="command">tax/1040</span>
-    <span class="dim">Adjust withholding &amp; estimated payments for changed income</span>
+    <span class="dim">Adjust withholding &amp; estimated payments</span>
 
   <span class="ok">&gt;</span> <span class="command">retirement/ssa-estimator</span>
     <span class="dim">Recalculate projected benefits with updated work history</span>
@@ -95,6 +97,7 @@
         <!-- ══ What can it do? ══ -->
         <section class="section-light">
           <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
             <h2>What can it <span class="gradient-text">actually do?</span></h2>
 
             <!-- Showcase 1 -->
@@ -205,19 +208,24 @@
 
 <span class="cyan">Action Plan</span> <span class="dim">(5 workflows)</span>
 
-<span class="yellow">--- Phase 1: Right away ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 1: Right away &#x2500;&#x2500;&#x2500;</span>
+
   <span class="ok">&gt;</span> <span class="command">identity/name-change</span>
     <span class="dim">Court petition + SSA + DMV + passport cascade</span>
+
   <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!) [30 days]</span>
     <span class="dim">Marriage is a qualifying life event</span>
 
-<span class="yellow">--- Phase 2: Before tax season ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 2: Before tax season &#x2500;&#x2500;&#x2500;</span>
+
   <span class="ok">&gt;</span> <span class="command">tax/1040</span>
     <span class="dim">Switch to Married Filing Jointly (usually saves $$$)</span>
 
-<span class="yellow">--- Phase 3: When settled ---</span>
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 3: When settled &#x2500;&#x2500;&#x2500;</span>
+
   <span class="ok">&gt;</span> <span class="command">estate/basic-will</span>
     <span class="dim">Update beneficiaries and estate plan</span>
+
   <span class="ok">&gt;</span> <span class="command">immigration/family-visa-intake</span>
     <span class="dim">If applicable: spouse petition workflow</span>
 
@@ -231,6 +239,7 @@
         <!-- ══ Workflow Domains ══ -->
         <section class="section-gradient" id="catalog">
           <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
             <h2>34 workflows across everything the government throws at you.</h2>
             <p class="section-sub">Click a domain to see its workflows. Or just search.</p>
 
@@ -247,6 +256,7 @@
         <!-- ══ For Agents ══ -->
         <section class="agent-section" id="agents">
           <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
             <h2>Your AI agent's new best friend.</h2>
             <p class="section-sub">
               PigeonGov speaks MCP natively. Point your agent at it and let it handle the paperwork.
@@ -302,6 +312,7 @@
         <!-- ══ Privacy ══ -->
         <section class="privacy-section">
           <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
             <h2>Everything stays on your machine.</h2>
             <div class="privacy-points">
               <div class="privacy-point">
@@ -325,6 +336,11 @@
       <!-- ── Footer ── -->
       <footer class="site-footer">
         <div class="content-wrap">
+          <div class="footer-pigeon">    ___
+   (o o)
+   ( V )
+   /| |\
+  / | | \</div>
           <div class="footer-brand">pigeongov<span>_</span></div>
           <div class="footer-links">
             <a href="https://github.com/CMLKevin/pigeongov">GitHub</a>
@@ -333,7 +349,7 @@
             <a href="/llms.txt">llms.txt</a>
             <a href="/privacy">Privacy</a>
           </div>
-          <p class="footer-note">Made with &#x1F426; by humans, for humans dealing with government forms.</p>
+          <p class="footer-note">Made with care by humans, for humans dealing with government forms.</p>
         </div>
       </footer>
 

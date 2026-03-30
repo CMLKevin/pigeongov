@@ -337,11 +337,9 @@ export function registerFillCommand(program: Command): void {
       ) {
         const launched = await tryLaunchTuiFill({
           formId: normalizedWorkflowId,
-          year: String(options.year),
           cwd: process.cwd(),
           output: options.output,
           format: options.format,
-          importPaths: options.import ?? [],
         });
         if (launched) {
           return;
