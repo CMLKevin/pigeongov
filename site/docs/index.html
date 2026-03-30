@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PigeonGov Docs</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="docs">
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/">PigeonGov</a>
+        <nav class="nav">
+          <a href="/planner/">Planner</a>
+          <a href="/review/">Reviewer</a>
+          <a href="/docs/" aria-current="page">Docs</a>
+          <a href="/mcp">MCP</a>
+        </nav>
+      </header>
+      <main class="docs-layout">
+        <section class="card">
+          <p class="eyebrow">CLI</p>
+          <h1>PigeonGov terminal product</h1>
+          <pre><code>npx pigeongov workflows list
+npx pigeongov fill tax/1040
+npx pigeongov fill immigration/family-visa-intake --json
+npx pigeongov doctor --json</code></pre>
+          <p>
+            The CLI now exposes both guided human commands and machine-friendly JSON flows with deterministic
+            exit codes, flagged fields, and reusable workflow starter data.
+          </p>
+        </section>
+        <section class="card">
+          <p class="eyebrow">TUI</p>
+          <h2>Bubble Tea workspace</h2>
+          <p>
+            The terminal UI is evolving into a multi-workflow workspace with navigation, evidence readiness,
+            review surfaces, and local packet assembly. Use <code>pigeongov tui</code> to launch it.
+          </p>
+        </section>
+        <section class="card">
+          <p class="eyebrow">MCP</p>
+          <h2>Connect agents</h2>
+          <pre><code>claude mcp add pigeongov -- npx pigeongov serve
+codex mcp add pigeongov -- npx pigeongov serve</code></pre>
+          <p>
+            The MCP endpoint stays available at <code>/mcp</code> and now includes workflow-wide tools for listing,
+            describing, filling, validating, reviewing, building packets, and explaining flags.
+          </p>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

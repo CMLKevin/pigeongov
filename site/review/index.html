@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PigeonGov Reviewer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="review">
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/">PigeonGov</a>
+        <nav class="nav">
+          <a href="/planner/">Planner</a>
+          <a href="/review/" aria-current="page">Reviewer</a>
+          <a href="/docs/">Docs</a>
+          <a href="/mcp">MCP</a>
+        </nav>
+      </header>
+      <main class="review-layout">
+        <section class="card review-main">
+          <div class="section-header">
+            <p class="eyebrow">Packet reviewer</p>
+            <h1>Inspect a bundle locally in the browser</h1>
+            <p class="lede">
+              Upload a PigeonGov bundle JSON to see the review headline, validation flags, and evidence readiness.
+            </p>
+          </div>
+          <input id="review-upload" type="file" accept="application/json" />
+          <div id="review-headline" class="callout"></div>
+          <div id="review-flags" class="flag-list"></div>
+          <pre id="review-json" class="json-preview"></pre>
+        </section>
+        <aside class="card inspector">
+          <p class="eyebrow">How to use this</p>
+          <ol class="feature-list numbered">
+            <li>Generate a bundle from the CLI, TUI, or MCP server.</li>
+            <li>Upload the JSON here to do a browser-side review.</li>
+            <li>Use the flagged fields list to decide what still needs a human look.</li>
+          </ol>
+        </aside>
+      </main>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

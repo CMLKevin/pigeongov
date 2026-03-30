@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PigeonGov</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="home">
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/">PigeonGov</a>
+        <nav class="nav">
+          <a href="/planner/">Planner</a>
+          <a href="/review/">Reviewer</a>
+          <a href="/docs/">Docs</a>
+          <a href="/mcp">MCP</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Local-first government forms copilot</p>
+            <h1>Plan, review, and validate government paperwork without leaving your machine.</h1>
+            <p class="lede">
+              PigeonGov is a privacy-first CLI, TUI, and MCP product for US government forms.
+              It helps with taxes, immigration packets, unemployment claims, healthcare enrollment,
+              business licenses, and permit planning while keeping the final review in human hands.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="/planner/">Open Planner</a>
+              <a class="button secondary" href="/docs/">Read Docs</a>
+            </div>
+            <pre class="terminal"><code>$ npx pigeongov workflows list
+$ npx pigeongov fill immigration/family-visa-intake --json
+$ claude mcp add pigeongov -- npx pigeongov serve</code></pre>
+          </div>
+          <div class="hero-panel">
+            <div class="metric-card">
+              <span>Surfaces</span>
+              <strong>CLI + TUI + MCP + Web</strong>
+            </div>
+            <div class="metric-card">
+              <span>Supported deep workflows</span>
+              <strong>Tax, immigration, healthcare, unemployment</strong>
+            </div>
+            <div class="metric-card">
+              <span>Privacy model</span>
+              <strong>Local-first. No cloud storage. No submission.</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <p class="eyebrow">Workflow catalog</p>
+            <h2>Government paperwork where structure actually matters</h2>
+          </div>
+          <div id="workflow-grid" class="workflow-grid"></div>
+        </section>
+
+        <section class="section split">
+          <div class="card">
+            <p class="eyebrow">Agent-ready</p>
+            <h3>One core engine, two interfaces</h3>
+            <p>
+              Humans use the CLI and Bubble Tea TUI. Agents use the same workflows over MCP with structured
+              outputs, starter data, flagged fields, and review summaries.
+            </p>
+            <ul class="feature-list">
+              <li>Structured workflow registry</li>
+              <li>Stable machine JSON output</li>
+              <li>Flag explanations and evidence checklists</li>
+              <li>Shared local packet review model</li>
+            </ul>
+          </div>
+          <div class="card">
+            <p class="eyebrow">Browser tools</p>
+            <h3>Planner + packet reviewer at the root site</h3>
+            <p>
+              The root deployment includes a client-side planner and bundle reviewer so people can explore
+              workflows in the browser without turning the product into a hosted filing service.
+            </p>
+            <div class="callout">
+              <strong>Important:</strong> PigeonGov does not submit to agencies. It prepares structured bundles
+              and review artifacts so a human can finish the job.
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <p class="eyebrow">Connect an agent</p>
+            <h2>Preserve the MCP endpoint, add a real product site</h2>
+          </div>
+          <div class="agent-grid">
+            <div class="card">
+              <h3>Claude Code</h3>
+              <pre><code>claude mcp add pigeongov -- npx pigeongov serve</code></pre>
+            </div>
+            <div class="card">
+              <h3>Codex</h3>
+              <pre><code>codex mcp add pigeongov -- npx pigeongov serve</code></pre>
+            </div>
+            <div class="card">
+              <h3>Remote MCP</h3>
+              <pre><code>https://pigeongov.vercel.app/mcp</code></pre>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

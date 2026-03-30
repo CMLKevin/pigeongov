@@ -1,0 +1,54 @@
+{
+  "name": "pigeongov",
+  "version": "0.1.0",
+  "description": "Local-first CLI, TUI, MCP server, and web planner for U.S. government workflows and forms.",
+  "type": "module",
+  "bin": {
+    "pigeongov": "./dist/bin/pigeongov.js"
+  },
+  "files": [
+    "dist",
+    "cmd",
+    "internal",
+    "forms",
+    "go.mod",
+    "go.sum",
+    "README.md",
+    "PRIVACY.md",
+    "LICENSE",
+    "AGENTS.md"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch bin/pigeongov.ts",
+    "dev:tui": "go run ./cmd/pigeongov",
+    "build": "pnpm build:mcp && pnpm build:cli && pnpm build:site && pnpm build:tui",
+    "build:cli": "tsc -p tsconfig.build.json && chmod +x dist/bin/pigeongov.js",
+    "build:site": "node scripts/build-site.mjs",
+    "build:tui": "mkdir -p dist/tui && go build -o dist/tui/pigeongov-tui ./cmd/pigeongov",
+    "build:mcp": "XMCP_TELEMETRY_DISABLED=true xmcp build && node scripts/prepare-mcp-runtime.mjs",
+    "build:mcp:vercel": "XMCP_TELEMETRY_DISABLED=true xmcp build --vercel && node scripts/prepare-mcp-runtime.mjs --vercel && pnpm build:cli && pnpm build:site && node scripts/build-vercel-output.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.3.2",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^2.4.5",
+    "xmcp": "^0.6.5",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  },
+  "packageManager": "pnpm@10.17.1",
+  "license": "MIT"
+}

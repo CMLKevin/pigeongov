@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PigeonGov Planner</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="planner">
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/">PigeonGov</a>
+        <nav class="nav">
+          <a href="/planner/" aria-current="page">Planner</a>
+          <a href="/review/">Reviewer</a>
+          <a href="/docs/">Docs</a>
+          <a href="/mcp">MCP</a>
+        </nav>
+      </header>
+      <main class="planner-layout">
+        <aside class="card sidebar">
+          <p class="eyebrow">Workflows</p>
+          <div id="planner-workflow-list" class="workflow-list"></div>
+        </aside>
+        <section class="card planner-main">
+          <div class="section-header">
+            <p class="eyebrow">Local planner</p>
+            <h1 id="planner-title">Choose a workflow</h1>
+            <p id="planner-summary" class="lede"></p>
+          </div>
+          <form id="planner-form" class="planner-form"></form>
+          <div class="button-row">
+            <button id="planner-download" class="button primary" type="button">Download Starter JSON</button>
+            <button id="planner-sample" class="button secondary" type="button">Load Example Bundle</button>
+          </div>
+        </section>
+        <aside class="card inspector">
+          <p class="eyebrow">Preview</p>
+          <pre id="planner-preview" class="json-preview"></pre>
+        </aside>
+      </main>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

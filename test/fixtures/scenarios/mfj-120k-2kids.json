@@ -1,0 +1,51 @@
+{
+  "filingStatus": "married_filing_jointly",
+  "wages": 120000,
+  "taxableInterest": 0,
+  "ordinaryDividends": 0,
+  "scheduleCNet": 0,
+  "otherIncome": 0,
+  "adjustments": {
+    "educatorExpenses": 0,
+    "hsaDeduction": 0,
+    "selfEmploymentTaxDeduction": 0,
+    "iraDeduction": 0,
+    "studentLoanInterest": 0
+  },
+  "useItemizedDeductions": false,
+  "itemizedDeductions": 0,
+  "dependents": [
+    {
+      "name": "Child One",
+      "ssn": "111-11-1111",
+      "relationship": "Child",
+      "childTaxCreditEligible": true,
+      "eitcEligible": true
+    },
+    {
+      "name": "Child Two",
+      "ssn": "222-22-2222",
+      "relationship": "Child",
+      "childTaxCreditEligible": true,
+      "eitcEligible": true
+    }
+  ],
+  "federalWithheld": 14000,
+  "estimatedPayments": 0,
+  "expected": {
+    "grossIncome": 120000,
+    "adjustedGrossIncome": 120000,
+    "deduction": 31500,
+    "taxableIncome": 88500,
+    "federalTax": 10143,
+    "childTaxCredit": 4400,
+    "earnedIncomeCredit": 0,
+    "totalCredits": 4400,
+    "selfEmploymentTax": 0,
+    "totalTax": 5743,
+    "totalPayments": 14000,
+    "refund": 8257,
+    "amountOwed": 0,
+    "marginalRate": 0.12
+  }
+}

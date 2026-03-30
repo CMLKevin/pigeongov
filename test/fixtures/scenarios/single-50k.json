@@ -1,0 +1,34 @@
+{
+  "filingStatus": "single",
+  "wages": 50000,
+  "taxableInterest": 0,
+  "ordinaryDividends": 0,
+  "scheduleCNet": 0,
+  "otherIncome": 0,
+  "adjustments": {
+    "educatorExpenses": 0,
+    "hsaDeduction": 0,
+    "selfEmploymentTaxDeduction": 0,
+    "iraDeduction": 0,
+    "studentLoanInterest": 0
+  },
+  "useItemizedDeductions": false,
+  "itemizedDeductions": 0,
+  "dependents": [],
+  "federalWithheld": 6200,
+  "estimatedPayments": 0,
+  "expected": {
+    "grossIncome": 50000,
+    "adjustedGrossIncome": 50000,
+    "deduction": 15750,
+    "taxableIncome": 34250,
+    "federalTax": 3871.5,
+    "selfEmploymentTax": 0,
+    "totalCredits": 0,
+    "totalTax": 3871.5,
+    "totalPayments": 6200,
+    "refund": 2328.5,
+    "amountOwed": 0,
+    "marginalRate": 0.12
+  }
+}
