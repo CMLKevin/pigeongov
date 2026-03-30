@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
@@ -50,6 +51,11 @@ type savedMsg struct {
 
 type errMsg struct {
 	err error
+}
+
+// statusMsg displays a transient status line (e.g. "Draft saved").
+type statusMsg struct {
+	text string
 }
 
 // ---- overlay state ----
@@ -96,6 +102,8 @@ type Model struct {
 	progressPanel  components.ProgressPanel
 	helpOverlay    components.HelpOverlay
 	confetti       components.ConfettiModel
+	workflowList   components.WorkflowListModel
+	reviewViewport components.ReviewViewport
 
 	// Animation
 	anim    AnimationState
@@ -103,6 +111,9 @@ type Model struct {
 
 	// Inspector visibility
 	showInspector bool
+
+	// Transient status text
+	statusText string
 }
 
 func newModel(
@@ -137,6 +148,11 @@ func newModel(
 			string(theme.Primary), string(theme.Secondary), 26,
 		),
 		helpOverlay: components.NewHelpOverlay(80, theme.Text, theme.Subtext),
+		workflowList: components.NewWorkflowListModel(
+			theme.Primary, theme.Secondary, theme.Text, theme.Subtext,
+			theme.DomainColor,
+		),
+		reviewViewport: components.NewReviewViewport(60, 20, theme.Secondary, theme.Subtext),
 
 		anim:          NewAnimationState(!acc.ShouldAnimate()),
 		showInspector: true,
@@ -270,6 +286,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.helpOverlay.SetWidth(msg.Width - 4)
 		m.progressPanel.SetWidth(26)
+		m.workflowList.SetSize(msg.Width-8, msg.Height-10)
+		m.reviewViewport.SetSize(msg.Width-12, msg.Height-14)
 		return m, nil
 
 	case tickMsg:
@@ -287,8 +305,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case components.ConfettiTickMsg:
-		// Forward to confetti model (won't match — confettiTickMsg is unexported)
-		// Handled below via the generic confetti path
+		// Matched here; falls through to the confetti forwarding path below
+
+	case statusMsg:
+		m.statusText = msg.text
+		return m, nil
 
 	case tea.KeyMsg:
 		// Global key handling
@@ -314,6 +335,64 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.TogglePane):
 			m.showInspector = !m.showInspector
 			return m, nil
+
+		// Ctrl+G — jump to next section (cycles)
+		case key.Matches(msg, m.keys.Jump):
+			if m.stage == stageWorkflowSection && m.descriptor != nil && len(m.descriptor.Sections) > 0 {
+				if m.sectionIndex < len(m.descriptor.Sections) {
+					commitSectionState(&m.draft, m.descriptor.Sections[m.sectionIndex], m.sectionState)
+				}
+				m.sectionIndex = (m.sectionIndex + 1) % len(m.descriptor.Sections)
+				target := float64(m.sectionIndex+1) / float64(len(m.descriptor.Sections))
+				m.anim.StartProgressAnimation(target)
+				m.anim.StartFadeIn()
+				model, cmd := m.prepareSection()
+				return model, tea.Batch(cmd, tickCmd())
+			}
+			return m, nil
+
+		// Ctrl+S — save draft
+		case key.Matches(msg, m.keys.Save):
+			if m.stage == stageWorkflowSection || m.stage == stagePreview {
+				rootPath := m.rootPath
+				draft := m.draft
+				return m, func() tea.Msg {
+					_, _, err := saveWorkflow(context.Background(), rootPath, draft)
+					if err != nil {
+						return statusMsg{text: "Draft save failed: " + err.Error()}
+					}
+					return statusMsg{text: "Draft saved"}
+				}
+			}
+			return m, nil
+
+		// / — activate search filter on workflow list
+		case key.Matches(msg, m.keys.Search):
+			if m.stage == stageWorkflowSelect && m.workflowList.Ready() {
+				m.workflowList.SetFilterState(list.Filtering)
+				return m, nil
+			}
+		}
+
+		// Forward keys to WorkflowList during workflow selection
+		if m.stage == stageWorkflowSelect && m.workflowList.Ready() {
+			if key.Matches(msg, m.keys.Confirm) {
+				if selected := m.workflowList.SelectedItem(); selected != nil {
+					m.selectedID = selected.ID
+					m.spinnerOverlay.SetMessage("Loading " + m.selectedID + "...")
+					return m, m.loadDescriptorCmd(m.selectedID)
+				}
+			}
+			cmd := m.workflowList.Update(msg)
+			return m, cmd
+		}
+
+		// Forward scroll events to review viewport during preview
+		if m.stage == stagePreview {
+			cmd := m.reviewViewport.Update(msg)
+			if cmd != nil {
+				cmds = append(cmds, cmd)
+			}
 		}
 
 	case catalogMsg:
@@ -322,14 +401,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.err = fmt.Errorf("no workflows available")
 			return m, tea.Quit
 		}
+		// Slide the workflow list in from the left on first load
+		m.anim.StartSlideIn()
+		m.anim.StartFadeIn()
+		cmds = append(cmds, tickCmd())
 		if m.preselectedID != "" {
 			m.selectedID = m.preselectedID
 			m.spinnerOverlay.SetMessage("Loading " + m.selectedID + "...")
-			return m, m.loadDescriptorCmd(m.selectedID)
+			cmds = append(cmds, m.loadDescriptorCmd(m.selectedID))
+			return m, tea.Batch(cmds...)
 		}
 		m.selectedID = m.catalog[0].ID
-		m.form = newWorkflowSelectionForm(m.catalog, &m.selectedID, m.accessibility.Accessible)
-		return m, m.form.Init()
+		m.workflowList.SetItems(catalogToListItems(m.catalog))
+		m.workflowList.SetSize(m.width-8, m.height-10)
+		return m, tea.Batch(cmds...)
 
 	case descriptorMsg:
 		descriptor := msg.descriptor
@@ -353,10 +438,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.stage = stagePreview
 		m.form = newSaveForm(&m.draft, m.accessibility.Accessible)
 		m.anim.StartFadeIn()
-		// Animate refund if present in derived
+		// Populate the review viewport with preview content
+		m.reviewViewport.SetContent(renderPreviewContent(m.styles, msg.preview))
+		// Cascade: progress bar fills to 1.0 first, then refund counter ticks up
 		if refund, ok := m.preview.Derived["estimatedRefund"]; ok {
 			if val, ok := refund.(float64); ok {
-				m.anim.StartRefundAnimation(val)
+				m.anim.StartCascade(1.0, val)
 			}
 		}
 		cmds = append(cmds, m.form.Init(), tickCmd())
@@ -391,6 +478,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if !m.confetti.IsActive() {
 			m.overlay = overlayNone
+		}
+	}
+
+	// Forward mouse/resize events to WorkflowList when active
+	if m.stage == stageWorkflowSelect && m.workflowList.Ready() {
+		cmd := m.workflowList.Update(msg)
+		if cmd != nil {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	// Forward mouse/scroll events to ReviewViewport when in preview
+	if m.stage == stagePreview {
+		cmd := m.reviewViewport.Update(msg)
+		if cmd != nil {
+			cmds = append(cmds, cmd)
 		}
 	}
 
@@ -485,8 +588,8 @@ func (m Model) mainPaneContent() string {
 
 	switch m.stage {
 	case stageWorkflowSelect:
-		if m.form != nil {
-			return m.form.View()
+		if m.workflowList.Ready() {
+			return m.workflowList.View()
 		}
 		return m.spinnerOverlay.View()
 
@@ -508,10 +611,7 @@ func (m Model) mainPaneContent() string {
 		return m.spinnerOverlay.View()
 
 	case stagePreview:
-		parts := []string{}
-		if m.preview != nil {
-			parts = append(parts, renderPreviewContent(s, *m.preview))
-		}
+		parts := []string{m.reviewViewport.View()}
 		if m.form != nil {
 			parts = append(parts, m.form.View())
 		}
@@ -535,8 +635,11 @@ func (m Model) View() string {
 	// Header
 	headerView := renderHeader(s, m.descriptor, m.stageLabel())
 
-	// Help footer
+	// Help footer (include status text if present)
 	helpView := m.helpOverlay.View(&m.keys)
+	if m.statusText != "" {
+		helpView = s.Ok.Render(m.statusText) + "  " + helpView
+	}
 	footerView := renderFooter(s, helpView, m.startTime)
 
 	// Rail
@@ -549,6 +652,17 @@ func (m Model) View() string {
 	if offset := m.anim.ShakeOffset(); offset != 0 {
 		pad := strings.Repeat(" ", abs(offset))
 		mainContent = pad + mainContent
+	}
+
+	// Apply slide-in offset: pad from left when offset is negative (entering)
+	if slideOffset := m.anim.SlideInOffset(); slideOffset < 0 {
+		pad := strings.Repeat(" ", -slideOffset)
+		// Indent every line so the whole pane slides in
+		lines := strings.Split(mainContent, "\n")
+		for i, line := range lines {
+			lines[i] = pad + line
+		}
+		mainContent = strings.Join(lines, "\n")
 	}
 
 	// Inspector
@@ -643,4 +757,20 @@ func maxInt(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// catalogToListItems converts catalog entries to WorkflowItems for the list component.
+func catalogToListItems(catalog []WorkflowCatalogItem) []components.WorkflowItem {
+	items := make([]components.WorkflowItem, len(catalog))
+	for i, c := range catalog {
+		items[i] = components.WorkflowItem{
+			ID:      c.ID,
+			Domain:  c.Domain,
+			Title:   c.Title,
+			Summary: c.Summary,
+			Status:  c.Status,
+			Tags:    c.Tags,
+		}
+	}
+	return items
 }

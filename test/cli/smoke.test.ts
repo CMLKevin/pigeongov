@@ -56,8 +56,10 @@ describe("CLI command registration", () => {
 describe("Workflow commands", () => {
   test("list outputs all 34 workflows", () => {
     const output = run("list");
-    const lines = output.trim().split("\n");
-    expect(lines.length).toBe(34);
+    // Formatted output includes domain headers, blank lines, and footer;
+    // verify the 34 workflow lines are present (lines containing a status badge)
+    const workflowLines = output.split("\n").filter((l) => /[●○]/.test(l));
+    expect(workflowLines.length).toBe(34);
   });
 
   test("list --json returns valid JSON with workflows", () => {

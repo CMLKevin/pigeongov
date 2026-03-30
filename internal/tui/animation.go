@@ -44,6 +44,17 @@ type AnimationState struct {
 	fadeVel    float64
 	fadeTarget float64
 
+	// Slide-in offset for entrance animation (starts negative, settles at 0)
+	slideInSpring harmonica.Spring
+	slideInValue  float64
+	slideInVel    float64
+	slideInTarget float64
+
+	// Cascade: progress settles first, then refund kicks off
+	cascading      bool
+	stageComplete  bool
+	cascadeRefund  float64
+
 	// Master toggle
 	animating    bool
 	reduceMotion bool
@@ -55,14 +66,16 @@ func NewAnimationState(reduceMotion bool) AnimationState {
 	dt := harmonica.FPS(60)
 	return AnimationState{
 		// Progress: snappy, slight overshoot
-		progressSpring: harmonica.NewSpring(dt, 6.0, 0.5),
-		// Refund counter: slower, no overshoot
-		refundSpring: harmonica.NewSpring(dt, 4.0, 1.0),
-		// Shake: fast, heavily damped
-		shakeSpring: harmonica.NewSpring(dt, 15.0, 0.3),
-		// Fade: gentle ease-in
-		fadeSpring: harmonica.NewSpring(dt, 5.0, 1.0),
+		progressSpring: harmonica.NewSpring(dt, 7.0, 0.4),
+		// Refund counter: smooth ramp
+		refundSpring: harmonica.NewSpring(dt, 5.5, 0.95),
+		// Shake: punchy, slightly elastic
+		shakeSpring: harmonica.NewSpring(dt, 18.0, 0.35),
+		// Fade: faster pane reveals
+		fadeSpring: harmonica.NewSpring(dt, 6.0, 1.0),
 		fadeTarget: 1.0,
+		// Slide-in: content enters from the left
+		slideInSpring: harmonica.NewSpring(dt, 7.0, 0.9),
 
 		reduceMotion: reduceMotion,
 	}
@@ -75,6 +88,8 @@ func (a *AnimationState) AnimateFrame() {
 		a.refundDisplay = a.refundTarget
 		a.shakeOffset = 0
 		a.fadeValue = a.fadeTarget
+		a.slideInValue = a.slideInTarget
+		a.stageComplete = true
 		a.animating = false
 		return
 	}
@@ -82,6 +97,17 @@ func (a *AnimationState) AnimateFrame() {
 	a.progressValue, a.progressVel = a.progressSpring.Update(
 		a.progressValue, a.progressVel, a.progressTarget,
 	)
+
+	// Cascade: when progress settles, kick off the refund counter
+	if a.cascading && !a.stageComplete {
+		const epsilon = 0.01
+		if math.Abs(a.progressValue-a.progressTarget) < epsilon &&
+			math.Abs(a.progressVel) < epsilon {
+			a.stageComplete = true
+			a.refundTarget = a.cascadeRefund
+		}
+	}
+
 	a.refundDisplay, a.refundVel = a.refundSpring.Update(
 		a.refundDisplay, a.refundVel, a.refundTarget,
 	)
@@ -90,6 +116,9 @@ func (a *AnimationState) AnimateFrame() {
 	)
 	a.fadeValue, a.fadeVel = a.fadeSpring.Update(
 		a.fadeValue, a.fadeVel, a.fadeTarget,
+	)
+	a.slideInValue, a.slideInVel = a.slideInSpring.Update(
+		a.slideInValue, a.slideInVel, a.slideInTarget,
 	)
 
 	a.animating = !a.IsSettled()
@@ -123,6 +152,34 @@ func (a *AnimationState) StartFadeIn() {
 	a.animating = true
 }
 
+// StartCascade sets up a chained animation: the progress bar fills to
+// progressTarget first, and only once it settles does the refund counter
+// begin ticking toward refundTarget.
+func (a *AnimationState) StartCascade(progressTarget, refundTarget float64) {
+	a.progressTarget = progressTarget
+	a.cascading = true
+	a.stageComplete = false
+	a.cascadeRefund = refundTarget
+	// Hold refund at zero until progress settles
+	a.refundTarget = 0
+	a.refundDisplay = 0
+	a.refundVel = 0
+	a.animating = true
+}
+
+// StartSlideIn kicks the horizontal offset to -20 and lets it spring to 0.
+func (a *AnimationState) StartSlideIn() {
+	a.slideInValue = -20
+	a.slideInVel = 0
+	a.slideInTarget = 0
+	a.animating = true
+}
+
+// SlideInOffset returns the current horizontal slide-in displacement (int columns).
+func (a *AnimationState) SlideInOffset() int {
+	return int(math.Round(a.slideInValue))
+}
+
 // IsSettled returns true when all springs are close enough to rest.
 func (a *AnimationState) IsSettled() bool {
 	const epsilon = 0.001
@@ -133,7 +190,9 @@ func (a *AnimationState) IsSettled() bool {
 		math.Abs(a.shakeOffset) < epsilon &&
 		math.Abs(a.shakeVel) < epsilon &&
 		math.Abs(a.fadeValue-a.fadeTarget) < epsilon &&
-		math.Abs(a.fadeVel) < epsilon
+		math.Abs(a.fadeVel) < epsilon &&
+		math.Abs(a.slideInValue-a.slideInTarget) < epsilon &&
+		math.Abs(a.slideInVel) < epsilon
 }
 
 // ProgressPercent returns the current animated progress as 0..1.

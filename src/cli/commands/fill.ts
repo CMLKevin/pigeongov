@@ -224,11 +224,28 @@ async function saveOutputs(
 }
 
 function renderGenericWorkflowSummary(bundle: ReturnType<typeof buildWorkflowBundle>): string {
+  const titleLine = ` ${bundle.title} `;
+  const W = Math.max(titleLine.length + 4, 44);
+  const top = chalk.dim(`\u250c${"═".repeat(W)}\u2510`);
+  const bottom = chalk.dim(`\u2514${"═".repeat(W)}\u2518`);
+
   const lines = [
-    chalk.bold(`═══ ${bundle.title} ═══`),
-    bundle.review.headline,
-    ...bundle.review.notes,
+    "",
+    top,
+    `${chalk.dim("\u2502")} ${chalk.bold(titleLine)}${" ".repeat(Math.max(0, W - titleLine.length - 1))}${chalk.dim("\u2502")}`,
+    bottom,
+    "",
   ];
+
+  // Review headline with color
+  const isRefund = bundle.review.headline.toLowerCase().includes("refund");
+  const headlineColor = isRefund ? chalk.green.bold : chalk.yellow.bold;
+  lines.push(headlineColor(bundle.review.headline));
+
+  for (const note of bundle.review.notes) {
+    lines.push(`  ${chalk.dim("\u2502")} ${note}`);
+  }
+
   return lines.join("\n");
 }
 

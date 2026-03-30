@@ -1,28 +1,8 @@
 package tui
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/huh"
 )
-
-func newWorkflowSelectionForm(catalog []WorkflowCatalogItem, selected *string, accessible bool) *huh.Form {
-	options := make([]huh.Option[string], 0, len(catalog))
-	for _, item := range catalog {
-		options = append(options, huh.NewOption(fmt.Sprintf("%s · %s", item.Domain, item.Title), item.ID))
-	}
-
-	form := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Choose a workflow").
-				Options(options...).
-				Value(selected),
-		),
-	)
-	form.WithAccessible(accessible)
-	return form
-}
 
 func newSectionState(section WorkflowSection, draft Draft) SectionState {
 	state := SectionState{
