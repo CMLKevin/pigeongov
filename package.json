@@ -1,22 +1,46 @@
 {
   "name": "pigeongov",
-  "version": "0.1.0",
-  "description": "Local-first CLI, TUI, MCP server, and web planner for U.S. government workflows and forms.",
+  "version": "0.2.0",
+  "description": "Local-first CLI, TUI, MCP server, and web planner for U.S. government workflows and forms. 34 workflows across 13 domains — tax, immigration, healthcare, education, benefits, veterans, identity, legal, estate, retirement, and more.",
   "type": "module",
   "bin": {
     "pigeongov": "./dist/bin/pigeongov.js"
   },
+  "keywords": [
+    "government",
+    "forms",
+    "tax",
+    "immigration",
+    "healthcare",
+    "benefits",
+    "cli",
+    "tui",
+    "mcp",
+    "local-first",
+    "privacy",
+    "1040",
+    "fafsa",
+    "snap",
+    "medicaid",
+    "passport",
+    "bubbletea"
+  ],
+  "homepage": "https://pigeongov.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CMLKevin/pigeongov.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CMLKevin/pigeongov/issues"
+  },
   "files": [
     "dist",
-    "cmd",
-    "internal",
-    "forms",
-    "go.mod",
-    "go.sum",
     "README.md",
     "PRIVACY.md",
     "LICENSE",
-    "AGENTS.md"
+    "AGENTS.md",
+    "agents.json",
+    "llms.txt"
   ],
   "engines": {
     "node": ">=20.0.0"
@@ -34,7 +58,8 @@
     "test:watch": "vitest",
     "test:snapshots": "vitest run test/snapshots/",
     "test:fuzz": "vitest run test/fuzz/ --timeout 30000",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "pnpm build:cli"
   },
   "dependencies": {
     "@inquirer/prompts": "^8.3.2",
