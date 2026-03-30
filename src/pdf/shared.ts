@@ -31,6 +31,7 @@ export interface PdfReadResultBase {
   textPages: PdfTextPage[];
   flaggedFields: ValidationFlag[];
   sourceFileName?: string;
+  ocrUsed?: boolean;
 }
 
 export type PdfReadResult =

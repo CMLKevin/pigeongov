@@ -1,8 +1,8 @@
 # PigeonGov
 
-`PigeonGov` is a local-first government workflow product for the United States. It started as a tax tool and now expands into immigration packets, unemployment claims, healthcare enrollment, business-license planning, and permit planning. Humans use it through the CLI and Bubble Tea TUI. Agents use the same workflows through MCP. The public Vercel root now hosts a product site, workflow catalog, planner, and browser-side reviewer while preserving the MCP endpoint at `/mcp`.
+`PigeonGov` is a local-first government workflow platform for the United States. 34 workflows across 13 domains: tax, immigration, healthcare, benefits, education, veterans, identity, legal, estate, retirement, unemployment, business, and permits. Humans use it through the CLI and Bubble Tea TUI. Agents use the same workflows through MCP. The public Vercel root hosts a product site, workflow catalog, planner, and browser-side reviewer while preserving the MCP endpoint at `/mcp`.
 
-This project still targets the 2025 federal tax year for returns filed in 2026, while the broader product design follows 2026-era agentic CLI and TUI conventions.
+This project targets the 2025 federal tax year for returns filed in 2026, while the broader product design follows 2026-era agentic CLI and TUI conventions.
 
 ## Install
 
@@ -25,102 +25,168 @@ pnpm build:tui
 ## Quick start
 
 ```bash
+# List all 34 workflows
 $ npx pigeongov workflows list
+
+# Fill a federal tax return
 $ npx pigeongov fill tax/1040
+
+# Fill with JSON input/output
 $ npx pigeongov fill immigration/family-visa-intake --json --data ./visa-input.json
+
+# Life event action plan
+$ npx pigeongov life-event job-loss
+
+# Eligibility screening
+$ npx pigeongov screen benefits/snap
+
+# Check your environment
 $ npx pigeongov doctor --json
 ```
 
-Interactive tax example:
+## Workflows
+
+### Tax (1)
+- `tax/1040` — Federal individual return (Schedule 1, B, C, D, Form 8949)
+
+### Immigration (5)
+- `immigration/family-visa-intake` — Family visa packet intake
+- `immigration/naturalization` — N-400 eligibility review
+- `immigration/green-card-renewal` — I-90 filing organizer
+- `immigration/daca-renewal` — DACA renewal eligibility
+- `immigration/work-authorization` — I-765 EAD application
+
+### Healthcare (2)
+- `healthcare/aca-enrollment` — ACA marketplace enrollment
+- `healthcare/medicare-enrollment` — Medicare with IRMAA calculation
+
+### Benefits (6)
+- `benefits/snap` — SNAP eligibility and benefit estimation
+- `benefits/section8` — Section 8 Housing Choice Voucher
+- `benefits/wic` — WIC program eligibility
+- `benefits/liheap` — LIHEAP energy assistance
+- `benefits/medicaid` — Medicaid eligibility (MAGI-based)
+- `benefits/ssdi-application` — SSDI application intake
+
+### Education (3)
+- `education/fafsa` — FAFSA readiness planner
+- `education/student-loan-repayment` — IDR comparison (SAVE, PAYE, IBR, ICR)
+- `education/529-planner` — 529 savings projections
+
+### Veterans (3)
+- `veterans/disability-claim` — VA disability with combined rating
+- `veterans/gi-bill` — Post-9/11 GI Bill estimation
+- `veterans/va-healthcare` — VA healthcare priority groups
+
+### Identity (4)
+- `identity/passport` — Passport application readiness
+- `identity/name-change` — Name change with cascading updates
+- `identity/voter-registration` — Voter registration guide
+- `identity/real-id` — REAL ID readiness checker
+
+### Legal (3)
+- `legal/small-claims` — Small claims court filing
+- `legal/expungement` — Criminal record expungement
+- `legal/child-support-modification` — Child support modification
+
+### Estate (3)
+- `estate/basic-will` — Basic will planner
+- `estate/power-of-attorney` — Power of attorney planner
+- `estate/advance-directive` — Advance directive planner
+
+### Retirement (1)
+- `retirement/ssa-estimator` — Social Security benefit estimator
+
+### Unemployment (1)
+- `unemployment/claim-intake` — Unemployment claim intake
+
+### Business (1)
+- `business/license-starter` — Business license planner *(preview)*
+
+### Permits (1)
+- `permits/local-permit-planner` — Local permit planner *(preview)*
+
+## State tax coverage
+
+**Full calculators:** CA, NY, IL, PA, NC, MI, GA, VA, NJ, OH
+
+**No income tax (returns $0):** AK, FL, NV, NH, SD, TN, TX, WA, WY
+
+## Decision support
+
+- **What-if scenarios** — Compare filing statuses, deduction strategies, income levels
+- **Audit risk scorer** — IRS DIF-inspired heuristics
+- **Missed deduction detector** — Profile-based deduction suggestions
+- **Contribution optimizer** — Optimal 401k, IRA, HSA strategy
+- **Multi-year carryforward** — Track carryforward items across tax years
+
+## CLI commands
+
+| Command | Description |
+|---------|-------------|
+| `workflows list` | List all workflows |
+| `workflows describe <id>` | Describe a workflow |
+| `fill <id>` | Interactive workflow fill |
+| `validate <file>` | Validate a bundle |
+| `review <file>` | Review summary |
+| `extract <pdf>` | Extract from source PDFs |
+| `serve` | Start MCP server |
+| `tui` | Launch Bubble Tea TUI |
+| `doctor` | Environment check |
+| `drafts` | Manage local drafts |
+| `vault` | Encrypted credential storage |
+| `profile` | Reusable identity profiles |
+| `deadlines` | Filing deadlines |
+| `fees` | Filing fees and costs |
+| `glossary` | Government terminology |
+| `life-event <id>` | Life event action plan |
+| `screen <id>` | Eligibility screening |
+| `merge` | Merge bundles |
+| `scaffold` | Generate workflow plugin |
+| `plugins` | Manage plugins |
+| `testdata` | Generate test data |
+| `schemas` | List form schemas |
+| `start` | Get starter data |
+
+All commands support `--json` for structured output and deterministic exit codes (0=success, 1=validation, 2=input, 3=system).
+
+## Agent integration
 
 ```bash
-$ npx pigeongov fill 1040
-
-pigeongov v0.1.0 — 2025 Tax Year
-
-? Filing status › Single
-? First name › Kevin
-? Last name › Lin
-? SSN › ***-**-****
-
-? Import income documents? › Yes
-? Path to W-2 PDF › ./w2-acme-corp.pdf
-  ✓ Extracted W-2: Acme Corp
-    Wages: $50,000.00 | Fed withheld: $6,200.00
-
-? Any 1099 forms? › No
-? Any other income? › No
-? Standard deduction or itemized deductions? › Standard
-
-  ═══ Calculating ═══
-  Gross income:        $50,000.00
-  Standard deduction:  -$15,750.00
-  Taxable income:      $34,250.00
-  Federal tax:         $3,871.50
-  Tax withheld:        $6,200.00
-  ──────────────────────────────
-  REFUND:              $2,328.50
-
-  ✓ All validation checks passed
-  ⚠ Flagged for review: (none)
-
-? Save as › both
-  ✓ Saved: ./1040-2025-filled.json
-  ✓ Saved: ./1040-2025-filled.pdf
-
-Review your return before filing. `pigeongov` does not submit to the IRS.
-```
-
-If the Go TUI is available, `pigeongov fill 1040` or `pigeongov fill immigration/family-visa-intake` will launch the full-screen workspace automatically. You can also open it directly:
-
-```bash
-pigeongov tui
-pigeongov tui unemployment/claim-intake
-```
-
-## Claude Code integration
-
-```bash
+# Claude Code
 claude mcp add pigeongov -- npx pigeongov serve
-```
 
-## Codex integration
-
-```bash
+# Codex
 codex mcp add pigeongov -- npx pigeongov serve
+
+# Remote MCP endpoint
+https://pigeongov.vercel.app/mcp
 ```
+
+Agent discovery files:
+- [`agents.json`](https://pigeongov.vercel.app/agents.json) — Structured capability manifest
+- [`llms.txt`](https://pigeongov.vercel.app/llms.txt) — Plain-text agent instructions
+
+See the [full docs](https://pigeongov.vercel.app/docs/) for MCP tool reference and structured output contracts.
 
 ## Vercel deployment
-
-The Vercel deployment now serves both the public site and the MCP server:
 
 ```bash
 vercel deploy -y --public
 ```
 
-The live MCP endpoint remains:
+The live MCP endpoint: `https://pigeongov.vercel.app/mcp`
 
-```text
-https://pigeongov.vercel.app/mcp
-```
+The public site: `https://pigeongov.vercel.app/`
 
-The public site root is:
-
-```text
-https://pigeongov.vercel.app/
-```
-
-For local HTTP testing of the same server:
+For local HTTP testing:
 
 ```bash
 npx pigeongov serve --http
+# Listens on http://127.0.0.1:3847/mcp
 ```
 
-That local server listens on `http://127.0.0.1:3847/mcp`.
-
 ## Architecture
-
-`PigeonGov` is split into three layers:
 
 ```mermaid
 flowchart TB
@@ -130,59 +196,28 @@ flowchart TB
   MCP["MCP: xmcp tools"]
   WORKFLOWS["Workflow registry + shared bundle model"]
   ENGINE["Engine: tax math, validation, extraction, review"]
+  ADVISORY["Advisory: life events, screener, decision support"]
 
   WEB --> WORKFLOWS
   CLI --> WORKFLOWS
   TUI --> CLI
   MCP --> WORKFLOWS
   WORKFLOWS --> ENGINE
+  WORKFLOWS --> ADVISORY
 ```
-
-- The workflow registry is the product contract shared by the website, CLI, TUI, and MCP.
-- The engine remains deterministic and local-first.
-- The CLI now supports human and machine modes with stable JSON output and exit codes.
-- The TUI is a multi-workflow Bubble Tea workspace built on top of machine-readable CLI commands.
-- The web root is a local-planning and review surface, not a hosted filing backend.
-- The MCP server exposes the same workflows to agents and returns structured data, including `flaggedFields`.
-
-## Available workflows
-
-- `tax/1040`
-- `immigration/family-visa-intake`
-- `healthcare/aca-enrollment`
-- `unemployment/claim-intake`
-- `business/license-starter` (preview)
-- `permits/local-permit-planner` (preview)
-
-## Adding a new workflow
-
-1. Add a workflow definition to `src/workflows/registry.ts`.
-2. Define starter data, sections, evidence logic, and validation/review rules.
-3. Reuse the shared bundle contract so the CLI, TUI, site, and MCP all inherit the new workflow.
-4. If the workflow needs underlying form schemas, add or extend `src/schemas/`.
-5. Add tests for registry behavior, CLI output, and MCP tool integration.
 
 ## Privacy
 
 - All processing happens locally on your machine.
 - No cloud account is required for the CLI, TUI, or local MCP server.
 - No telemetry is sent.
-- No user tax data should be logged.
-- SSNs should be masked in terminal prompts.
-- The browser planner and reviewer are client-side surfaces; they do not submit to agencies.
+- No user data is logged.
+- SSNs are masked in terminal prompts.
+- The browser planner and reviewer are client-side only — no server submission.
 
 Read the full policy in [`PRIVACY.md`](./PRIVACY.md).
 
-## Roadmap
-
-- Immigration forms
-- State taxes
-- More business-license and permit workflows
-- Guided packet assembly across additional federal and state programs
-
 ## Development
-
-Typical workflows:
 
 ```bash
 pnpm install

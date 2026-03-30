@@ -32,6 +32,8 @@
     "build:mcp:vercel": "XMCP_TELEMETRY_DISABLED=true xmcp build --vercel && node scripts/prepare-mcp-runtime.mjs --vercel && pnpm build:cli && pnpm build:site && node scripts/build-vercel-output.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:snapshots": "vitest run test/snapshots/",
+    "test:fuzz": "vitest run test/fuzz/ --timeout 30000",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
@@ -40,6 +42,7 @@
     "commander": "^14.0.3",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^2.4.5",
+    "tesseract.js": "^7.0.0",
     "xmcp": "^0.6.5",
     "zod": "^4.1.12"
   },

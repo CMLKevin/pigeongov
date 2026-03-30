@@ -1,0 +1,19 @@
+{
+  "cli.welcome": "PigeonGov — Local-first government workflows",
+  "cli.version": "Version {{version}}",
+  "cli.noWorkflowFound": "Workflow not found: {{id}}",
+  "cli.savedTo": "Saved to {{path}}",
+  "cli.draftResumePrompt": "Found a draft for {{workflow}}. Resume? (last updated {{date}})",
+  "cli.noDraftsFound": "No drafts found",
+  "cli.deadlinesNone": "No upcoming deadlines",
+  "cli.feesTotal": "Total fees: {{amount}}",
+  "cli.feesNone": "No fees for this workflow",
+  "error.runtimeError": "An unexpected error occurred",
+  "error.notFound": "Resource not found: {{resource}}",
+  "error.schemaError": "Input does not match expected format",
+  "workflow.sectionComplete": "Section complete: {{section}}",
+  "workflow.allSectionsComplete": "All sections complete",
+  "workflow.evidenceProvided": "Provided",
+  "workflow.evidenceMissing": "Missing",
+  "workflow.evidenceReview": "Needs review"
+}

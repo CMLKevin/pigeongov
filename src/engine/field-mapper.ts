@@ -41,7 +41,10 @@ function getImportedWithholding(
         if (document.type === "w2") {
           return total + document.federalWithheld;
         }
-        return total + (document.federalWithheld ?? 0);
+        if ("federalWithheld" in document && typeof document.federalWithheld === "number") {
+          return total + document.federalWithheld;
+        }
+        return total;
       }, 0),
   );
 }
@@ -52,7 +55,12 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
   const federalWithheld1099 = roundCurrency(
     input.importedDocuments
       .filter((document) => document.type !== "w2")
-      .reduce((total, document) => total + (document.federalWithheld ?? 0), 0),
+      .reduce((total, document) => {
+        if ("federalWithheld" in document && typeof document.federalWithheld === "number") {
+          return total + document.federalWithheld;
+        }
+        return total;
+      }, 0),
   );
   const unassignedWithholding = roundCurrency(
     Math.max(0, input.taxInput.federalWithheld - federalWithheldW2 - federalWithheld1099),

@@ -1,0 +1,19 @@
+{
+  "cli.welcome": "PigeonGov — Flujos de trabajo gubernamentales locales",
+  "cli.version": "Versión {{version}}",
+  "cli.noWorkflowFound": "Flujo de trabajo no encontrado: {{id}}",
+  "cli.savedTo": "Guardado en {{path}}",
+  "cli.draftResumePrompt": "Se encontró un borrador para {{workflow}}. ¿Continuar? (última actualización {{date}})",
+  "cli.noDraftsFound": "No se encontraron borradores",
+  "cli.deadlinesNone": "No hay plazos próximos",
+  "cli.feesTotal": "Total de tarifas: {{amount}}",
+  "cli.feesNone": "No hay tarifas para este flujo de trabajo",
+  "error.runtimeError": "Ocurrió un error inesperado",
+  "error.notFound": "Recurso no encontrado: {{resource}}",
+  "error.schemaError": "La entrada no coincide con el formato esperado",
+  "workflow.sectionComplete": "Sección completa: {{section}}",
+  "workflow.allSectionsComplete": "Todas las secciones completas",
+  "workflow.evidenceProvided": "Proporcionado",
+  "workflow.evidenceMissing": "Faltante",
+  "workflow.evidenceReview": "Necesita revisión"
+}

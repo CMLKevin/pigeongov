@@ -1,0 +1,19 @@
+{
+  "cli.welcome": "PigeonGov — 本地优先的政府工作流程",
+  "cli.version": "版本 {{version}}",
+  "cli.noWorkflowFound": "未找到工作流程：{{id}}",
+  "cli.savedTo": "已保存到 {{path}}",
+  "cli.draftResumePrompt": "找到 {{workflow}} 的草稿。继续？（最后更新 {{date}}）",
+  "cli.noDraftsFound": "未找到草稿",
+  "cli.deadlinesNone": "没有即将到来的截止日期",
+  "cli.feesTotal": "总费用：{{amount}}",
+  "cli.feesNone": "此工作流程无费用",
+  "error.runtimeError": "发生了意外错误",
+  "error.notFound": "未找到资源：{{resource}}",
+  "error.schemaError": "输入不符合预期格式",
+  "workflow.sectionComplete": "部分完成：{{section}}",
+  "workflow.allSectionsComplete": "所有部分已完成",
+  "workflow.evidenceProvided": "已提供",
+  "workflow.evidenceMissing": "缺失",
+  "workflow.evidenceReview": "需要审查"
+}

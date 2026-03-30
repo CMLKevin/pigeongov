@@ -1,0 +1,10 @@
+{
+  "name": "PigeonGov",
+  "short_name": "PigeonGov",
+  "description": "Local-first government workflows platform. 34 workflows across 13 domains.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f1e7",
+  "theme_color": "#1d5b5e",
+  "icons": []
+}

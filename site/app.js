@@ -1,6 +1,170 @@
+/* ──────────────────────────────────────────────
+   PigeonGov — Frontend Application
+   ────────────────────────────────────────────── */
+
+const DOMAIN_META = {
+  tax: { icon: "T", label: "Tax" },
+  immigration: { icon: "I", label: "Immigration" },
+  healthcare: { icon: "H", label: "Healthcare" },
+  unemployment: { icon: "U", label: "Unemployment" },
+  business: { icon: "B", label: "Business" },
+  permits: { icon: "P", label: "Permits" },
+  education: { icon: "E", label: "Education" },
+  identity: { icon: "ID", label: "Identity" },
+  benefits: { icon: "$", label: "Benefits" },
+  veterans: { icon: "V", label: "Veterans" },
+  legal: { icon: "L", label: "Legal" },
+  estate: { icon: "W", label: "Estate" },
+  retirement: { icon: "R", label: "Retirement" },
+};
+
+const LIFE_EVENTS = [
+  {
+    id: "new-baby",
+    icon: "Baby",
+    label: "New baby",
+    description: "Born or adopted -- update insurance, taxes, and benefits.",
+    workflowCount: 5,
+  },
+  {
+    id: "marriage",
+    icon: "Ring",
+    label: "Marriage",
+    description: "Filing status, name changes, insurance, and immigration.",
+    workflowCount: 5,
+  },
+  {
+    id: "divorce",
+    icon: "Split",
+    label: "Divorce",
+    description: "Filing changes, custody, insurance, estate updates.",
+    workflowCount: 6,
+  },
+  {
+    id: "job-loss",
+    icon: "Alert",
+    label: "Job loss",
+    description: "Unemployment, insurance, benefits screening.",
+    workflowCount: 6,
+  },
+  {
+    id: "retirement",
+    icon: "Clock",
+    label: "Retirement",
+    description: "Social Security, Medicare, estate planning.",
+    workflowCount: 6,
+  },
+  {
+    id: "moving-states",
+    icon: "Map",
+    label: "Moving states",
+    description: "Voter registration, ID, state taxes, benefits transfer.",
+    workflowCount: 5,
+  },
+  {
+    id: "death-of-spouse",
+    icon: "Heart",
+    label: "Death of spouse",
+    description: "Survivor benefits, probate, tax, insurance.",
+    workflowCount: 5,
+  },
+  {
+    id: "buying-home",
+    icon: "Home",
+    label: "Buying a home",
+    description: "Tax deductions, permits, estate planning.",
+    workflowCount: 4,
+  },
+  {
+    id: "starting-business",
+    icon: "Biz",
+    label: "Starting a business",
+    description: "Licenses, permits, Schedule C, insurance.",
+    workflowCount: 4,
+  },
+  {
+    id: "becoming-disabled",
+    icon: "Aid",
+    label: "Becoming disabled",
+    description: "SSDI, Medicaid, VA claims, estate directives.",
+    workflowCount: 7,
+  },
+  {
+    id: "aging-into-medicare",
+    icon: "65",
+    label: "Turning 65",
+    description: "Medicare enrollment, Social Security, directives.",
+    workflowCount: 3,
+  },
+  {
+    id: "immigration-status-change",
+    icon: "Flag",
+    label: "Immigration status change",
+    description: "Naturalization, work auth, voter reg, passport.",
+    workflowCount: 7,
+  },
+];
+
+// All 34 workflows, grouped by domain, for client-side rendering.
+// This is the source of truth for the catalog when workflows.json is unavailable,
+// and supplements it with all the newer workflows the old JSON was missing.
+const ALL_WORKFLOWS = [
+  // Tax
+  { id: "tax/1040", domain: "tax", title: "Federal individual return", summary: "Form 1040 with Schedule 1, Schedule C, Schedule B, Schedule D, and Form 8949 for the 2025 filing season.", status: "active", audience: "household" },
+  // Immigration
+  { id: "immigration/family-visa-intake", domain: "immigration", title: "Family visa packet intake", summary: "Build a household-centered family visa or adjustment packet checklist before attorney or human review.", status: "active", audience: "household" },
+  { id: "immigration/naturalization", domain: "immigration", title: "Naturalization eligibility review", summary: "N-400 eligibility assessment with residence, physical presence, and civics readiness checks.", status: "active", audience: "individual" },
+  { id: "immigration/green-card-renewal", domain: "immigration", title: "Green card renewal", summary: "I-90 filing organizer for green card renewal or replacement.", status: "active", audience: "individual" },
+  { id: "immigration/daca-renewal", domain: "immigration", title: "DACA renewal", summary: "DACA renewal eligibility check with timeline and documentation readiness.", status: "active", audience: "individual" },
+  { id: "immigration/work-authorization", domain: "immigration", title: "Work authorization (EAD)", summary: "I-765 work authorization application organizer with category and timeline tracking.", status: "active", audience: "individual" },
+  // Healthcare
+  { id: "healthcare/aca-enrollment", domain: "healthcare", title: "Healthcare enrollment planner", summary: "Organize household, income, and coverage evidence for marketplace enrollment review.", status: "active", audience: "household" },
+  { id: "healthcare/medicare-enrollment", domain: "healthcare", title: "Medicare enrollment planner", summary: "Medicare eligibility assessment with IRMAA calculation and late enrollment penalty estimation.", status: "active", audience: "individual" },
+  // Education
+  { id: "education/fafsa", domain: "education", title: "FAFSA readiness planner", summary: "FAFSA readiness assessment with dependency status, income documentation, and school selection.", status: "active", audience: "individual" },
+  { id: "education/student-loan-repayment", domain: "education", title: "Student loan repayment planner", summary: "IDR comparison for federal student loans with SAVE, PAYE, IBR, and ICR estimates.", status: "active", audience: "individual" },
+  { id: "education/529-planner", domain: "education", title: "529 savings planner", summary: "Project 529 plan growth and explore state tax deduction benefits.", status: "active", audience: "household" },
+  // Unemployment
+  { id: "unemployment/claim-intake", domain: "unemployment", title: "Unemployment claim intake", summary: "Organize claimant identity, separation facts, and wage evidence for state unemployment review.", status: "active", audience: "individual" },
+  // Benefits
+  { id: "benefits/snap", domain: "benefits", title: "SNAP benefits eligibility", summary: "SNAP (food stamps) eligibility assessment using FPL-based income tests and benefit estimation.", status: "active", audience: "household" },
+  { id: "benefits/section8", domain: "benefits", title: "Section 8 Housing Choice Voucher", summary: "Section 8 housing voucher eligibility assessment based on income and area median income limits.", status: "active", audience: "household" },
+  { id: "benefits/wic", domain: "benefits", title: "WIC program eligibility", summary: "WIC eligibility assessment for women, infants, and children based on income.", status: "active", audience: "household" },
+  { id: "benefits/liheap", domain: "benefits", title: "LIHEAP energy assistance", summary: "LIHEAP eligibility assessment for home energy assistance based on income and utility needs.", status: "active", audience: "household" },
+  { id: "benefits/medicaid", domain: "benefits", title: "Medicaid eligibility assessment", summary: "MAGI-based Medicaid eligibility review with FPL threshold analysis.", status: "active", audience: "household" },
+  { id: "benefits/ssdi-application", domain: "benefits", title: "SSDI application intake", summary: "SSDI application intake with SGA check and five-step evaluation summary.", status: "active", audience: "individual" },
+  // Veterans
+  { id: "veterans/disability-claim", domain: "veterans", title: "VA disability compensation claim", summary: "VA disability claim intake with combined rating estimation using VA math and evidence checklist.", status: "active", audience: "individual" },
+  { id: "veterans/gi-bill", domain: "veterans", title: "Post-9/11 GI Bill benefits", summary: "GI Bill entitlement estimation including housing allowance and remaining benefits months.", status: "active", audience: "individual" },
+  { id: "veterans/va-healthcare", domain: "veterans", title: "VA healthcare enrollment", summary: "VA healthcare priority group determination and copay estimation based on service and income.", status: "active", audience: "individual" },
+  // Identity
+  { id: "identity/passport", domain: "identity", title: "Passport application planner", summary: "Passport application readiness assessment with document checklist and fee estimation.", status: "active", audience: "individual" },
+  { id: "identity/name-change", domain: "identity", title: "Name change planner", summary: "Name change planning with court petition steps and cascading document update checklist.", status: "active", audience: "individual" },
+  { id: "identity/voter-registration", domain: "identity", title: "Voter registration guide", summary: "Voter registration readiness assessment with state-specific deadline tracking.", status: "active", audience: "individual" },
+  { id: "identity/real-id", domain: "identity", title: "REAL ID readiness checker", summary: "REAL ID document readiness assessment with required documentation checklist.", status: "active", audience: "individual" },
+  // Legal
+  { id: "legal/small-claims", domain: "legal", title: "Small claims court filing", summary: "Small claims case preparation with filing fee estimate, evidence checklist, and statute of limitations check.", status: "active", audience: "individual" },
+  { id: "legal/expungement", domain: "legal", title: "Criminal record expungement", summary: "Expungement eligibility assessment with waiting period estimation and documentation requirements.", status: "active", audience: "individual" },
+  { id: "legal/child-support-modification", domain: "legal", title: "Child support modification", summary: "Child support modification assessment with income change analysis and threshold evaluation.", status: "active", audience: "individual" },
+  // Estate
+  { id: "estate/basic-will", domain: "estate", title: "Basic will planner", summary: "Will planning intake with asset inventory, beneficiaries, executor selection, and state requirements.", status: "active", audience: "individual" },
+  { id: "estate/power-of-attorney", domain: "estate", title: "Power of attorney planner", summary: "POA planning with agent selection, power scope, and state-specific requirements.", status: "active", audience: "individual" },
+  { id: "estate/advance-directive", domain: "estate", title: "Advance directive planner", summary: "Advance directive planning for healthcare preferences, agent selection, and distribution wishes.", status: "active", audience: "individual" },
+  // Retirement
+  { id: "retirement/ssa-estimator", domain: "retirement", title: "Social Security benefit estimator", summary: "Estimate Social Security retirement benefits at ages 62, 67, and 70 using AIME/PIA calculation.", status: "active", audience: "individual" },
+  // Business
+  { id: "business/license-starter", domain: "business", title: "Business license planner", summary: "Map local license, zoning, and entity-registration follow-up tasks for a new business.", status: "preview", audience: "business" },
+  // Permits
+  { id: "permits/local-permit-planner", domain: "permits", title: "Local permit planner", summary: "Local permit scoping and evidence collection for construction, renovation, and zoning.", status: "preview", audience: "individual" },
+];
+
 async function loadCatalog() {
-  const response = await fetch("/data/workflows.json");
-  return response.json();
+  try {
+    const response = await fetch("/data/workflows.json");
+    return response.json();
+  } catch {
+    return { workflows: ALL_WORKFLOWS, descriptors: [] };
+  }
 }
 
 function el(tag, className, text) {
@@ -10,27 +174,172 @@ function el(tag, className, text) {
   return node;
 }
 
+// ── Hamburger menu ──
+
+function initHamburger() {
+  const hamburger = document.querySelector(".hamburger");
+  const nav = document.querySelector("#main-nav");
+  if (!hamburger || !nav) return;
+
+  hamburger.addEventListener("click", () => {
+    const expanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", String(!expanded));
+    nav.classList.toggle("open");
+  });
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+      hamburger.setAttribute("aria-expanded", "false");
+      nav.classList.remove("open");
+    }
+  });
+}
+
+// ── Home Page ──
+
+function groupByDomain(workflows) {
+  const groups = {};
+  for (const wf of workflows) {
+    if (!groups[wf.domain]) groups[wf.domain] = [];
+    groups[wf.domain].push(wf);
+  }
+  return groups;
+}
+
 function renderHome(catalog) {
-  const grid = document.querySelector("#workflow-grid");
+  initHamburger();
+  renderCatalog(catalog);
+  renderLifeEvents();
+}
+
+function renderCatalog(catalog) {
+  const container = document.querySelector("#workflow-catalog");
+  const filtersContainer = document.querySelector("#catalog-filters");
+  const searchInput = document.querySelector("#catalog-search");
+  if (!container) return;
+
+  // Use ALL_WORKFLOWS as the full list (the JSON may only have 6)
+  const workflows = ALL_WORKFLOWS;
+  const grouped = groupByDomain(workflows);
+
+  // Domain display order
+  const domainOrder = [
+    "tax", "immigration", "healthcare", "benefits", "education", "veterans",
+    "identity", "legal", "estate", "retirement", "unemployment", "business", "permits",
+  ];
+
+  let activeFilter = null;
+
+  // Build filter chips
+  if (filtersContainer) {
+    const allChip = el("button", "filter-chip active", "All");
+    allChip.addEventListener("click", () => {
+      activeFilter = null;
+      updateCatalog();
+      updateFilterState();
+    });
+    filtersContainer.append(allChip);
+
+    for (const domain of domainOrder) {
+      if (!grouped[domain]) continue;
+      const meta = DOMAIN_META[domain] || { label: domain };
+      const chip = el("button", `filter-chip domain-${domain}`, `${meta.label} (${grouped[domain].length})`);
+      chip.dataset.domain = domain;
+      chip.addEventListener("click", () => {
+        activeFilter = domain;
+        updateCatalog();
+        updateFilterState();
+      });
+      filtersContainer.append(chip);
+    }
+  }
+
+  function updateFilterState() {
+    if (!filtersContainer) return;
+    for (const chip of filtersContainer.querySelectorAll(".filter-chip")) {
+      const chipDomain = chip.dataset.domain;
+      if (!chipDomain && !activeFilter) {
+        chip.classList.add("active");
+      } else if (chipDomain === activeFilter) {
+        chip.classList.add("active");
+      } else {
+        chip.classList.remove("active");
+      }
+    }
+  }
+
+  function updateCatalog() {
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    container.innerHTML = "";
+
+    for (const domain of domainOrder) {
+      if (activeFilter && domain !== activeFilter) continue;
+      const domainWorkflows = (grouped[domain] || []).filter((wf) => {
+        if (!query) return true;
+        return (
+          wf.title.toLowerCase().includes(query) ||
+          wf.summary.toLowerCase().includes(query) ||
+          wf.id.toLowerCase().includes(query)
+        );
+      });
+      if (domainWorkflows.length === 0) continue;
+
+      const meta = DOMAIN_META[domain] || { icon: "?", label: domain };
+      const section = el("div", `domain-section domain-${domain}`);
+
+      // Header
+      const header = el("div", "domain-header");
+      const iconEl = el("div", "domain-icon", meta.icon);
+      const labelEl = el("span", "domain-label", meta.label);
+      const countEl = el("span", "domain-count", `${domainWorkflows.length}`);
+      const chevron = el("span", "domain-chevron", "\u25BC");
+      header.append(iconEl, labelEl, countEl, chevron);
+      header.addEventListener("click", () => {
+        section.classList.toggle("collapsed");
+      });
+      section.append(header);
+
+      // Body
+      const body = el("div", "domain-body");
+      for (const wf of domainWorkflows) {
+        const card = el("div", "workflow-card");
+        card.append(el("h4", "", wf.title));
+        card.append(el("p", "workflow-summary", wf.summary));
+        const metaRow = el("div", "workflow-meta");
+        const statusPill = el("span", `pill status-${wf.status}`, wf.status);
+        const audiencePill = el("span", "pill audience", wf.audience);
+        metaRow.append(statusPill, audiencePill);
+        card.append(metaRow);
+        body.append(card);
+      }
+      section.append(body);
+      container.append(section);
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", updateCatalog);
+  }
+
+  updateCatalog();
+}
+
+function renderLifeEvents() {
+  const grid = document.querySelector("#life-event-grid");
   if (!grid) return;
 
-  for (const workflow of catalog.workflows) {
-    const card = el("article", "card workflow-card");
-    card.append(
-      el("p", "eyebrow", workflow.domain),
-      el("h3", "", workflow.title),
-      el("p", "lede", workflow.summary),
-    );
-
-    const meta = el("div", "workflow-meta");
-    meta.append(
-      el("span", "pill", workflow.status),
-      ...workflow.tags.slice(0, 4).map((tag) => el("span", "pill", tag)),
-    );
-    card.append(meta);
+  for (const event of LIFE_EVENTS) {
+    const card = el("div", "life-event-card");
+    card.append(el("div", "life-event-icon", event.icon));
+    card.append(el("h4", "", event.label));
+    card.append(el("p", "life-event-desc", event.description));
+    card.append(el("span", "life-event-count", `${event.workflowCount} workflows triggered`));
     grid.append(card);
   }
 }
+
+// ── Planner Page ──
 
 function getValueAtPath(target, path) {
   return path.split(".").reduce((value, part) => (value && typeof value === "object" ? value[part] : undefined), target);
@@ -86,6 +395,7 @@ function downloadJson(fileName, payload) {
 }
 
 function renderPlanner(catalog) {
+  initHamburger();
   const workflowList = document.querySelector("#planner-workflow-list");
   const form = document.querySelector("#planner-form");
   const preview = document.querySelector("#planner-preview");
@@ -151,7 +461,17 @@ function renderPlanner(catalog) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = descriptor.id === selected.id ? "is-active" : "";
-      button.textContent = descriptor.title;
+
+      const titleSpan = el("span", "", descriptor.title);
+      button.append(titleSpan);
+
+      // Domain badge
+      const domain = descriptor.domain;
+      if (domain) {
+        const badge = el("span", `domain-badge domain-${domain}`, domain);
+        button.append(badge);
+      }
+
       button.addEventListener("click", () => {
         selected = descriptor;
         draft = structuredClone(descriptor.starterData);
@@ -181,7 +501,10 @@ function renderPlanner(catalog) {
   renderSelectedWorkflow();
 }
 
+// ── Review Page ──
+
 function renderReviewPage() {
+  initHamburger();
   const upload = document.querySelector("#review-upload");
   const headline = document.querySelector("#review-headline");
   const flagsContainer = document.querySelector("#review-flags");
@@ -203,9 +526,45 @@ function renderReviewPage() {
   });
 }
 
+// ── Docs Page ──
+
+function renderDocsPage() {
+  initHamburger();
+  // Sidebar TOC highlighting
+  const tocLinks = document.querySelectorAll(".docs-sidebar .toc-list a");
+  if (tocLinks.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach((link) => {
+            link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+          });
+        }
+      }
+    },
+    { rootMargin: "-20% 0px -70% 0px" },
+  );
+
+  document.querySelectorAll(".docs-content section[id]").forEach((section) => {
+    observer.observe(section);
+  });
+}
+
+// ── Boot ──
+
 const catalog = await loadCatalog();
 const page = document.body.dataset.page;
 
 if (page === "home") renderHome(catalog);
 if (page === "planner") renderPlanner(catalog);
 if (page === "review") renderReviewPage(catalog);
+if (page === "docs") renderDocsPage();
+
+// ── Service Worker Registration ──
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
