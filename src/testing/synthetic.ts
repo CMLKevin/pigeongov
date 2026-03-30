@@ -183,7 +183,7 @@ export function generateRandomInput(
   // Start from starter data, then overlay random values from the schema
   const result = structuredClone(starterData);
 
-  for (const field of description.inputSchema as FieldDescriptor[]) {
+  for (const field of description.inputSchema as unknown as FieldDescriptor[]) {
     if (field.optional && rand() < 0.2) continue;
     result[field.name] = generateFieldValue(field, rand);
   }
