@@ -8,7 +8,21 @@ import { checkCaseStatus, getProcessingTimeEstimate } from "../../advisory/track
 export function registerTrackCommand(program: Command): void {
   program
     .command("track <receiptNumber>")
-    .description("Check USCIS case status by receipt number (the only command that makes a network call)")
+    .description(
+      `Check USCIS case status by receipt number (makes a network call).
+
+  Queries the USCIS API for case status and processing time estimates.
+  Receipt numbers are 13 characters: 3-letter service center code + 10
+  digits (e.g., EAC2590012345, WAC2490054321).
+
+  Use --offline with --form to skip the API call and only show processing
+  time estimates for a form type.
+
+  Examples:
+    $ pigeongov track EAC2590012345
+    $ pigeongov track EAC2590012345 --form I-485 --json
+    $ pigeongov track EAC2590012345 --offline --form I-485 --json`,
+    )
     .option("--form <type>", "USCIS form type (e.g., I-485, N-400)")
     .option("--offline", "Skip API call, show processing time estimates only")
     .action(async (receiptNumber: string, options: { form?: string; offline?: boolean }) => {

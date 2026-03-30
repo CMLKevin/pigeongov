@@ -376,7 +376,32 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
 export function registerFillCommand(program: Command): void {
   program
     .command("fill <workflowId>")
-    .description("Interactive questionnaire to fill a supported workflow")
+    .description(
+      `Fill a workflow with data and produce a validated bundle.
+
+  This is the main command for completing government workflows. It accepts
+  a workflow ID (e.g., tax/1040, immigration/family-visa-intake) and either
+  launches an interactive questionnaire or processes a JSON data file.
+
+  Pipeline:  list → start → fill → validate → review
+
+  Non-interactive usage (for agents):
+    1. Run 'pigeongov start <id> --json' to get the data template
+    2. Fill in the template fields
+    3. Run 'pigeongov fill <id> --data <file> --json'
+
+  The --data flag expects a JSON file matching the starter data shape from
+  'pigeongov start'. For tax/1040, this includes taxpayer info, income
+  fields, adjustments, and deductions. Use 'pigeongov start <id> --json'
+  to see the exact schema with field descriptions.
+
+  Exit codes: 0 = success, 2 = warnings, 3 = validation errors
+
+  Examples:
+    $ pigeongov fill tax/1040                           # interactive TUI
+    $ pigeongov fill tax/1040 --data input.json --json  # non-interactive
+    $ pigeongov fill immigration/i-130 --data i130.json --json`,
+    )
     .option("--year <year>", "Workflow year", "2025")
     .option("--output <path>", "Output directory", ".")
     .option("--format <format>", "Output format", "json")

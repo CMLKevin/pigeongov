@@ -8,7 +8,19 @@ import { calculateCliff } from "../../advisory/cliff/calculator.js";
 export function registerCliffCommand(program: Command): void {
   program
     .command("cliff")
-    .description("Benefits cliff calculator — shows where benefits drop off as income rises")
+    .description(
+      `Benefits cliff calculator — find where benefits drop off as income rises.
+
+  Calculates current benefit eligibility, cliff points (income thresholds
+  where you lose a benefit), and a safe raise target. Helps answer "if I
+  earn more, will I lose more in benefits than I gain?"
+
+  Returns: currentBenefits, cliffPoints, safeRaiseThreshold, recommendation.
+
+  Examples:
+    $ pigeongov cliff --income 28000 --household 4
+    $ pigeongov cliff --income 28000 --household 4 --state TX --json`,
+    )
     .requiredOption("--income <amount>", "Annual household income (before taxes)")
     .requiredOption("--household <size>", "Number of people in household")
     .option("--state <code>", "Two-letter state code", "CA")

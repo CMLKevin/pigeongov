@@ -76,7 +76,22 @@ function formatPlanVisual(plan: LifeEventPlan): string {
 export function registerLifeEventCommand(program: Command): void {
   program
     .command("life-event")
-    .description("Get a prioritized action plan for a life event")
+    .description(
+      `Get a prioritized action plan for a life event.
+
+  Without an event argument, lists all 12 supported life events. With
+  an event ID, returns a phased action plan: which workflows to file,
+  in what order, with deadlines and priority levels.
+
+  Available events: job-loss, marriage, divorce, new-baby, retirement,
+  moving-states, death-of-spouse, buying-home, starting-business,
+  becoming-disabled, aging-into-medicare, immigration-status-change
+
+  Examples:
+    $ pigeongov life-event                     # list all events
+    $ pigeongov life-event job-loss            # action plan
+    $ pigeongov life-event job-loss --json     # structured plan`,
+    )
     .argument("[event]", "Life event ID (e.g., job-loss, marriage, new-baby)")
     .action((event: string | undefined) => {
       if (!event) {

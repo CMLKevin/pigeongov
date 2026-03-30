@@ -10,7 +10,35 @@ import { screenEligibility, formatScreenerResults } from "../../advisory/screene
 export function registerScreenCommand(program: Command): void {
   program
     .command("screen")
-    .description("Universal eligibility screener — answer 10 questions, get program recommendations")
+    .description(
+      `Universal eligibility screener — answer 10 questions, get program matches.
+
+  Evaluates eligibility for SNAP, Medicaid, WIC, LIHEAP, ACA subsidies,
+  and other benefit programs based on household data. Interactive mode
+  prompts for answers; non-interactive mode reads from a JSON file.
+
+  The --input JSON file must contain:
+    {
+      "householdSize": 4,
+      "annualHouseholdIncome": 28000,
+      "state": "CA",
+      "citizenshipStatus": "us_citizen",
+      "ages": [35, 33, 5, 2],
+      "hasDisability": false,
+      "employmentStatus": "employed",
+      "isVeteran": false,
+      "hasHealthInsurance": true,
+      "monthlyRent": 1200
+    }
+
+  citizenshipStatus: us_citizen | permanent_resident | conditional_resident
+    | ead_holder | refugee_asylee | undocumented | other
+  employmentStatus: employed | unemployed | self_employed | retired | disabled
+
+  Examples:
+    $ pigeongov screen                              # interactive
+    $ pigeongov screen --input data.json --json     # non-interactive`,
+    )
     .option("--input <file>", "Read screener answers from JSON file")
     .action(async (options: { input?: string }) => {
       let screenerData: ScreenerInput;
