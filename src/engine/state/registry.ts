@@ -3,6 +3,13 @@ import { isNoIncomeTaxState } from "./common.js";
 import { illinoisTaxPlugin } from "./il/calculator.js";
 import { californiaTaxPlugin } from "./ca/calculator.js";
 import { newYorkTaxPlugin } from "./ny/calculator.js";
+import { pennsylvaniaTaxPlugin } from "./pa/calculator.js";
+import { northCarolinaTaxPlugin } from "./nc/calculator.js";
+import { michiganTaxPlugin } from "./mi/calculator.js";
+import { georgiaTaxPlugin } from "./ga/calculator.js";
+import { virginiaTaxPlugin } from "./va/calculator.js";
+import { newJerseyTaxPlugin } from "./nj/calculator.js";
+import { ohioTaxPlugin } from "./oh/calculator.js";
 
 const statePlugins = new Map<string, StateTaxPlugin>();
 
@@ -14,6 +21,13 @@ function registerPlugin(plugin: StateTaxPlugin): void {
 registerPlugin(illinoisTaxPlugin);
 registerPlugin(californiaTaxPlugin);
 registerPlugin(newYorkTaxPlugin);
+registerPlugin(pennsylvaniaTaxPlugin);
+registerPlugin(northCarolinaTaxPlugin);
+registerPlugin(michiganTaxPlugin);
+registerPlugin(georgiaTaxPlugin);
+registerPlugin(virginiaTaxPlugin);
+registerPlugin(newJerseyTaxPlugin);
+registerPlugin(ohioTaxPlugin);
 
 export function getStateTaxPlugin(stateCode: string): StateTaxPlugin | undefined {
   return statePlugins.get(stateCode.toUpperCase());
