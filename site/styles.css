@@ -1183,21 +1183,21 @@ select:focus {
   margin: 18px 0;
 }
 
-.flag {
+.flag-list .flag {
   padding: 12px 14px;
   border-radius: var(--radius-sm);
   background: var(--white);
   border: 1px solid var(--line-dark);
 }
 
-.flag.error {
+.flag-list .flag.error {
   border-color: rgba(239, 68, 68, 0.3);
   color: #dc2626;
   background: rgba(239, 68, 68, 0.04);
 }
 
-.flag.warning,
-.flag.review {
+.flag-list .flag.warning,
+.flag-list .flag.review {
   border-color: rgba(245, 158, 11, 0.3);
   color: #d97706;
   background: rgba(245, 158, 11, 0.04);
