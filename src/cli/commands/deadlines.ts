@@ -3,6 +3,7 @@ import { writeFileSync } from "node:fs";
 import chalk from "chalk";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import {
   DEFAULT_DEADLINES,
   getUpcomingDeadlines,
@@ -14,7 +15,6 @@ export function registerDeadlinesCommand(program: Command): void {
     .command("deadlines")
     .description("Show upcoming workflow deadlines")
     .option("--workflow <id>", "Filter by workflow ID")
-    .option("--json", "Print JSON output")
     .option("--ics <output-path>", "Write ICS calendar file to path")
     .action((options) => {
       let deadlines = DEFAULT_DEADLINES;
@@ -36,7 +36,7 @@ export function registerDeadlinesCommand(program: Command): void {
       }
 
       // JSON mode
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ deadlines: upcoming });
         return;
       }

@@ -28,6 +28,7 @@ import {
 } from "../prompts/common.js";
 import { collectWorkflowData } from "../prompts/workflow.js";
 import { emitJson, setExitCodeFromFlags, summarizeBundleForMachine } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { shouldUseTui, tryLaunchTuiFill } from "../tui.js";
 import {
   buildWorkflowBundle,
@@ -283,6 +284,57 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
       };
     }
 
+    // Try the starterData / TaxWorkflowInput format (flat object with both taxpayer
+    // and tax fields at the top level — produced by `pigeongov start tax/1040`)
+    if (
+      typeof rawInput === "object" &&
+      rawInput !== null &&
+      "taxpayer" in rawInput &&
+      "filingStatus" in rawInput
+    ) {
+      const flat = rawInput as Record<string, unknown>;
+      const taxpayer = flat.taxpayer as BuildReturnBundleInput["taxpayer"];
+      const dependents = Array.isArray(flat.dependents) ? flat.dependents : [];
+      const filingStatus = flat.filingStatus as BuildReturnBundleInput["filingStatus"];
+      const num = (key: string) => Number(flat[key]) || 0;
+      const adjustments = (flat.adjustments ?? {}) as Record<string, number>;
+
+      const result: BuildReturnBundleInput = {
+        formId: "1040",
+        taxYear: 2025,
+        filingStatus,
+        taxpayer,
+        dependents,
+        importedDocuments: [],
+        taxInput: {
+          filingStatus,
+          wages: num("wages"),
+          taxableInterest: num("taxableInterest"),
+          ordinaryDividends: num("ordinaryDividends"),
+          scheduleCNet: num("scheduleCNet"),
+          otherIncome: num("otherIncome"),
+          adjustments: {
+            educatorExpenses: Number(adjustments.educatorExpenses) || 0,
+            hsaDeduction: Number(adjustments.hsaDeduction) || 0,
+            selfEmploymentTaxDeduction: Number(adjustments.selfEmploymentTaxDeduction) || 0,
+            iraDeduction: Number(adjustments.iraDeduction) || 0,
+            studentLoanInterest: Number(adjustments.studentLoanInterest) || 0,
+          },
+          useItemizedDeductions: Boolean(flat.useItemizedDeductions),
+          itemizedDeductions: num("itemizedDeductions"),
+          dependents,
+          federalWithheld: num("federalWithheld"),
+          estimatedPayments: num("estimatedPayments"),
+        },
+      };
+
+      if (flat.spouse) {
+        result.spouse = flat.spouse as NonNullable<BuildReturnBundleInput["spouse"]>;
+      }
+
+      return result;
+    }
+
     throw parsedEnvelope.error;
   }
 
@@ -314,7 +366,6 @@ export function registerFillCommand(program: Command): void {
     .option("--import <paths...>", "Pre-import W-2/1099 PDFs before prompting")
     .option("--no-interactive", "Skip prompts and require --data")
     .option("--no-tui", "Disable the Go TUI and use Node prompts instead")
-    .option("--json", "Print machine-oriented JSON to stdout")
     .option("--quiet", "Suppress human-oriented console output")
     .option("--resume <path>", "Resume from an existing workflow bundle JSON")
     .option("--from-bundle <path>", "Use a saved workflow bundle as the input source")
@@ -322,7 +373,13 @@ export function registerFillCommand(program: Command): void {
     .action(async (workflowId, options) => {
       const normalizedWorkflowId = normalizeWorkflowId(String(workflowId));
 
+      // When --data is provided, skip interactive/TUI entirely
+      const hasDataFile = Boolean(options.data);
+      const hasResume = Boolean(options.resume || options.fromBundle);
+
       if (
+        !hasDataFile &&
+        !hasResume &&
         shouldUseTui(
           {
             formId: isLegacy1040WorkflowId(normalizedWorkflowId) ? "1040" : normalizedWorkflowId,
@@ -346,15 +403,18 @@ export function registerFillCommand(program: Command): void {
         }
       }
 
+      // --data implies non-interactive
+      const isInteractive = options.interactive !== false && !hasDataFile;
+
       if (!options.quiet) {
         console.log(chalk.bold(`PigeonGov v0.1.0 — ${normalizedWorkflowId}`));
       }
 
       if (isLegacy1040WorkflowId(normalizedWorkflowId)) {
         const workflowInput =
-          options.resume || options.fromBundle
+          hasResume
             ? await loadWorkflowBundle(String(options.resume ?? options.fromBundle))
-            : options.interactive === false
+            : hasDataFile
               ? await loadWorkflowInput(String(options.data))
               : await fill1040Workflow(defaultPromptClient, options.import ?? []);
 
@@ -379,7 +439,7 @@ export function registerFillCommand(program: Command): void {
         }
 
         const saveFormat =
-          options.interactive === false
+          !isInteractive
             ? (options.format as "json" | "pdf" | "both")
             : await defaultPromptClient.select("Save as", [
                 { name: "json", value: "json" },
@@ -390,12 +450,12 @@ export function registerFillCommand(program: Command): void {
         const saved = await saveWorkflowBundle(bundle, String(options.output), saveFormat);
         if (!options.quiet) {
           for (const filePath of saved) {
-            console.log(chalk.green(`✓ Saved: ${filePath}`));
+            console.log(chalk.green(`\u2713 Saved: ${filePath}`));
           }
           console.log("Review your return before filing.");
           console.log("PigeonGov does not submit to the IRS.");
         }
-        if (options.json) {
+        if (isJsonMode()) {
           emitJson({ ...summarizeBundleForMachine(bundle), saved });
         }
         setExitCodeFromFlags(bundle.validation.flaggedFields);
@@ -404,9 +464,9 @@ export function registerFillCommand(program: Command): void {
 
       const definition = describeWorkflow(normalizedWorkflowId);
       const workflowData =
-        options.resume || options.fromBundle
+        hasResume
           ? (await loadWorkflowBundle(String(options.resume ?? options.fromBundle))).answers
-          : options.interactive === false
+          : hasDataFile
             ? await loadFillInputForWorkflow(normalizedWorkflowId, String(options.data))
             : await collectWorkflowData(
                 defaultPromptClient,
@@ -427,7 +487,7 @@ export function registerFillCommand(program: Command): void {
       const saved = await saveWorkflowBundle(
         workflowBundle,
         String(options.output),
-        options.interactive === false
+        !isInteractive
           ? (options.format as "json" | "pdf" | "both")
           : await defaultPromptClient.select("Save as", [
               { name: "json", value: "json" },
@@ -438,13 +498,13 @@ export function registerFillCommand(program: Command): void {
 
       if (!options.quiet) {
         for (const filePath of saved) {
-          console.log(chalk.green(`✓ Saved: ${filePath}`));
+          console.log(chalk.green(`\u2713 Saved: ${filePath}`));
         }
         console.log("Review the workflow packet before submitting anything to an agency.");
         console.log("PigeonGov never submits on your behalf.");
       }
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ ...summarizeBundleForMachine(workflowBundle), saved });
       }
       setExitCodeFromFlags(workflowBundle.validation.flaggedFields);

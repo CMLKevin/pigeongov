@@ -1,16 +1,16 @@
 import type { Command } from "commander";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { listWorkflowSummaries } from "../../workflows/registry.js";
 
 export function registerListCommand(program: Command): void {
   program
     .command("list")
     .description("List available PigeonGov workflows")
-    .option("--json", "Print JSON output")
-    .action((options) => {
+    .action(() => {
       const workflows = listWorkflowSummaries();
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ workflows });
         return;
       }

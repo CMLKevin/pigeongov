@@ -7,7 +7,6 @@ export function registerStartCommand(program: Command): void {
   program
     .command("start <workflowId>")
     .description("Print starter data and metadata for a workflow")
-    .option("--json", "Print JSON output", true)
     .action((workflowId) => {
       const normalizedId = normalizeWorkflowId(String(workflowId));
       emitJson({

@@ -24,6 +24,9 @@ import { registerScaffoldCommand } from "./commands/scaffold.js";
 import { registerTestdataCommand } from "./commands/testdata.js";
 import { registerCompletionsCommand } from "./commands/completions.js";
 import { registerStatsCommand } from "./commands/stats.js";
+import { registerLifeEventCommand } from "./commands/life-event.js";
+import { registerScreenCommand } from "./commands/screen.js";
+import { registerMergeCommand } from "./commands/merge.js";
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command();
@@ -83,6 +86,9 @@ export async function runCli(argv: string[]): Promise<void> {
   registerTestdataCommand(program);
   registerCompletionsCommand(program);
   registerStatsCommand(program);
+  registerLifeEventCommand(program);
+  registerScreenCommand(program);
+  registerMergeCommand(program);
 
   await program.parseAsync(argv);
 }

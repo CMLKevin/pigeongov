@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import chalk from "chalk";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { listDrafts, deleteDraft, cleanupDrafts } from "../../storage/drafts.js";
 
 export function registerDraftsCommand(program: Command): void {
@@ -14,11 +15,10 @@ export function registerDraftsCommand(program: Command): void {
     .command("list")
     .description("List saved drafts")
     .option("--workflow <id>", "Filter by workflow id")
-    .option("--json", "Print JSON output")
-    .action(async (options: { workflow?: string; json?: boolean }) => {
+    .action(async (options: { workflow?: string }) => {
       const items = await listDrafts(options.workflow);
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ drafts: items });
         return;
       }

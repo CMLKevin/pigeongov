@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import chalk from "chalk";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import {
   DEFAULT_FEES,
   getWorkflowFees,
@@ -13,7 +14,6 @@ export function registerFeesCommand(program: Command): void {
     .command("fees")
     .description("Show fee breakdown for a workflow")
     .option("--workflow <id>", "Filter by workflow ID")
-    .option("--json", "Print JSON output")
     .action((options) => {
       let fees = DEFAULT_FEES;
 
@@ -24,7 +24,7 @@ export function registerFeesCommand(program: Command): void {
       const total = calculateTotalFees(fees);
 
       // JSON mode
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ fees, total });
         return;
       }

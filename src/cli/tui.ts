@@ -61,11 +61,18 @@ async function findPackageRoot(startFileUrl: string): Promise<string | null> {
   let currentDir = path.dirname(fileURLToPath(startFileUrl));
 
   while (true) {
-    if (
-      (await pathExists(path.join(currentDir, "package.json"))) &&
-      (await pathExists(path.join(currentDir, "go.mod")))
-    ) {
-      return currentDir;
+    // Check for pigeongov package.json (not just any package.json)
+    const pkgPath = path.join(currentDir, "package.json");
+    if (await pathExists(pkgPath)) {
+      try {
+        const { readFile } = await import("node:fs/promises");
+        const pkg = JSON.parse(await readFile(pkgPath, "utf-8"));
+        if (pkg.name === "pigeongov") {
+          return currentDir;
+        }
+      } catch {
+        // Not valid JSON, skip
+      }
     }
 
     const parent = path.dirname(currentDir);

@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { password } from "@inquirer/prompts";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import {
   addToVault,
   listVault,
@@ -47,12 +48,11 @@ export function registerVaultCommand(program: Command): void {
   vault
     .command("list")
     .description("List all vault entries")
-    .option("--json", "Print JSON output")
-    .action(async (options: { json?: boolean }) => {
+    .action(async () => {
       const passphrase = await askPassphrase();
       const entries = await listVault(passphrase);
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ vault: entries });
         return;
       }
