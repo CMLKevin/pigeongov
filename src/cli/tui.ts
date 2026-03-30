@@ -16,7 +16,6 @@ export interface TuiTtyState {
 
 export interface LaunchTuiOptions {
   formId: string;
-  year: string;
   cwd: string;
   output?: string;
   format?: string;
@@ -97,30 +96,22 @@ async function resolveTuiLaunchCommand(packageRoot: string): Promise<TuiLaunchCo
 }
 
 function buildTuiArgs(options: LaunchTuiOptions): string[] {
-  const args = [
-    "--form",
-    options.formId,
-    "--year",
-    options.year,
-    "--cwd",
-    options.cwd,
-    "--output",
-    options.output ?? ".",
-    "--format",
-    options.format ?? "json",
-  ];
+  const args: string[] = [];
 
-  const importPaths = (options.importPaths ?? []).filter(Boolean);
-  if (importPaths.length > 0) {
-    args.push("--import", importPaths.join(","));
+  if (options.formId) {
+    args.push("-form", options.formId);
   }
 
+  args.push("-cwd", options.cwd);
+  args.push("-output", options.output ?? ".");
+  args.push("-format", options.format ?? "json");
+
   if (options.accessible) {
-    args.push("--accessible");
+    args.push("-accessible");
   }
 
   if (options.noAltScreen) {
-    args.push("--no-alt-screen");
+    args.push("-no-alt-screen");
   }
 
   return args;

@@ -15,6 +15,17 @@ const config: XmcpConfig = {
     prompts: false,
     resources: false,
   },
+  bundler: (rspackConfig) => {
+    // Resolve .js imports to .ts source files (ESM TypeScript convention)
+    rspackConfig.resolve = {
+      ...rspackConfig.resolve,
+      extensionAlias: {
+        ...rspackConfig.resolve?.extensionAlias,
+        ".js": [".ts", ".js"],
+      },
+    };
+    return rspackConfig;
+  },
 };
 
 export default config;

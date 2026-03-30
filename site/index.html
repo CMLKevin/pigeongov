@@ -3,232 +3,356 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1d5b5e" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1e1e2e" media="(prefers-color-scheme: dark)" />
-    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows across 13 domains." />
+    <meta name="theme-color" content="#6c3aed" />
+    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows across 13 domains. Zero cloud uploads." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body data-page="home">
     <div class="page-shell">
+
+      <!-- ── Nav ── -->
       <header class="topbar">
-        <a class="brand" href="/">PigeonGov</a>
+        <a class="brand" href="/">pigeongov<span class="cursor">_</span></a>
         <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
         <nav class="nav" id="main-nav">
-          <a href="/planner/">Planner</a>
-          <a href="/review/">Reviewer</a>
           <a href="/docs/">Docs</a>
-          <a href="/mcp">MCP</a>
+          <a href="https://github.com/CMLKevin/pigeongov">GitHub</a>
+          <a href="https://www.npmjs.com/package/pigeongov">npm</a>
         </nav>
       </header>
 
       <main>
-        <section class="hero">
-          <div>
-            <p class="eyebrow">Local-first government workflows platform</p>
-            <h1>Plan, review, and validate government paperwork without leaving your machine.</h1>
-            <p class="lede">
-              PigeonGov is a privacy-first CLI, TUI, and MCP product for US government forms.
-              34 workflows across tax, immigration, healthcare, education, benefits, veterans,
-              legal, estate, identity, retirement, and more &mdash; all processed locally.
+
+        <!-- ══ Hero ══ -->
+        <section class="hero-section">
+          <div class="content-wrap hero-content">
+            <div class="stripe-bar"></div>
+            <h1>Government paperwork,<br>without the paperwork.</h1>
+            <div class="stripe-bar"></div>
+            <p class="hero-subtitle">
+              A delightful terminal tool that turns scary government forms into
+              guided workflows. Fill forms, check eligibility, plan for life events
+              &mdash; all from your command line.
             </p>
+
+            <div class="hero-stats">
+              <span class="hero-stat-pill"><span class="stat-num">34</span> workflows</span>
+              <span class="hero-stat-pill"><span class="stat-num">13</span> domains</span>
+              <span class="hero-stat-pill"><span class="stat-num">0</span> cloud uploads</span>
+              <span class="hero-stat-pill"><span class="stat-num">20</span> MCP tools</span>
+            </div>
+
             <div class="hero-actions">
-              <a class="button primary" href="/planner/">Open Planner</a>
-              <a class="button secondary" href="/docs/">Read Docs</a>
-              <a class="button accent" href="#life-events">Life Events</a>
+              <a class="btn btn-pink" href="/docs/#getting-started">Get Started</a>
+              <a class="btn btn-outline" href="https://www.npmjs.com/package/pigeongov">npm install</a>
             </div>
-            <pre class="terminal"><code>$ npx pigeongov workflows list
-$ npx pigeongov fill tax/1040 --json
-$ npx pigeongov life-event job-loss
-$ npx pigeongov screen benefits/snap
-$ claude mcp add pigeongov -- npx pigeongov serve</code></pre>
-          </div>
-          <div class="hero-panel">
-            <div class="metric-card">
-              <span>Active workflows</span>
-              <strong>34</strong>
-            </div>
-            <div class="metric-card">
-              <span>Government domains</span>
-              <strong>13</strong>
-            </div>
-            <div class="metric-card">
-              <span>State tax calculators</span>
-              <strong>10 states + 9 no-tax</strong>
-            </div>
-            <div class="metric-card">
-              <span>Privacy model</span>
-              <strong>Local-first. No cloud. No telemetry.</strong>
+
+            <div class="hero-terminal terminal-window">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">pigeongov &mdash; life-event</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">life-event</span> <span class="string">job-loss</span>
+
+<span class="heading">Life Event: Job loss</span>
+<span class="dim">Generating prioritized action plan...</span>
+
+<span class="cyan">Action Plan</span> <span class="dim">(6 workflows)</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 1: Immediate (this week) &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">unemployment/claim-intake</span> <span class="deadline">(!)  [DEADLINE: 7 days]</span>
+    <span class="dim">File unemployment claim immediately</span>
+
+  <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!)  [DEADLINE: 60 days]</span>
+    <span class="dim">Enroll in ACA marketplace</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 2: This month &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">benefits/snap</span>
+    <span class="dim">Income drop may qualify your household</span>
+
+  <span class="ok">&gt;</span> <span class="command">benefits/medicaid</span>
+    <span class="dim">Check Medicaid eligibility before marketplace</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 3: When ready &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">tax/1040</span>
+    <span class="dim">Adjust withholding &amp; estimated payments</span>
+
+  <span class="ok">&gt;</span> <span class="command">retirement/ssa-estimator</span>
+    <span class="dim">Recalculate projected benefits with updated work history</span>
+
+<span class="ok">Done.</span> <span class="dim">Run</span> <span class="command">pigeongov fill &lt;workflow-id&gt;</span> <span class="dim">to start any workflow.</span></div>
             </div>
           </div>
         </section>
 
-        <!-- Workflow Catalog -->
-        <section class="section" id="catalog">
-          <div class="section-header">
-            <p class="eyebrow">Workflow catalog</p>
-            <h2>34 workflows across 13 government domains</h2>
+        <!-- ══ What can it do? ══ -->
+        <section class="section-light">
+          <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
+            <h2>What can it <span class="gradient-text">actually do?</span></h2>
+
+            <!-- Showcase 1 -->
+            <div class="showcase">
+              <div class="showcase-text">
+                <h3>Fill out any government form.</h3>
+                <p>
+                  Guided, interactive workflows for tax returns, immigration packets,
+                  benefits applications, and more. Answer questions in plain language,
+                  get a validated bundle out.
+                </p>
+                <span class="inline-cmd">$ pigeongov fill tax/1040</span>
+              </div>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">fill &mdash; tax/1040</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">fill</span> <span class="string">tax/1040</span> <span class="flag">--json</span>
+
+<span class="heading">Federal Individual Return (2025)</span>
+<span class="dim">Schedule 1, B, C, D &amp; Form 8949</span>
+
+<span class="cyan">Filing Status:</span>  <span class="ok">Married Filing Jointly</span>
+<span class="cyan">Gross Income:</span>  $142,800.00
+<span class="cyan">Adjustments:</span>   -$6,500.00  <span class="dim">(HSA, IRA)</span>
+<span class="cyan">AGI:</span>           $136,300.00
+<span class="cyan">Deduction:</span>     -$29,200.00 <span class="dim">(standard)</span>
+<span class="cyan">Taxable:</span>       $107,100.00
+
+<span class="heading">Tax Calculation</span>
+<span class="yellow">Federal:</span>       $16,290.00
+<span class="yellow">State (CA):</span>    $5,847.00
+<span class="yellow">SE Tax:</span>        $2,119.00
+<span class="ok">Credits:</span>       -$4,000.00  <span class="dim">(child tax credit x2)</span>
+
+<span class="ok">Bundle saved to ./1040-bundle.json</span></div>
+              </div>
+            </div>
+
+            <!-- Showcase 2 -->
+            <div class="showcase reverse">
+              <div class="showcase-text">
+                <h3>Know what you qualify for.</h3>
+                <p>
+                  Cross-program eligibility screening for SNAP, Medicaid, Section 8,
+                  WIC, LIHEAP, and SSDI. Uses federal poverty level calculations and
+                  program-specific rules. No signup required.
+                </p>
+                <span class="inline-cmd">$ pigeongov screen benefits/snap</span>
+              </div>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">screen &mdash; benefits</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">screen</span> <span class="string">benefits/snap</span>
+
+<span class="heading">SNAP Eligibility Screening</span>
+<span class="dim">Household: 4 members | Monthly income: $2,800</span>
+
+<span class="cyan">Gross Income Test</span>
+  130% FPL for 4: $3,467/mo
+  Your income:    $2,800/mo
+  <span class="ok">PASS</span> <span class="dim">(81% of threshold)</span>
+
+<span class="cyan">Net Income Test</span>
+  100% FPL for 4: $2,667/mo
+  After deductions: $2,240/mo
+  <span class="ok">PASS</span> <span class="dim">(84% of threshold)</span>
+
+<span class="cyan">Asset Test</span>
+  Limit: $2,750 | Yours: $1,200
+  <span class="ok">PASS</span>
+
+<span class="heading">Result: <span class="ok">LIKELY ELIGIBLE</span></span>
+<span class="cyan">Est. monthly benefit:</span> <span class="ok">$459</span>
+
+<span class="dim">Also check:</span> <span class="command">benefits/medicaid</span> <span class="command">benefits/wic</span> <span class="command">benefits/liheap</span></div>
+              </div>
+            </div>
+
+            <!-- Showcase 3 -->
+            <div class="showcase">
+              <div class="showcase-text">
+                <h3>Life happens. We help.</h3>
+                <p>
+                  Major life changes trigger cascading government paperwork. Tell PigeonGov
+                  what happened and get a prioritized action plan with deadlines, workflow
+                  mappings, and the order to do things in.
+                </p>
+                <span class="inline-cmd">$ pigeongov life-event marriage</span>
+              </div>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">life-event &mdash; marriage</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">life-event</span> <span class="string">marriage</span>
+
+<span class="heading">Life Event: Marriage</span>
+
+<span class="cyan">Action Plan</span> <span class="dim">(5 workflows)</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 1: Right away &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">identity/name-change</span>
+    <span class="dim">Court petition + SSA + DMV + passport cascade</span>
+
+  <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!) [30 days]</span>
+    <span class="dim">Marriage is a qualifying life event</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 2: Before tax season &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">tax/1040</span>
+    <span class="dim">Switch to Married Filing Jointly (usually saves $$$)</span>
+
+<span class="line-sep">&#x2500;&#x2500;&#x2500; Phase 3: When settled &#x2500;&#x2500;&#x2500;</span>
+
+  <span class="ok">&gt;</span> <span class="command">estate/basic-will</span>
+    <span class="dim">Update beneficiaries and estate plan</span>
+
+  <span class="ok">&gt;</span> <span class="command">immigration/family-visa-intake</span>
+    <span class="dim">If applicable: spouse petition workflow</span>
+
+<span class="pink">Tip:</span> <span class="dim">Run workflows in order. Phase 1 deadlines are real.</span></div>
+              </div>
+            </div>
+
           </div>
-          <div class="catalog-toolbar">
-            <input type="search" id="catalog-search" placeholder="Search workflows..." aria-label="Search workflows" />
-            <div class="catalog-filters" id="catalog-filters"></div>
-          </div>
-          <div id="workflow-catalog" class="workflow-catalog"></div>
         </section>
 
-        <!-- Life Event Engine -->
-        <section class="section" id="life-events">
-          <div class="section-header">
-            <p class="eyebrow">Life Event Engine</p>
-            <h2>What just happened? Get an action plan.</h2>
-            <p class="lede">Major life changes trigger cascading government paperwork. PigeonGov maps the workflows you need, in priority order, with deadlines.</p>
+        <!-- ══ Workflow Domains ══ -->
+        <section class="section-gradient" id="catalog">
+          <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
+            <h2>34 workflows across everything the government throws at you.</h2>
+            <p class="section-sub">Click a domain to see its workflows. Or just search.</p>
+
+            <input type="search" id="catalog-search" placeholder="Search workflows... (e.g. &quot;passport&quot;, &quot;medicaid&quot;, &quot;1040&quot;)" aria-label="Search workflows" />
+
+            <div id="catalog-filters" class="domain-pills"></div>
+
+            <div class="domain-expand-area">
+              <div id="workflow-catalog" class="domain-workflow-expand"></div>
+            </div>
           </div>
-          <div id="life-event-grid" class="life-event-grid"></div>
         </section>
 
-        <!-- Eligibility Screener -->
-        <section class="section" id="screener">
-          <div class="section-header">
-            <p class="eyebrow">Eligibility Screener</p>
-            <h2>Find out what you qualify for</h2>
-            <p class="lede">
-              Answer a few household questions and PigeonGov screens you across SNAP, Medicaid,
-              Section 8, WIC, LIHEAP, and SSDI. No data leaves your machine.
+        <!-- ══ For Agents ══ -->
+        <section class="agent-section" id="agents">
+          <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
+            <h2>Your AI agent's new best friend.</h2>
+            <p class="section-sub">
+              PigeonGov speaks MCP natively. Point your agent at it and let it handle the paperwork.
             </p>
-          </div>
-          <div class="cta-row">
-            <a class="button primary" href="/planner/">Try the Screener</a>
-            <code class="inline-code">npx pigeongov screen benefits/snap</code>
-          </div>
-        </section>
 
-        <!-- Decision Support -->
-        <section class="section split" id="decision-support">
-          <div class="card">
-            <p class="eyebrow">Decision support</p>
-            <h3>What-if scenarios &amp; optimization</h3>
-            <p>
-              Run hypothetical tax scenarios, estimate audit risk, find missed deductions,
-              and optimize retirement contributions &mdash; all with deterministic local math.
-            </p>
-            <ul class="feature-list">
-              <li>What-if scenario engine for tax planning</li>
-              <li>Audit risk scorer with IRS DIF heuristics</li>
-              <li>Missed deduction detector</li>
-              <li>Contribution optimizer (401k, IRA, HSA)</li>
-            </ul>
-          </div>
-          <div class="card">
-            <p class="eyebrow">Agent-ready</p>
-            <h3>One engine, every surface</h3>
-            <p>
-              Humans use the CLI and Bubble Tea TUI. Agents use the same workflows over MCP with structured
-              outputs, starter data, flagged fields, and review summaries.
-            </p>
-            <ul class="feature-list">
-              <li>20 MCP tools for agent integration</li>
-              <li>Stable machine JSON output with exit codes</li>
-              <li>Flag explanations and evidence checklists</li>
-              <li>Life event planning and eligibility screening</li>
-            </ul>
-          </div>
-        </section>
+            <div class="agent-layout">
+              <div class="agent-text">
+                <p>
+                  One <code style="font-family: var(--mono); color: var(--purple);">npx pigeongov serve</code> gives any MCP-compatible agent
+                  access to all 34 workflows, eligibility screening, life event planning,
+                  and form validation. JSON in, JSON out. Deterministic exit codes.
+                </p>
+                <p>
+                  Works with Claude Code, Codex, or any agent that speaks MCP.
+                  Also ships <a href="/agents.json" style="color: var(--purple);">agents.json</a>
+                  and <a href="/llms.txt" style="color: var(--purple);">llms.txt</a> for discovery.
+                </p>
+                <div class="agent-pills">
+                  <span class="agent-pill pill-purple">20 MCP tools</span>
+                  <span class="agent-pill pill-pink-soft">JSON output</span>
+                  <span class="agent-pill pill-cyan-soft">Structured errors</span>
+                </div>
+              </div>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">agent setup</span>
+                </div>
+                <div class="terminal-body"><span class="comment"># Add PigeonGov to Claude Code</span>
+<span class="prompt">$</span> <span class="command">claude</span> <span class="flag">mcp add</span> <span class="string">pigeongov</span> -- npx pigeongov serve
 
-        <!-- State Tax Coverage -->
-        <section class="section" id="state-taxes">
-          <div class="section-header">
-            <p class="eyebrow">State tax coverage</p>
-            <h2>10 state calculators. 9 no-income-tax states recognized.</h2>
-          </div>
-          <div class="state-grid">
-            <div class="state-chip state-implemented">CA</div>
-            <div class="state-chip state-implemented">NY</div>
-            <div class="state-chip state-implemented">IL</div>
-            <div class="state-chip state-implemented">PA</div>
-            <div class="state-chip state-implemented">NC</div>
-            <div class="state-chip state-implemented">MI</div>
-            <div class="state-chip state-implemented">GA</div>
-            <div class="state-chip state-implemented">VA</div>
-            <div class="state-chip state-implemented">NJ</div>
-            <div class="state-chip state-implemented">OH</div>
-            <div class="state-chip state-notax">AK</div>
-            <div class="state-chip state-notax">FL</div>
-            <div class="state-chip state-notax">NV</div>
-            <div class="state-chip state-notax">NH</div>
-            <div class="state-chip state-notax">SD</div>
-            <div class="state-chip state-notax">TN</div>
-            <div class="state-chip state-notax">TX</div>
-            <div class="state-chip state-notax">WA</div>
-            <div class="state-chip state-notax">WY</div>
-          </div>
-          <p class="state-legend">
-            <span class="legend-dot state-implemented"></span> Full calculator
-            <span class="legend-dot state-notax"></span> No income tax (returns $0)
-          </p>
-        </section>
+<span class="comment"># Or Codex</span>
+<span class="prompt">$</span> <span class="command">codex</span> <span class="flag">mcp add</span> <span class="string">pigeongov</span> -- npx pigeongov serve
 
-        <!-- Connect an Agent -->
-        <section class="section" id="agents">
-          <div class="section-header">
-            <p class="eyebrow">Connect an agent</p>
-            <h2>MCP endpoint, CLI, or REST API</h2>
-          </div>
-          <div class="agent-grid">
-            <div class="card">
-              <h3>Claude Code</h3>
-              <pre><code>claude mcp add pigeongov -- npx pigeongov serve</code></pre>
-            </div>
-            <div class="card">
-              <h3>Codex</h3>
-              <pre><code>codex mcp add pigeongov -- npx pigeongov serve</code></pre>
-            </div>
-            <div class="card">
-              <h3>Remote MCP</h3>
-              <pre><code>https://pigeongov.vercel.app/mcp</code></pre>
+<span class="comment"># Or use the remote endpoint</span>
+<span class="prompt">$</span> <span class="command">curl</span> <span class="string">https://pigeongov.vercel.app/mcp</span>
+
+<span class="comment"># Then just ask your agent:</span>
+<span class="prompt">$</span> <span class="command">claude</span> <span class="string">"help me file my taxes"</span>
+
+<span class="ok">Claude will automatically:</span>
+  <span class="dim">1. List available tax workflows</span>
+  <span class="dim">2. Start the 1040 fill flow</span>
+  <span class="dim">3. Validate the bundle</span>
+  <span class="dim">4. Flag anything that needs review</span></div>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- For Developers -->
-        <section class="section" id="developers">
-          <div class="section-header">
-            <p class="eyebrow">For developers</p>
-            <h2>Extend, integrate, and build on PigeonGov</h2>
-          </div>
-          <div class="dev-grid">
-            <div class="card compact">
-              <h3>Plugin System</h3>
-              <p>Scaffold custom workflows with <code>pigeongov scaffold</code> and register them as plugins.</p>
-            </div>
-            <div class="card compact">
-              <h3>REST API</h3>
-              <p>Run <code>pigeongov serve --http</code> for a local HTTP server at <code>127.0.0.1:3847</code>.</p>
-            </div>
-            <div class="card compact">
-              <h3>MCP Server</h3>
-              <p>20 tools: list, describe, fill, validate, review, build-packet, explain-flag, screen, life-event, deadlines, fees, glossary.</p>
-            </div>
-            <div class="card compact">
-              <h3>OpenAPI &amp; Agent Specs</h3>
-              <p><a href="/agents.json">agents.json</a> and <a href="/llms.txt">llms.txt</a> for agent discovery. Structured JSON output with deterministic exit codes.</p>
+        <!-- ══ Privacy ══ -->
+        <section class="privacy-section">
+          <div class="content-wrap">
+            <div class="stripe-bar-wide"></div>
+            <h2>Everything stays on your machine.</h2>
+            <div class="privacy-points">
+              <div class="privacy-point">
+                <span class="privacy-icon">&#x1F512;</span>
+                <strong>No cloud uploads</strong>
+              </div>
+              <div class="privacy-point">
+                <span class="privacy-icon">&#x1F4E1;</span>
+                <strong>No telemetry</strong>
+              </div>
+              <div class="privacy-point">
+                <span class="privacy-icon">&#x1F5C4;</span>
+                <strong>Encrypted local vault</strong>
+              </div>
             </div>
           </div>
         </section>
+
       </main>
 
+      <!-- ── Footer ── -->
       <footer class="site-footer">
-        <div class="footer-links">
-          <a href="https://github.com/pigeongov/pigeongov">GitHub</a>
-          <a href="/docs/">Documentation</a>
-          <a href="/agents.json">agents.json</a>
-          <a href="/llms.txt">llms.txt</a>
-          <a href="/privacy">Privacy Policy</a>
+        <div class="content-wrap">
+          <div class="footer-pigeon">    ___
+   (o o)
+   ( V )
+   /| |\
+  / | | \</div>
+          <div class="footer-brand">pigeongov<span>_</span></div>
+          <div class="footer-links">
+            <a href="https://github.com/CMLKevin/pigeongov">GitHub</a>
+            <a href="/docs/">Docs</a>
+            <a href="/agents.json">agents.json</a>
+            <a href="/llms.txt">llms.txt</a>
+            <a href="/privacy">Privacy</a>
+          </div>
+          <p class="footer-note">Made with care by humans, for humans dealing with government forms.</p>
         </div>
-        <p class="footer-note">Built with privacy in mind. No telemetry. No cloud uploads. All processing happens on your machine.</p>
       </footer>
+
     </div>
     <script type="module" src="/app.js"></script>
   </body>
