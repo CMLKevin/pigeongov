@@ -431,6 +431,16 @@ export interface EquityCompensationInput {
   saleDate?: string | undefined;
 }
 
+// --- Cost estimator types ---
+
+export interface CostEstimate {
+  workflowId: string;
+  diyTotal: { min: number; max: number; breakdown: Array<{ item: string; amount: number; type: string }> };
+  withToolTotal: { min: number; max: number; breakdown: Array<{ item: string; amount: number; type: string }> };
+  withAttorneyTotal: { min: number; max: number; breakdown: Array<{ item: string; amount: number; type: string }> };
+  savings: { vsAttorney: number; description: string };
+}
+
 // --- Plugin types ---
 
 export interface WorkflowPlugin {
@@ -446,4 +456,58 @@ export interface WorkflowPlugin {
     buildBundle: (input: unknown) => WorkflowBundle;
   }>;
   glossaryTerms?: GlossaryEntry[] | undefined;
+}
+
+// --- Benefits cliff types ---
+
+export interface CliffAnalysis {
+  currentIncome: number;
+  householdSize: number;
+  state: string;
+  currentBenefits: Array<{ program: string; monthlyValue: number }>;
+  cliffPoints: Array<{
+    income: number;
+    programLost: string;
+    monthlyLoss: number;
+    annualLoss: number;
+  }>;
+  safeRaiseThreshold: number;
+  recommendation: string;
+}
+
+// --- Dependency graph types ---
+
+export interface WorkflowDependency {
+  sourceWorkflowId: string;
+  targetWorkflowId: string;
+  relationship: "triggers" | "requires" | "affects" | "invalidates";
+  description: string;
+  bidirectional: boolean;
+}
+
+export interface DependencyChain {
+  workflowId: string;
+  downstream: Array<{
+    workflowId: string;
+    relationship: string;
+    description: string;
+    depth: number;
+  }>;
+  upstream: Array<{
+    workflowId: string;
+    relationship: string;
+    description: string;
+    depth: number;
+  }>;
+}
+
+// --- Case tracker types ---
+
+export interface CaseStatus {
+  receiptNumber: string;
+  formType: string;
+  status: string;
+  statusDescription: string;
+  lastUpdated: string;
+  processingTime?: { percentile50: number; percentile75: number; percentile90: number } | undefined;
 }

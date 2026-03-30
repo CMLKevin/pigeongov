@@ -27,13 +27,17 @@ import { registerStatsCommand } from "./commands/stats.js";
 import { registerLifeEventCommand } from "./commands/life-event.js";
 import { registerScreenCommand } from "./commands/screen.js";
 import { registerMergeCommand } from "./commands/merge.js";
+import { registerDependenciesCommand } from "./commands/dependencies.js";
+import { registerCliffCommand } from "./commands/cliff.js";
+import { registerTrackCommand } from "./commands/track.js";
+import { registerCostCommand } from "./commands/cost.js";
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command();
   program
     .name("pigeongov")
     .description("Local-first CLI for government workflows, packets, and forms")
-    .version("0.2.3");
+    .version("0.3.0");
 
   // Global output options
   program.addOption(new Option("--json", "Output structured JSON to stdout").default(false));
@@ -89,6 +93,10 @@ export async function runCli(argv: string[]): Promise<void> {
   registerLifeEventCommand(program);
   registerScreenCommand(program);
   registerMergeCommand(program);
+  registerDependenciesCommand(program);
+  registerCliffCommand(program);
+  registerTrackCommand(program);
+  registerCostCommand(program);
 
   await program.parseAsync(argv);
 }
