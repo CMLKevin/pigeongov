@@ -406,8 +406,8 @@ export function registerFillCommand(program: Command): void {
       // --data implies non-interactive
       const isInteractive = options.interactive !== false && !hasDataFile;
 
-      if (!options.quiet) {
-        console.log(chalk.bold(`PigeonGov v0.1.0 — ${normalizedWorkflowId}`));
+      if (!options.quiet && !isJsonMode()) {
+        console.log(chalk.bold(`PigeonGov v0.2.2 — ${normalizedWorkflowId}`));
       }
 
       if (isLegacy1040WorkflowId(normalizedWorkflowId)) {
@@ -427,6 +427,12 @@ export function registerFillCommand(program: Command): void {
                 dependents: (workflowInput as BuildReturnBundleInput).dependents,
                 ...((workflowInput as BuildReturnBundleInput).taxInput as object),
               });
+
+        if (isJsonMode()) {
+          emitJson(summarizeBundleForMachine(bundle));
+          setExitCodeFromFlags(bundle.validation.flaggedFields);
+          return;
+        }
 
         if (!options.quiet) {
           if (bundle.calculation) {
@@ -455,9 +461,6 @@ export function registerFillCommand(program: Command): void {
           console.log("Review your return before filing.");
           console.log("PigeonGov does not submit to the IRS.");
         }
-        if (isJsonMode()) {
-          emitJson({ ...summarizeBundleForMachine(bundle), saved });
-        }
         setExitCodeFromFlags(bundle.validation.flaggedFields);
         return;
       }
@@ -475,6 +478,12 @@ export function registerFillCommand(program: Command): void {
               );
 
       const workflowBundle = buildWorkflowBundle(normalizedWorkflowId, workflowData);
+
+      if (isJsonMode()) {
+        emitJson(summarizeBundleForMachine(workflowBundle));
+        setExitCodeFromFlags(workflowBundle.validation.flaggedFields);
+        return;
+      }
 
       if (!options.quiet) {
         console.log(renderGenericWorkflowSummary(workflowBundle));
@@ -502,10 +511,6 @@ export function registerFillCommand(program: Command): void {
         }
         console.log("Review the workflow packet before submitting anything to an agency.");
         console.log("PigeonGov never submits on your behalf.");
-      }
-
-      if (isJsonMode()) {
-        emitJson({ ...summarizeBundleForMachine(workflowBundle), saved });
       }
       setExitCodeFromFlags(workflowBundle.validation.flaggedFields);
     });

@@ -33,7 +33,7 @@ export async function runCli(argv: string[]): Promise<void> {
   program
     .name("pigeongov")
     .description("Local-first CLI for government workflows, packets, and forms")
-    .version("0.2.0");
+    .version("0.2.3");
 
   // Global output options
   program.addOption(new Option("--json", "Output structured JSON to stdout").default(false));
