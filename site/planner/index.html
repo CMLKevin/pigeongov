@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d5b5e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1e1e2e" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov Planner</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
@@ -10,7 +13,10 @@
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="/">PigeonGov</a>
-        <nav class="nav">
+        <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="nav" id="main-nav">
           <a href="/planner/" aria-current="page">Planner</a>
           <a href="/review/">Reviewer</a>
           <a href="/docs/">Docs</a>
@@ -42,4 +48,4 @@
     </div>
     <script type="module" src="/app.js"></script>
   </body>
-  </html>
+</html>
