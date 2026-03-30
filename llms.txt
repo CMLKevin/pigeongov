@@ -1,0 +1,48 @@
+# PigeonGov
+
+> Local-first, privacy-preserving government workflow platform for U.S. forms and applications
+
+## Quick Start
+- Install: `npm install -g pigeongov`
+- List workflows: `pigeongov list --json`
+- Fill a workflow: `pigeongov fill tax/1040 --input data.json --json`
+- Get input schema: `pigeongov schemas --workflow tax/1040 --json`
+- MCP server: `pigeongov serve --port 3847`
+
+## Domains
+- tax: Federal and state tax returns
+- immigration: Visa, naturalization, work authorization
+- healthcare: ACA enrollment, Medicare
+- unemployment: Benefit claims
+- education: FAFSA, student loans, 529 plans
+- benefits: SNAP, Medicaid, Section 8, WIC, LIHEAP, SSDI
+- veterans: Disability claims, GI Bill, VA healthcare
+- identity: Passport, name change, voter registration, Real ID
+- legal: Small claims, expungement, child support modification
+- estate: Wills, power of attorney, advance directives
+- business: License planning
+- permits: Local permit routing
+- retirement: Social Security estimation
+
+## For Agents
+- Always use `--json` for structured output
+- Use `--dry-run` before destructive operations
+- Exit codes: 0=success, 2=warnings, 3=errors, 4=invalid input, 5=not found
+- Use `pigeongov schemas --workflow <id> --json` for input/output shapes
+- Use `pigeongov start <workflow-id> --json` to get starter data template
+- Pipe commands: `pigeongov extract doc.pdf --json | pigeongov fill tax/1040 --stdin --json`
+
+## Key Commands
+- `pigeongov list [--domain <d>] --json` — list workflows with metadata
+- `pigeongov fill <id> --input <file> --json` — execute workflow from JSON input
+- `pigeongov validate <bundle.json> --json` — validate a saved bundle
+- `pigeongov review <bundle.json> --json` — get review summary
+- `pigeongov extract <pdf...> --json` — extract data from documents
+- `pigeongov deadlines [--workflow <id>] --json` — upcoming deadlines
+- `pigeongov fees [--workflow <id>] --json` — filing fees
+- `pigeongov glossary <term> --json` — explain government terminology
+- `pigeongov screen --json` — universal eligibility screener
+- `pigeongov life-event <event> --json` — action plan for life events
+
+## Privacy
+All processing is local. No cloud uploads. No telemetry. No PII in logs. Never auto-submits to any government system.

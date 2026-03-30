@@ -60,6 +60,12 @@ function detectDocumentType(text: string, typeHint?: Exclude<PdfDocumentKind, "u
     w2: 0,
     "1099-nec": 0,
     "1099-int": 0,
+    "1098": 0,
+    "1095-a": 0,
+    "1099-div": 0,
+    "1099-b": 0,
+    "1099-r": 0,
+    "k-1": 0,
   };
 
   if (normalized.includes("form w-2")) {
@@ -88,6 +94,55 @@ function detectDocumentType(text: string, typeHint?: Exclude<PdfDocumentKind, "u
   if (normalized.includes("interest income")) {
     scores["1099-int"] += 2;
     reasons.push("matched 1099-INT interest label");
+  }
+
+  // New document type scoring
+  if (normalized.includes("form 1098") || normalized.includes("mortgage interest statement")) {
+    scores["1098"] += 3;
+    reasons.push("matched Form 1098 heading");
+  }
+  if (normalized.includes("mortgage interest received")) {
+    scores["1098"] += 2;
+  }
+
+  if (normalized.includes("form 1095-a") || normalized.includes("health insurance marketplace")) {
+    scores["1095-a"] += 3;
+    reasons.push("matched Form 1095-A heading");
+  }
+  if (normalized.includes("monthly enrollment premiums")) {
+    scores["1095-a"] += 2;
+  }
+
+  if (normalized.includes("form 1099-div")) {
+    scores["1099-div"] += 3;
+    reasons.push("matched Form 1099-DIV heading");
+  }
+  if (normalized.includes("ordinary dividends") && normalized.includes("qualified dividends")) {
+    scores["1099-div"] += 2;
+  }
+
+  if (normalized.includes("form 1099-b") || normalized.includes("proceeds from broker")) {
+    scores["1099-b"] += 3;
+    reasons.push("matched Form 1099-B heading");
+  }
+  if (normalized.includes("cost or other basis") && normalized.includes("proceeds")) {
+    scores["1099-b"] += 2;
+  }
+
+  if (normalized.includes("form 1099-r")) {
+    scores["1099-r"] += 3;
+    reasons.push("matched Form 1099-R heading");
+  }
+  if (normalized.includes("gross distribution") && normalized.includes("taxable amount")) {
+    scores["1099-r"] += 2;
+  }
+
+  if (normalized.includes("schedule k-1") || normalized.includes("partner's share")) {
+    scores["k-1"] += 3;
+    reasons.push("matched Schedule K-1 heading");
+  }
+  if (normalized.includes("ordinary business income")) {
+    scores["k-1"] += 2;
   }
 
   if (typeHint) {

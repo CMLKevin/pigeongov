@@ -1,0 +1,72 @@
+{
+  "name": "pigeongov",
+  "version": "0.2.0",
+  "description": "Local-first, privacy-preserving government workflow platform for U.S. forms and applications",
+  "capabilities": ["cli", "mcp", "rest"],
+  "cli": {
+    "binary": "pigeongov",
+    "install": "npm install -g pigeongov",
+    "globalOptions": ["--json", "--jsonl", "--compact", "--full", "--fields", "--non-interactive", "--yes", "--dry-run", "--quiet", "--stdin", "--locale"],
+    "exitCodes": {
+      "0": "success",
+      "1": "runtime error",
+      "2": "has validation warnings",
+      "3": "has validation errors",
+      "4": "invalid input",
+      "5": "not found",
+      "6": "permission denied",
+      "7": "conflict",
+      "8": "schema error",
+      "9": "dependency missing",
+      "10": "timeout"
+    },
+    "commands": {
+      "list": { "description": "List available workflows", "args": "[--domain <domain>]" },
+      "fill": { "description": "Execute a workflow interactively or from JSON input", "args": "<workflow-id> [--input <file>]" },
+      "validate": { "description": "Validate a saved workflow bundle", "args": "<bundle-file>" },
+      "review": { "description": "Print human-readable review of a bundle", "args": "<bundle-file>" },
+      "extract": { "description": "Extract structured data from PDF documents", "args": "<pdf-file...>" },
+      "start": { "description": "Get starter data for a workflow", "args": "<workflow-id>" },
+      "schema": { "description": "Get JSON Schema for a workflow's input", "args": "<workflow-id>" },
+      "deadlines": { "description": "Show upcoming government deadlines", "args": "[--workflow <id>] [--ics <output>]" },
+      "fees": { "description": "Show filing fees for a workflow", "args": "[--workflow <id>]" },
+      "glossary": { "description": "Look up government terminology", "args": "[term] [--domain <domain>]" },
+      "screen": { "description": "Universal eligibility screener", "args": "" },
+      "life-event": { "description": "Get action plan for a life event", "args": "[event-name]" },
+      "drafts": { "description": "Manage saved workflow drafts", "args": "list|delete|cleanup" },
+      "vault": { "description": "Manage encrypted document vault", "args": "add|list|get|link" },
+      "profile": { "description": "Manage household profile", "args": "show|set|import" },
+      "merge": { "description": "Merge multiple PDFs with cover page", "args": "<files...> --output <path>" },
+      "serve": { "description": "Start MCP server", "args": "[--port <port>]" },
+      "doctor": { "description": "System diagnostics", "args": "" }
+    }
+  },
+  "mcp": {
+    "endpoint": "http://127.0.0.1:3847/mcp",
+    "transport": ["stdio", "streamable-http"],
+    "auth": ["api-key"],
+    "tools": [
+      "pigeongov_fill_workflow",
+      "pigeongov_validate_workflow",
+      "pigeongov_review_workflow",
+      "pigeongov_list_workflows",
+      "pigeongov_describe_workflow",
+      "pigeongov_extract_document",
+      "pigeongov_calculate_tax",
+      "pigeongov_explain_flag",
+      "pigeongov_list_deadlines",
+      "pigeongov_list_fees",
+      "pigeongov_lookup_term",
+      "pigeongov_screen_eligibility",
+      "pigeongov_plan_life_event",
+      "pigeongov_list_drafts",
+      "pigeongov_load_draft"
+    ]
+  },
+  "privacy": {
+    "localFirst": true,
+    "noTelemetry": true,
+    "noCloudUploads": true,
+    "noPiiInLogs": true
+  }
+}
