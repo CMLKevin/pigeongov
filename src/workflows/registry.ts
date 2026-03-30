@@ -3,10 +3,19 @@ import { z } from "zod";
 import type { WorkflowBundle, WorkflowDomain } from "../types.js";
 import { businessWorkflows } from "./domains/business.js";
 import { healthcareWorkflows } from "./domains/healthcare.js";
+import { healthcareExtWorkflows } from "./domains/healthcare-ext.js";
 import { immigrationWorkflows } from "./domains/immigration.js";
+import { immigrationExtWorkflows } from "./domains/immigration-ext.js";
 import { permitsWorkflows } from "./domains/permits.js";
 import { taxWorkflows } from "./domains/tax.js";
 import { unemploymentWorkflows } from "./domains/unemployment.js";
+import { educationWorkflows } from "./domains/education.js";
+import { identityWorkflows } from "./domains/identity-domain.js";
+import { benefitsWorkflows } from "./domains/benefits.js";
+import { veteransWorkflows } from "./domains/veterans.js";
+import { legalWorkflows } from "./domains/legal.js";
+import { estateWorkflows } from "./domains/estate.js";
+import { retirementWorkflows } from "./domains/retirement.js";
 
 export type { WorkflowDefinition } from "./types.js";
 export type { TaxWorkflowInput } from "./schemas/tax.js";
@@ -18,10 +27,19 @@ export type { PlanningWorkflowInput } from "./schemas/planning.js";
 const workflowDefinitions = {
   ...taxWorkflows,
   ...immigrationWorkflows,
+  ...immigrationExtWorkflows,
   ...healthcareWorkflows,
+  ...healthcareExtWorkflows,
   ...unemploymentWorkflows,
   ...businessWorkflows,
   ...permitsWorkflows,
+  ...educationWorkflows,
+  ...identityWorkflows,
+  ...benefitsWorkflows,
+  ...veteransWorkflows,
+  ...legalWorkflows,
+  ...estateWorkflows,
+  ...retirementWorkflows,
 } as const;
 
 export type WorkflowId = keyof typeof workflowDefinitions;
