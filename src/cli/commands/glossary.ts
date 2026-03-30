@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import chalk from "chalk";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { lookupTerm, searchTerms, getTermsForDomain } from "../../glossary/index.js";
 import type { WorkflowDomain } from "../../types.js";
 
@@ -11,13 +12,12 @@ export function registerGlossaryCommand(program: Command): void {
     .description("Look up plain-language definitions of government terms")
     .argument("[term]", "Term to look up")
     .option("--domain <domain>", "Filter by domain (tax, immigration, healthcare, unemployment)")
-    .option("--json", "Print JSON output")
     .action((term: string | undefined, options) => {
       // With a specific term: look it up or search
       if (term) {
         const exact = lookupTerm(term);
 
-        if (options.json) {
+        if (isJsonMode()) {
           if (exact) {
             emitJson({ entry: exact });
           } else {
@@ -62,7 +62,7 @@ export function registerGlossaryCommand(program: Command): void {
         ? getTermsForDomain(String(options.domain) as WorkflowDomain)
         : searchTerms("");
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ entries });
         return;
       }

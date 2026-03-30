@@ -1,17 +1,17 @@
 import type { Command } from "commander";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { getLocalStats, formatStats } from "../../analytics/stats.js";
 
 export function registerStatsCommand(program: Command): void {
   program
     .command("stats")
     .description("Show local usage statistics")
-    .option("--json", "Print JSON output")
-    .action(async (options: { json?: boolean }) => {
+    .action(async () => {
       const stats = await getLocalStats();
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson(stats);
         return;
       }

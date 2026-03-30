@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import {
   planLifeEvent,
   formatPlanSummary,
@@ -12,12 +13,11 @@ export function registerLifeEventCommand(program: Command): void {
     .command("life-event")
     .description("Get a prioritized action plan for a life event")
     .argument("[event]", "Life event ID (e.g., job-loss, marriage, new-baby)")
-    .option("--json", "Output as JSON")
-    .action((event: string | undefined, options: { json?: boolean }) => {
+    .action((event: string | undefined) => {
       if (!event) {
         const events = listLifeEvents();
 
-        if (options.json) {
+        if (isJsonMode()) {
           emitJson(events.map((e) => ({ id: e.id, label: e.label, description: e.description, workflowCount: e.workflows.length })));
           return;
         }
@@ -39,7 +39,7 @@ export function registerLifeEventCommand(program: Command): void {
         return;
       }
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson(plan);
         return;
       }

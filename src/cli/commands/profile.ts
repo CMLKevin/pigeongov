@@ -5,6 +5,7 @@ import chalk from "chalk";
 
 import type { HouseholdProfile } from "../../types.js";
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { loadProfile, saveProfile } from "../../storage/profile.js";
 
 export function registerProfileCommand(program: Command): void {
@@ -16,8 +17,7 @@ export function registerProfileCommand(program: Command): void {
   profile
     .command("show")
     .description("Display the current household profile")
-    .option("--json", "Print JSON output")
-    .action(async (options: { json?: boolean }) => {
+    .action(async () => {
       const p = await loadProfile();
 
       if (!p) {
@@ -25,7 +25,7 @@ export function registerProfileCommand(program: Command): void {
         return;
       }
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson(p);
         return;
       }

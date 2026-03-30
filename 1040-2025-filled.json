@@ -1,0 +1,274 @@
+{
+  "workflowId": "tax/1040",
+  "domain": "tax",
+  "title": "Federal individual return",
+  "summary": "Deterministic 2025 federal return bundle.",
+  "year": 2025,
+  "legacyFormId": "1040",
+  "applicant": {
+    "firstName": "PigeonGov",
+    "lastName": "Taxpayer",
+    "ssn": "000-00-0000",
+    "address": {
+      "street1": "Unknown",
+      "city": "Unknown",
+      "state": "CA",
+      "zipCode": "00000"
+    }
+  },
+  "household": [],
+  "evidence": [],
+  "answers": {
+    "taxpayer": {
+      "firstName": "PigeonGov",
+      "lastName": "Taxpayer",
+      "ssn": "000-00-0000",
+      "address": {
+        "street1": "Unknown",
+        "city": "Unknown",
+        "state": "CA",
+        "zipCode": "00000"
+      }
+    },
+    "dependents": [],
+    "filingStatus": "single",
+    "wages": 50000,
+    "taxableInterest": 100,
+    "ordinaryDividends": 0,
+    "scheduleCNet": 0,
+    "otherIncome": 0,
+    "adjustments": {
+      "educatorExpenses": 0,
+      "hsaDeduction": 0,
+      "selfEmploymentTaxDeduction": 0,
+      "iraDeduction": 0,
+      "studentLoanInterest": 0
+    },
+    "useItemizedDeductions": false,
+    "itemizedDeductions": 0,
+    "federalWithheld": 5000,
+    "estimatedPayments": 0
+  },
+  "derived": {
+    "refund": 1116.5,
+    "amountOwed": 0,
+    "taxableIncome": 34350
+  },
+  "validation": {
+    "checks": [
+      {
+        "id": "income-total",
+        "label": "Form 1040 line 9 total income",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 9 total income matches."
+      },
+      {
+        "id": "agi",
+        "label": "Form 1040 line 11 adjusted gross income",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 11 adjusted gross income matches."
+      },
+      {
+        "id": "deduction-total",
+        "label": "Form 1040 line 12z deduction",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 12z deduction matches."
+      },
+      {
+        "id": "taxable-income",
+        "label": "Form 1040 line 13 taxable income",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 13 taxable income matches."
+      },
+      {
+        "id": "total-tax",
+        "label": "Form 1040 line 24 total tax",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 24 total tax matches."
+      },
+      {
+        "id": "payments-total",
+        "label": "Form 1040 line 33 total payments",
+        "passed": true,
+        "severity": "error",
+        "message": "Form 1040 line 33 total payments matches."
+      },
+      {
+        "id": "refund-exclusive",
+        "label": "Refund and amount owed exclusivity",
+        "passed": true,
+        "severity": "error",
+        "message": "Refund and amount owed are mutually exclusive."
+      }
+    ],
+    "flaggedFields": []
+  },
+  "review": {
+    "headline": "Refund expected: $1,116.50",
+    "notes": [
+      "Gross income $50,100.00",
+      "Taxable income $34,350.00",
+      "Federal tax $3,883.50"
+    ],
+    "flaggedFields": []
+  },
+  "outputArtifacts": [
+    {
+      "kind": "bundle",
+      "label": "1040 return bundle",
+      "format": "json",
+      "path": "1040-2025-filled.json"
+    },
+    {
+      "kind": "review",
+      "label": "Return review PDF",
+      "format": "pdf",
+      "path": "1040-2025-filled.pdf"
+    }
+  ],
+  "provenance": [
+    "calculation-engine",
+    "field-mapper",
+    "validator"
+  ],
+  "filledForm": {
+    "formId": "1040",
+    "taxYear": 2025,
+    "taxpayer": {
+      "firstName": "PigeonGov",
+      "lastName": "Taxpayer",
+      "ssn": "000-00-0000",
+      "address": {
+        "street1": "Unknown",
+        "city": "Unknown",
+        "state": "CA",
+        "zipCode": "00000"
+      }
+    },
+    "dependents": [],
+    "importedDocuments": [
+      {
+        "type": "w2",
+        "employerName": "Withholding input",
+        "wages": 50000,
+        "federalWithheld": 5000
+      }
+    ],
+    "calculation": {
+      "grossIncome": 50100,
+      "adjustedGrossIncome": 50100,
+      "deduction": 15750,
+      "taxableIncome": 34350,
+      "federalTax": 3883.5,
+      "selfEmploymentTax": 0,
+      "totalTax": 3883.5,
+      "totalCredits": 0,
+      "childTaxCredit": 0,
+      "earnedIncomeCredit": 0,
+      "additionalChildTaxCredit": 0,
+      "totalPayments": 5000,
+      "amountOwed": 0,
+      "refund": 1116.5,
+      "effectiveRate": 0.08,
+      "marginalRate": 0.12,
+      "breakdown": [
+        {
+          "rate": 0.1,
+          "lowerBound": 0,
+          "taxableAmount": 11925,
+          "taxAmount": 1192.5,
+          "upperBound": 11925
+        },
+        {
+          "rate": 0.12,
+          "lowerBound": 11925,
+          "taxableAmount": 22425,
+          "taxAmount": 2691,
+          "upperBound": 48475
+        }
+      ]
+    },
+    "form1040": {
+      "taxYear": 2025,
+      "filingStatus": "single",
+      "taxpayer": {
+        "firstName": "PigeonGov",
+        "lastName": "Taxpayer",
+        "ssn": "000-00-0000",
+        "address": {
+          "street1": "Unknown",
+          "city": "Unknown",
+          "state": "CA",
+          "zipCode": "00000"
+        }
+      },
+      "mailingAddress": {
+        "street1": "Unknown",
+        "city": "Unknown",
+        "state": "CA",
+        "zipCode": "00000"
+      },
+      "dependents": [],
+      "lines": {
+        "line1a": 50000,
+        "line2b": 100,
+        "line9": 50100,
+        "line11": 50100,
+        "line12a": 15750,
+        "line12z": 15750,
+        "line13": 34350,
+        "line14": 3883.5,
+        "line16": 3883.5,
+        "line24": 3883.5,
+        "line25a": 5000,
+        "line33": 5000,
+        "line34": 1116.5
+      }
+    },
+    "schedule1": {
+      "taxYear": 2025,
+      "filingStatus": "single",
+      "additionalIncome": {},
+      "adjustments": {}
+    }
+  },
+  "calculation": {
+    "grossIncome": 50100,
+    "adjustedGrossIncome": 50100,
+    "deduction": 15750,
+    "taxableIncome": 34350,
+    "federalTax": 3883.5,
+    "selfEmploymentTax": 0,
+    "totalTax": 3883.5,
+    "totalCredits": 0,
+    "childTaxCredit": 0,
+    "earnedIncomeCredit": 0,
+    "additionalChildTaxCredit": 0,
+    "totalPayments": 5000,
+    "amountOwed": 0,
+    "refund": 1116.5,
+    "effectiveRate": 0.08,
+    "marginalRate": 0.12,
+    "breakdown": [
+      {
+        "rate": 0.1,
+        "lowerBound": 0,
+        "taxableAmount": 11925,
+        "taxAmount": 1192.5,
+        "upperBound": 11925
+      },
+      {
+        "rate": 0.12,
+        "lowerBound": 11925,
+        "taxableAmount": 22425,
+        "taxAmount": 2691,
+        "upperBound": 48475
+      }
+    ]
+  }
+}

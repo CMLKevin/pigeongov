@@ -4,6 +4,7 @@ import path from "node:path";
 import chalk from "chalk";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { generateRandomInput } from "../../testing/synthetic.js";
 
 export function registerTestdataCommand(program: Command): void {
@@ -13,7 +14,6 @@ export function registerTestdataCommand(program: Command): void {
     .option("-n, --count <n>", "Number of fixtures to generate", "5")
     .option("-s, --seed <seed>", "PRNG seed for reproducibility", "42")
     .option("-o, --output <dir>", "Output directory for JSON files")
-    .option("--json", "Print fixtures to stdout as JSON")
     .action((workflowId: string, options) => {
       const count = Number(options.count) || 5;
       const baseSeed = Number(options.seed) || 42;
@@ -36,7 +36,7 @@ export function registerTestdataCommand(program: Command): void {
       }
 
       // JSON mode: print to stdout
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ workflowId, seed: baseSeed, count, fixtures });
         return;
       }

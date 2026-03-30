@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { listDomains, listWorkflowSummaries } from "../../workflows/registry.js";
 
 export function registerWorkflowsCommand(program: Command): void {
@@ -12,12 +13,11 @@ export function registerWorkflowsCommand(program: Command): void {
     .command("list")
     .description("List available workflows")
     .option("--domain <domain>", "Filter by domain")
-    .option("--json", "Print JSON output")
     .action((options) => {
       const items = listWorkflowSummaries(
         options.domain ? { domain: String(options.domain) as never } : undefined,
       );
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ domains: listDomains(), workflows: items });
         return;
       }

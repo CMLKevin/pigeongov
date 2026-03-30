@@ -9,7 +9,6 @@ export function registerSchemasCommand(program: Command): void {
   schemas
     .command("describe <workflowId>")
     .description("Describe the workflow schema, sections, and starter data")
-    .option("--json", "Print JSON output", true)
     .action((workflowId) => {
       const normalizedId = normalizeWorkflowId(String(workflowId));
       emitJson(describeWorkflow(normalizedId));

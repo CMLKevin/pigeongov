@@ -2,6 +2,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import { input, select, confirm, number } from "@inquirer/prompts";
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 import { screenerInputSchema, SCREENER_QUESTIONS } from "../../advisory/screener/intake.js";
 import type { ScreenerInput } from "../../advisory/screener/intake.js";
 import { screenEligibility, formatScreenerResults } from "../../advisory/screener/engine.js";
@@ -10,9 +11,8 @@ export function registerScreenCommand(program: Command): void {
   program
     .command("screen")
     .description("Universal eligibility screener — answer 10 questions, get program recommendations")
-    .option("--json", "Output as JSON")
     .option("--input <file>", "Read screener answers from JSON file")
-    .action(async (options: { json?: boolean; input?: string }) => {
+    .action(async (options: { input?: string }) => {
       let screenerData: ScreenerInput;
 
       if (options.input) {
@@ -90,7 +90,7 @@ export function registerScreenCommand(program: Command): void {
 
       const results = screenEligibility(screenerData);
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson({ input: screenerData, results });
         return;
       }

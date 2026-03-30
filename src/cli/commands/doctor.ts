@@ -4,6 +4,7 @@ import path from "node:path";
 import type { Command } from "commander";
 
 import { emitJson } from "../support.js";
+import { isJsonMode } from "../output.js";
 
 async function exists(filePath: string): Promise<boolean> {
   try {
@@ -18,8 +19,7 @@ export function registerDoctorCommand(program: Command): void {
   program
     .command("doctor")
     .description("Report local PigeonGov capabilities for humans and agents")
-    .option("--json", "Print JSON output")
-    .action(async (options) => {
+    .action(async () => {
       const cwd = process.cwd();
       const report = {
         cwd,
@@ -38,7 +38,7 @@ export function registerDoctorCommand(program: Command): void {
         },
       };
 
-      if (options.json) {
+      if (isJsonMode()) {
         emitJson(report);
         return;
       }
