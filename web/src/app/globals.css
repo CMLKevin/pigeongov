@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@source "../../src/**/*.{ts,tsx}";
+
+/* ── PigeonGov Design Tokens ─────────────────────────────────── */
+@theme inline {
+  --color-background: #13131f;
+  --color-foreground: #e4e4eb;
+  --color-surface: #252538;
+  --color-surface-hover: #2f2f48;
+  --color-muted: #a0a0b8;
+  --color-border: #363650;
+
+  --color-pigeon-purple: #6c3aed;
+  --color-pigeon-pink: #ec4899;
+  --color-pigeon-cyan: #06b6d4;
+  --color-pigeon-dark: #1e1e2e;
+  --color-pigeon-darker: #13131f;
+  --color-pigeon-surface: #252538;
+  --color-pigeon-muted: #a0a0b8;
+
+  --color-urgent: #ef4444;
+  --color-urgent-border: #dc2626;
+
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Blinking cursor (matches the existing site) ─────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ── Selection ────────────────────────────────────────────────── */
+::selection {
+  background: var(--color-pigeon-purple);
+  color: white;
+}
+
+/* ── Focus ring ───────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-pigeon-purple);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
