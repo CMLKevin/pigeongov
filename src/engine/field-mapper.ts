@@ -92,7 +92,7 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
   });
 
   const scheduleC =
-    input.taxInput.scheduleCNet !== 0
+    input.taxInput.scheduleCNet > 0
       ? scheduleCSchema.parse({
           taxYear: input.taxYear,
           ownerName: `${input.taxpayer.firstName} ${input.taxpayer.lastName}`,

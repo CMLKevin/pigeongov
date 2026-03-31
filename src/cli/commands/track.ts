@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { checkCaseStatus, getProcessingTimeEstimate } from "../../advisory/tracker/uscis.js";
 
 export function registerTrackCommand(program: Command): void {
@@ -33,7 +32,7 @@ export function registerTrackCommand(program: Command): void {
         const estimate = getProcessingTimeEstimate(formType);
 
         if (isJsonMode()) {
-          emitJson({
+          emit({
             receiptNumber,
             formType,
             mode: "offline",
@@ -65,7 +64,7 @@ export function registerTrackCommand(program: Command): void {
         const result = await checkCaseStatus(receiptNumber, formType);
 
         if (isJsonMode()) {
-          emitJson(result);
+          emit(result);
           return;
         }
 
@@ -96,7 +95,7 @@ export function registerTrackCommand(program: Command): void {
         console.log("");
       } catch (err) {
         if (isJsonMode()) {
-          emitJson({
+          emit({
             ok: false,
             error: err instanceof Error ? err.message : String(err),
           });

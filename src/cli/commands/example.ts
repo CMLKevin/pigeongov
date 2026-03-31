@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import {
   normalizeWorkflowId,
   getWorkflowStarterData,
@@ -76,7 +75,7 @@ export function registerExampleCommand(program: Command): void {
       if (!workflowId) {
         const available = Object.keys(EXAMPLE_DATA);
         if (isJsonMode()) {
-          emitJson({ availableExamples: available });
+          emit({ availableExamples: available });
           return;
         }
 
@@ -93,7 +92,7 @@ export function registerExampleCommand(program: Command): void {
         normalizedId = normalizeWorkflowId(workflowId);
       } catch {
         if (isJsonMode()) {
-          emitJson({ error: `Unknown workflow: ${workflowId}` });
+          emit({ error: `Unknown workflow: ${workflowId}` });
         } else {
           process.stderr.write(`Unknown workflow: ${workflowId}\n`);
         }
@@ -108,7 +107,7 @@ export function registerExampleCommand(program: Command): void {
         const starterData = getWorkflowStarterData(normalizedId) as Record<string, unknown>;
 
         if (isJsonMode()) {
-          emitJson({
+          emit({
             workflowId: normalizedId,
             note: "No curated example exists for this workflow yet. Showing starter data template instead. Fill in the fields and use with: pigeongov fill " + normalizedId + " --data <file> --json",
             exampleInput: starterData,
@@ -128,7 +127,7 @@ export function registerExampleCommand(program: Command): void {
       const bundle = buildWorkflowBundle(normalizedId, exampleInput);
 
       if (isJsonMode()) {
-        emitJson({
+        emit({
           workflowId: normalizedId,
           exampleInput,
           resultBundle: {

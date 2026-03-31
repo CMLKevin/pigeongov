@@ -4,8 +4,7 @@ import type { Command } from "commander";
 import chalk from "chalk";
 
 import type { HouseholdProfile } from "../../types.js";
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { loadProfile, saveProfile } from "../../storage/profile.js";
 
 export function registerProfileCommand(program: Command): void {
@@ -26,7 +25,7 @@ export function registerProfileCommand(program: Command): void {
       }
 
       if (isJsonMode()) {
-        emitJson(p);
+        emit(p);
         return;
       }
 

@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { listDomains, listWorkflowSummaries } from "../../workflows/registry.js";
 
 export function registerWorkflowsCommand(program: Command): void {
@@ -19,7 +18,7 @@ export function registerWorkflowsCommand(program: Command): void {
         options.domain ? { domain: String(options.domain) as never } : undefined,
       );
       if (isJsonMode()) {
-        emitJson({ domains: listDomains(), workflows: items });
+        emit({ domains: listDomains(), workflows: items });
         return;
       }
 

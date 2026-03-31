@@ -36,11 +36,13 @@ function buildSmallClaimsBundle(input: SmallClaimsInput): WorkflowBundle {
   const exceedsLimit = input.claimAmount > typicalLimit;
 
   // Statute of limitations rough check — 2 years from incident
-  const incidentDate = new Date(input.incidentDate);
+  const incidentDate = input.incidentDate ? new Date(input.incidentDate) : null;
   const now = new Date();
-  const daysSinceIncident = Math.floor((now.getTime() - incidentDate.getTime()) / (1000 * 60 * 60 * 24));
-  const yearsElapsed = daysSinceIncident / 365.25;
-  const possibleSolConcern = yearsElapsed > 2;
+  const daysSinceIncident = incidentDate
+    ? Math.floor((now.getTime() - incidentDate.getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+  const yearsElapsed = incidentDate ? daysSinceIncident / 365.25 : 0;
+  const possibleSolConcern = incidentDate ? yearsElapsed > 2 : false;
 
   const evidence = [
     buildEvidenceItem("receipts", "Receipts or invoices", false, input.hasEvidence),
@@ -117,10 +119,12 @@ function estimateWaitingPeriod(offenseType: "misdemeanor" | "felony" | "infracti
 function buildExpungementBundle(input: ExpungementInput): WorkflowBundle {
   const waitingPeriod = estimateWaitingPeriod(input.offenseType);
 
-  const completionDate = new Date(input.sentenceCompletionDate);
+  const completionDate = input.sentenceCompletionDate ? new Date(input.sentenceCompletionDate) : null;
   const now = new Date();
-  const yearsSinceCompletion = (now.getTime() - completionDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-  const waitingPeriodMet = yearsSinceCompletion >= waitingPeriod.years;
+  const yearsSinceCompletion = completionDate
+    ? (now.getTime() - completionDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25)
+    : 0;
+  const waitingPeriodMet = completionDate ? yearsSinceCompletion >= waitingPeriod.years : false;
 
   const hasSubsequentOffenses = input.subsequentOffenses > 0;
 

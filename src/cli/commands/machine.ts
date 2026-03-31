@@ -10,7 +10,8 @@ import {
 } from "./fill.js";
 import { buildReturnBundle } from "../../engine/field-mapper.js";
 import { validateReturnBundle } from "../../engine/validator.js";
-import { emitJson, summarizeBundleForMachine } from "../support.js";
+import { summarizeBundleForMachine } from "../support.js";
+import { emit } from "../output.js";
 import {
   buildWorkflowBundle,
   describeWorkflow,
@@ -73,7 +74,7 @@ export function registerMachineCommand(program: Command): void {
     .command("workflow-catalog")
     .description("Print the workflow catalog for TUI and browser adapters")
     .action(() => {
-      emitJson({ workflows: listWorkflowSummaries() });
+      emit({ workflows: listWorkflowSummaries() });
     });
 
   machine
@@ -82,7 +83,7 @@ export function registerMachineCommand(program: Command): void {
     .requiredOption("--workflow <id>", "Workflow ID")
     .action((options: { workflow: string }) => {
       const workflowId = normalizeWorkflowId(options.workflow);
-      emitJson(describeWorkflow(workflowId));
+      emit(describeWorkflow(workflowId));
     });
 
   machine
@@ -91,7 +92,7 @@ export function registerMachineCommand(program: Command): void {
     .requiredOption("--workflow <id>", "Workflow ID")
     .action((options: { workflow: string }) => {
       const workflowId = normalizeWorkflowId(options.workflow);
-      emitJson({
+      emit({
         workflowId,
         starterData: getWorkflowStarterData(workflowId),
       });
@@ -111,7 +112,7 @@ export function registerMachineCommand(program: Command): void {
           ? (parsed as { data: unknown }).data
           : parsed,
       );
-      emitJson(summarizeBundleForMachine(bundle));
+      emit(summarizeBundleForMachine(bundle));
     });
 
   machine
@@ -137,7 +138,7 @@ export function registerMachineCommand(program: Command): void {
             : parsed,
         );
         const saved = await saveWorkflowBundle(bundle, options.output, options.format);
-        emitJson({ saved, bundle: summarizeBundleForMachine(bundle) });
+        emit({ saved, bundle: summarizeBundleForMachine(bundle) });
       },
     );
 }

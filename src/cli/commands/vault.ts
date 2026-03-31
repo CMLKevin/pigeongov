@@ -2,8 +2,7 @@ import type { Command } from "commander";
 import chalk from "chalk";
 import { password } from "@inquirer/prompts";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import {
   addToVault,
   listVault,
@@ -53,7 +52,7 @@ export function registerVaultCommand(program: Command): void {
       const entries = await listVault(passphrase);
 
       if (isJsonMode()) {
-        emitJson({ vault: entries });
+        emit({ vault: entries });
         return;
       }
 

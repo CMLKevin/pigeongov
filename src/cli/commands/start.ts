@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
+import { emit, emitError } from "../output.js";
+import { PigeonGovError, CLI_EXIT_CODES } from "../support.js";
 import { describeWorkflow, getWorkflowStarterData, normalizeWorkflowId } from "../../workflows/registry.js";
 
 export function registerStartCommand(program: Command): void {
@@ -20,7 +21,18 @@ export function registerStartCommand(program: Command): void {
     $ pigeongov start tax/1040 --json > template.json  # save to file`,
     )
     .action((workflowId) => {
-      const normalizedId = normalizeWorkflowId(String(workflowId));
+      let normalizedId: string;
+      try {
+        normalizedId = normalizeWorkflowId(String(workflowId));
+      } catch {
+        emitError(new PigeonGovError({
+          code: "not_found",
+          message: `Unsupported workflow: ${workflowId}`,
+          exitCode: CLI_EXIT_CODES.notFound,
+          suggestion: "Run 'pigeongov list' to see available workflows.",
+        }));
+        return;
+      }
       const workflow = describeWorkflow(normalizedId);
       const starterData = getWorkflowStarterData(normalizedId);
 
@@ -38,7 +50,7 @@ export function registerStartCommand(program: Command): void {
         }
       }
 
-      emitJson({
+      emit({
         workflow,
         starterData,
         _guide: guide,

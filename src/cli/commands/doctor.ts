@@ -1,13 +1,16 @@
 import { access } from "node:fs/promises";
 import { execSync } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import chalk from "chalk";
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { listWorkflowSummaries } from "../../workflows/registry.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const packageRoot = path.resolve(path.dirname(__filename), "../../../..");
 
 async function exists(filePath: string): Promise<boolean> {
   try {
@@ -46,23 +49,22 @@ export function registerDoctorCommand(program: Command): void {
     .command("doctor")
     .description("Report local PigeonGov capabilities for humans and agents")
     .action(async () => {
-      const cwd = process.cwd();
       const goVersion = tryCommand("go version");
       const nodeVersion = process.version;
       const workflowCount = listWorkflowSummaries().length;
 
       const report = {
-        cwd,
+        packageRoot,
         node: nodeVersion,
         go: goVersion ?? null,
         stdinIsTty: Boolean(process.stdin.isTTY),
         stdoutIsTty: Boolean(process.stdout.isTTY),
         workflowCount,
         builtArtifacts: {
-          cli: await exists(path.join(cwd, "dist", "bin", "pigeongov.js")),
-          tui: await exists(path.join(cwd, "dist", "tui", "pigeongov-tui")),
-          mcpHttp: await exists(path.join(cwd, "dist", "mcp", "http.js")),
-          mcpStdio: await exists(path.join(cwd, "dist", "mcp", "stdio.js")),
+          cli: await exists(path.join(packageRoot, "dist", "bin", "pigeongov.js")),
+          tui: await exists(path.join(packageRoot, "dist", "tui", "pigeongov-tui")),
+          mcpHttp: await exists(path.join(packageRoot, "dist", "mcp", "http.js")),
+          mcpStdio: await exists(path.join(packageRoot, "dist", "mcp", "stdio.js")),
         },
         env: {
           noTui: process.env.PIGEONGOV_NO_TUI === "1",
@@ -71,7 +73,7 @@ export function registerDoctorCommand(program: Command): void {
       };
 
       if (isJsonMode()) {
-        emitJson(report);
+        emit(report);
         return;
       }
 
@@ -102,7 +104,7 @@ export function registerDoctorCommand(program: Command): void {
         ),
       );
       console.log(boxLine(`  Workflows   ${chalk.cyan(String(workflowCount))}`, W));
-      console.log(boxLine(`  CWD         ${chalk.dim(report.cwd)}`, W));
+      console.log(boxLine(`  Package     ${chalk.dim(report.packageRoot)}`, W));
 
       // Built artifacts
       console.log(boxLine("", W));

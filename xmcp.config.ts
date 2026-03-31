@@ -1,6 +1,10 @@
 import type { XmcpConfig } from "xmcp";
 
 const config: XmcpConfig = {
+  template: {
+    name: "pigeongov",
+    description: "PigeonGov MCP server — 34 government workflows, eligibility screening, benefits cliff analysis, and more.",
+  },
   http: {
     port: 3847,
     host: "127.0.0.1",

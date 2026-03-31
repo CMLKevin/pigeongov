@@ -24,8 +24,8 @@ export function calculateCliff(input: CliffInput): CliffAnalysis {
   // 1. Current benefits at this income
   const currentBenefits: CliffAnalysis["currentBenefits"] = [];
   for (const program of PROGRAMS) {
-    if (program.isEligible(annualIncome, householdSize)) {
-      const monthly = program.monthlyBenefit(annualIncome, householdSize);
+    if (program.isEligible(annualIncome, householdSize, state)) {
+      const monthly = program.monthlyBenefit(annualIncome, householdSize, state);
       if (monthly > 0) {
         currentBenefits.push({
           program: program.name,
@@ -41,9 +41,9 @@ export function calculateCliff(input: CliffInput): CliffAnalysis {
   //    cutoff (even if the benefit slides down along the way).
   const cliffPoints: CliffAnalysis["cliffPoints"] = [];
   for (const program of PROGRAMS) {
-    const cutoff = program.cutoffIncome(householdSize);
-    if (cutoff > annualIncome && program.isEligible(annualIncome, householdSize)) {
-      const currentBenefit = program.monthlyBenefit(annualIncome, householdSize);
+    const cutoff = program.cutoffIncome(householdSize, state);
+    if (cutoff > annualIncome && program.isEligible(annualIncome, householdSize, state)) {
+      const currentBenefit = program.monthlyBenefit(annualIncome, householdSize, state);
       if (currentBenefit > 0) {
         cliffPoints.push({
           income: cutoff,
@@ -84,8 +84,8 @@ export function calculateCliff(input: CliffInput): CliffAnalysis {
     ) {
       let remainingMonthly = 0;
       for (const program of PROGRAMS) {
-        if (program.isEligible(candidate, householdSize)) {
-          remainingMonthly += program.monthlyBenefit(candidate, householdSize);
+        if (program.isEligible(candidate, householdSize, state)) {
+          remainingMonthly += program.monthlyBenefit(candidate, householdSize, state);
         }
       }
       const candidateTotal = candidate + remainingMonthly * 12;

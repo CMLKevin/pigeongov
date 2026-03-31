@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit, emitError } from "../output.js";
+import { PigeonGovError, CLI_EXIT_CODES } from "../support.js";
 import { estimateCost, listAvailableCosts } from "../../advisory/cost/estimator.js";
 
 function fmt(n: number): string {
@@ -36,7 +36,7 @@ export function registerCostCommand(program: Command): void {
         const available = listAvailableCosts();
 
         if (isJsonMode()) {
-          emitJson({ available });
+          emit({ available });
           return;
         }
 
@@ -56,18 +56,17 @@ export function registerCostCommand(program: Command): void {
       const estimate = estimateCost(workflowId);
 
       if (!estimate) {
-        if (isJsonMode()) {
-          emitJson({ ok: false, error: `No cost data for workflow: ${workflowId}` });
-        } else {
-          console.error(chalk.red(`  No cost data for workflow: ${workflowId}`));
-          console.log(chalk.dim("  Run ") + chalk.cyan("pigeongov cost") + chalk.dim(" to list available workflows."));
-        }
-        process.exitCode = 1;
+        emitError(new PigeonGovError({
+          code: "not_found",
+          message: `No cost data for workflow: ${workflowId}`,
+          exitCode: CLI_EXIT_CODES.notFound,
+          suggestion: "Run 'pigeongov cost' to list available workflows.",
+        }));
         return;
       }
 
       if (isJsonMode()) {
-        emitJson(estimate);
+        emit(estimate);
         return;
       }
 

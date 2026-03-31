@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import {
   planLifeEvent,
   listLifeEvents,
@@ -98,7 +97,7 @@ export function registerLifeEventCommand(program: Command): void {
         const events = listLifeEvents();
 
         if (isJsonMode()) {
-          emitJson(events.map((e) => ({ id: e.id, label: e.label, description: e.description, workflowCount: e.workflows.length })));
+          emit(events.map((e) => ({ id: e.id, label: e.label, description: e.description, workflowCount: e.workflows.length })));
           return;
         }
 
@@ -128,7 +127,7 @@ export function registerLifeEventCommand(program: Command): void {
       }
 
       if (isJsonMode()) {
-        emitJson(plan);
+        emit(plan);
         return;
       }
 

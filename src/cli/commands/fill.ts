@@ -27,8 +27,8 @@ import {
   type PromptClient,
 } from "../prompts/common.js";
 import { collectWorkflowData } from "../prompts/workflow.js";
-import { emitJson, setExitCodeFromFlags, summarizeBundleForMachine } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { CLI_EXIT_CODES, PigeonGovError, setExitCodeFromFlags, summarizeBundleForMachine } from "../support.js";
+import { emit, emitError, isJsonMode } from "../output.js";
 import { shouldUseTui, tryLaunchTuiFill } from "../tui.js";
 import {
   buildWorkflowBundle,
@@ -38,12 +38,14 @@ import {
 } from "../../workflows/registry.js";
 import { loadWorkflowBundle, saveWorkflowBundle } from "../../workflows/io.js";
 
+const PIGEONGOV_VERSION = "0.3.3";
+
 export const fillDataSchema = z
   .object({
-    taxpayer: z.any(),
+    taxpayer: z.any().refine((v): v is Record<string, unknown> => v != null && typeof v === "object", { message: "taxpayer is required" }),
     spouse: z.any().optional(),
     dependents: z.array(z.any()).default([]),
-    taxInput: z.any(),
+    taxInput: z.any().refine((v): v is Record<string, unknown> => v != null && typeof v === "object" && "filingStatus" in v, { message: "taxInput with filingStatus is required" }),
     importedDocuments: z.array(z.any()).default([]),
   })
   .strict();
@@ -57,9 +59,9 @@ const legacyTaxInputDataSchema = z
       "head_of_household",
       "qualifying_surviving_spouse",
     ]),
-    wages: z.coerce.number().default(0),
-    taxableInterest: z.coerce.number().default(0),
-    ordinaryDividends: z.coerce.number().default(0),
+    wages: z.coerce.number().min(0).default(0),
+    taxableInterest: z.coerce.number().min(0).default(0),
+    ordinaryDividends: z.coerce.number().min(0).default(0),
     scheduleCNet: z.coerce.number().default(0),
     otherIncome: z.coerce.number().default(0),
     adjustments: z
@@ -313,7 +315,8 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
       const taxpayer = flat.taxpayer as BuildReturnBundleInput["taxpayer"];
       const dependents = Array.isArray(flat.dependents) ? flat.dependents : [];
       const filingStatus = flat.filingStatus as BuildReturnBundleInput["filingStatus"];
-      const num = (key: string) => Number(flat[key]) || 0;
+      const num = (key: string) => Math.max(0, Number(flat[key]) || 0);
+      const numSigned = (key: string) => Number(flat[key]) || 0;
       const adjustments = (flat.adjustments ?? {}) as Record<string, number>;
 
       const result: BuildReturnBundleInput = {
@@ -328,8 +331,8 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
           wages: num("wages"),
           taxableInterest: num("taxableInterest"),
           ordinaryDividends: num("ordinaryDividends"),
-          scheduleCNet: num("scheduleCNet"),
-          otherIncome: num("otherIncome"),
+          scheduleCNet: numSigned("scheduleCNet"),
+          otherIncome: numSigned("otherIncome"),
           adjustments: {
             educatorExpenses: Number(adjustments.educatorExpenses) || 0,
             hsaDeduction: Number(adjustments.hsaDeduction) || 0,
@@ -349,10 +352,30 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
         result.spouse = flat.spouse as NonNullable<BuildReturnBundleInput["spouse"]>;
       }
 
+      // Warn about unrecognized fields
+      const knownKeys = new Set([
+        "taxpayer", "spouse", "dependents", "filingStatus",
+        "wages", "taxableInterest", "ordinaryDividends", "scheduleCNet",
+        "otherIncome", "adjustments", "useItemizedDeductions", "itemizedDeductions",
+        "federalWithheld", "estimatedPayments",
+      ]);
+      const unknownKeys = Object.keys(flat).filter((k) => !knownKeys.has(k));
+      if (unknownKeys.length > 0) {
+        process.stderr.write(
+          `Warning: Unrecognized fields ignored: ${unknownKeys.join(", ")}. ` +
+          `These will NOT be included in your return. Use 'pigeongov start tax/1040 --json' to see accepted fields.\n`,
+        );
+      }
+
       return result;
     }
 
-    throw parsedEnvelope.error;
+    throw new PigeonGovError({
+      code: "invalid_input",
+      message: "Input file does not match any recognized format for tax/1040. Use 'pigeongov start tax/1040 --json' to see the expected schema.",
+      exitCode: CLI_EXIT_CODES.invalidInput,
+      suggestion: "Run 'pigeongov start tax/1040 --json' to get the data template.",
+    });
   }
 
   const parsed = parsedEnvelope.data;
@@ -413,6 +436,7 @@ export function registerFillCommand(program: Command): void {
     .option("--from-bundle <path>", "Use a saved workflow bundle as the input source")
     .option("--data <path>", "JSON file with pre-filled data")
     .action(async (workflowId, options) => {
+      try {
       const normalizedWorkflowId = normalizeWorkflowId(String(workflowId));
 
       // When --data is provided, skip interactive/TUI entirely
@@ -449,7 +473,7 @@ export function registerFillCommand(program: Command): void {
       const isInteractive = options.interactive !== false && !hasDataFile;
 
       if (!options.quiet && !isJsonMode()) {
-        console.log(chalk.bold(`PigeonGov v0.2.2 — ${normalizedWorkflowId}`));
+        console.log(chalk.bold(`PigeonGov v${PIGEONGOV_VERSION} — ${normalizedWorkflowId}`));
       }
 
       if (isLegacy1040WorkflowId(normalizedWorkflowId)) {
@@ -471,7 +495,9 @@ export function registerFillCommand(program: Command): void {
               });
 
         if (isJsonMode()) {
-          emitJson(summarizeBundleForMachine(bundle));
+          // Save bundle to disk so validate/review pipeline works
+          await saveWorkflowBundle(bundle, String(options.output), options.format as "json" | "pdf" | "both" ?? "json");
+          emit(summarizeBundleForMachine(bundle));
           setExitCodeFromFlags(bundle.validation.flaggedFields);
           return;
         }
@@ -522,7 +548,8 @@ export function registerFillCommand(program: Command): void {
       const workflowBundle = buildWorkflowBundle(normalizedWorkflowId, workflowData);
 
       if (isJsonMode()) {
-        emitJson(summarizeBundleForMachine(workflowBundle));
+        await saveWorkflowBundle(workflowBundle, String(options.output), options.format as "json" | "pdf" | "both" ?? "json");
+        emit(summarizeBundleForMachine(workflowBundle));
         setExitCodeFromFlags(workflowBundle.validation.flaggedFields);
         return;
       }
@@ -555,5 +582,34 @@ export function registerFillCommand(program: Command): void {
         console.log("PigeonGov never submits on your behalf.");
       }
       setExitCodeFromFlags(workflowBundle.validation.flaggedFields);
+      } catch (err: unknown) {
+        if (err instanceof PigeonGovError) {
+          emitError(err);
+          return;
+        }
+        if (err instanceof z.ZodError) {
+          emitError(new PigeonGovError({
+            code: "schema_error",
+            message: `Schema validation failed:\n${err.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n")}`,
+            exitCode: CLI_EXIT_CODES.schemaError,
+            suggestion: "Check your input data against the expected schema. Run 'pigeongov start <id> --json' to see the template.",
+          }));
+          return;
+        }
+        if (err instanceof Error && err.message.startsWith("Unsupported workflow")) {
+          emitError(new PigeonGovError({
+            code: "not_found",
+            message: err.message,
+            exitCode: CLI_EXIT_CODES.notFound,
+            suggestion: "Run 'pigeongov list' to see available workflows.",
+          }));
+          return;
+        }
+        emitError(new PigeonGovError({
+          code: "runtime_error",
+          message: err instanceof Error ? err.message : String(err),
+          exitCode: CLI_EXIT_CODES.runtimeError,
+        }));
+      }
     });
 }

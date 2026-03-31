@@ -2,8 +2,7 @@ import type { Command } from "commander";
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import {
   addPluginEntry,
   getPluginManifest,
@@ -26,7 +25,7 @@ export function registerPluginCommand(program: Command): void {
       const manifest = getPluginManifest();
 
       if (isJsonMode()) {
-        emitJson({ plugins: manifest.plugins });
+        emit({ plugins: manifest.plugins });
         return;
       }
 

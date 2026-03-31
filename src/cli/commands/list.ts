@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { listWorkflowSummaries } from "../../workflows/registry.js";
 
 export function registerListCommand(program: Command): void {
@@ -24,7 +23,7 @@ export function registerListCommand(program: Command): void {
     .action(() => {
       const workflows = listWorkflowSummaries();
       if (isJsonMode()) {
-        emitJson({ workflows });
+        emit({ workflows });
         return;
       }
 

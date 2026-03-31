@@ -2,8 +2,7 @@ import type { Command } from "commander";
 import { writeFileSync } from "node:fs";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import {
   DEFAULT_DEADLINES,
   getUpcomingDeadlines,
@@ -59,7 +58,7 @@ export function registerDeadlinesCommand(program: Command): void {
 
       // JSON mode
       if (isJsonMode()) {
-        emitJson({ deadlines: upcoming });
+        emit({ deadlines: upcoming });
         return;
       }
 

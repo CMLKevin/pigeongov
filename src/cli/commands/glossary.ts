@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { lookupTerm, searchTerms, getTermsForDomain } from "../../glossary/index.js";
 import type { WorkflowDomain } from "../../types.js";
 
@@ -19,10 +18,10 @@ export function registerGlossaryCommand(program: Command): void {
 
         if (isJsonMode()) {
           if (exact) {
-            emitJson({ entry: exact });
+            emit({ entry: exact });
           } else {
             const results = searchTerms(term);
-            emitJson({ query: term, results });
+            emit({ query: term, results });
           }
           return;
         }
@@ -77,7 +76,7 @@ export function registerGlossaryCommand(program: Command): void {
         : searchTerms("");
 
       if (isJsonMode()) {
-        emitJson({ entries });
+        emit({ entries });
         return;
       }
 

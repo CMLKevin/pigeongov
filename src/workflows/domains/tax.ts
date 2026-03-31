@@ -68,7 +68,9 @@ export const taxWorkflows = {
             options: [
               { label: "Single", value: "single" },
               { label: "Married filing jointly", value: "married_filing_jointly" },
+              { label: "Married filing separately", value: "married_filing_separately" },
               { label: "Head of household", value: "head_of_household" },
+              { label: "Qualifying surviving spouse", value: "qualifying_surviving_spouse" },
             ],
           },
         ],

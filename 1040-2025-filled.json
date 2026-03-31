@@ -6,34 +6,34 @@
   "year": 2025,
   "legacyFormId": "1040",
   "applicant": {
-    "firstName": "PigeonGov",
-    "lastName": "Taxpayer",
+    "firstName": "Nobody",
+    "lastName": "Earns",
     "ssn": "000-00-0000",
     "address": {
-      "street1": "Unknown",
-      "city": "Unknown",
+      "street1": "1 Empty St",
+      "city": "Nowhere",
       "state": "CA",
-      "zipCode": "00000"
+      "zipCode": "90210"
     }
   },
   "household": [],
   "evidence": [],
   "answers": {
     "taxpayer": {
-      "firstName": "PigeonGov",
-      "lastName": "Taxpayer",
+      "firstName": "Nobody",
+      "lastName": "Earns",
       "ssn": "000-00-0000",
       "address": {
-        "street1": "Unknown",
-        "city": "Unknown",
+        "street1": "1 Empty St",
+        "city": "Nowhere",
         "state": "CA",
-        "zipCode": "00000"
+        "zipCode": "90210"
       }
     },
     "dependents": [],
     "filingStatus": "single",
-    "wages": 50000,
-    "taxableInterest": 100,
+    "wages": 0,
+    "taxableInterest": 0,
     "ordinaryDividends": 0,
     "scheduleCNet": 0,
     "otherIncome": 0,
@@ -46,13 +46,13 @@
     },
     "useItemizedDeductions": false,
     "itemizedDeductions": 0,
-    "federalWithheld": 5000,
+    "federalWithheld": 0,
     "estimatedPayments": 0
   },
   "derived": {
-    "refund": 1116.5,
+    "refund": 0,
     "amountOwed": 0,
-    "taxableIncome": 34350
+    "taxableIncome": 0
   },
   "validation": {
     "checks": [
@@ -109,11 +109,11 @@
     "flaggedFields": []
   },
   "review": {
-    "headline": "Refund expected: $1,116.50",
+    "headline": "Amount owed: $0.00",
     "notes": [
-      "Gross income $50,100.00",
-      "Taxable income $34,350.00",
-      "Federal tax $3,883.50"
+      "Gross income $0.00",
+      "Taxable income $0.00",
+      "Federal tax $0.00"
     ],
     "flaggedFields": []
   },
@@ -140,94 +140,68 @@
     "formId": "1040",
     "taxYear": 2025,
     "taxpayer": {
-      "firstName": "PigeonGov",
-      "lastName": "Taxpayer",
+      "firstName": "Nobody",
+      "lastName": "Earns",
       "ssn": "000-00-0000",
       "address": {
-        "street1": "Unknown",
-        "city": "Unknown",
+        "street1": "1 Empty St",
+        "city": "Nowhere",
         "state": "CA",
-        "zipCode": "00000"
+        "zipCode": "90210"
       }
     },
     "dependents": [],
-    "importedDocuments": [
-      {
-        "type": "w2",
-        "employerName": "Withholding input",
-        "wages": 50000,
-        "federalWithheld": 5000
-      }
-    ],
+    "importedDocuments": [],
     "calculation": {
-      "grossIncome": 50100,
-      "adjustedGrossIncome": 50100,
+      "grossIncome": 0,
+      "adjustedGrossIncome": 0,
       "deduction": 15750,
-      "taxableIncome": 34350,
-      "federalTax": 3883.5,
+      "taxableIncome": 0,
+      "federalTax": 0,
       "selfEmploymentTax": 0,
-      "totalTax": 3883.5,
+      "totalTax": 0,
       "totalCredits": 0,
       "childTaxCredit": 0,
       "earnedIncomeCredit": 0,
       "additionalChildTaxCredit": 0,
-      "totalPayments": 5000,
+      "totalPayments": 0,
       "amountOwed": 0,
-      "refund": 1116.5,
-      "effectiveRate": 0.08,
-      "marginalRate": 0.12,
-      "breakdown": [
-        {
-          "rate": 0.1,
-          "lowerBound": 0,
-          "taxableAmount": 11925,
-          "taxAmount": 1192.5,
-          "upperBound": 11925
-        },
-        {
-          "rate": 0.12,
-          "lowerBound": 11925,
-          "taxableAmount": 22425,
-          "taxAmount": 2691,
-          "upperBound": 48475
-        }
-      ]
+      "refund": 0,
+      "effectiveRate": 0,
+      "marginalRate": 0,
+      "breakdown": []
     },
     "form1040": {
       "taxYear": 2025,
       "filingStatus": "single",
       "taxpayer": {
-        "firstName": "PigeonGov",
-        "lastName": "Taxpayer",
+        "firstName": "Nobody",
+        "lastName": "Earns",
         "ssn": "000-00-0000",
         "address": {
-          "street1": "Unknown",
-          "city": "Unknown",
+          "street1": "1 Empty St",
+          "city": "Nowhere",
           "state": "CA",
-          "zipCode": "00000"
+          "zipCode": "90210"
         }
       },
       "mailingAddress": {
-        "street1": "Unknown",
-        "city": "Unknown",
+        "street1": "1 Empty St",
+        "city": "Nowhere",
         "state": "CA",
-        "zipCode": "00000"
+        "zipCode": "90210"
       },
       "dependents": [],
       "lines": {
-        "line1a": 50000,
-        "line2b": 100,
-        "line9": 50100,
-        "line11": 50100,
+        "line9": 0,
+        "line11": 0,
         "line12a": 15750,
         "line12z": 15750,
-        "line13": 34350,
-        "line14": 3883.5,
-        "line16": 3883.5,
-        "line24": 3883.5,
-        "line25a": 5000,
-        "line33": 5000,
-        "line34": 1116.5
+        "line13": 0,
+        "line14": 0,
+        "line16": 0,
+        "line24": 0,
+        "line33": 0
       }
     },
     "schedule1": {
@@ -238,37 +212,22 @@
     }
   },
   "calculation": {
-    "grossIncome": 50100,
-    "adjustedGrossIncome": 50100,
+    "grossIncome": 0,
+    "adjustedGrossIncome": 0,
     "deduction": 15750,
-    "taxableIncome": 34350,
-    "federalTax": 3883.5,
+    "taxableIncome": 0,
+    "federalTax": 0,
     "selfEmploymentTax": 0,
-    "totalTax": 3883.5,
+    "totalTax": 0,
     "totalCredits": 0,
     "childTaxCredit": 0,
     "earnedIncomeCredit": 0,
     "additionalChildTaxCredit": 0,
-    "totalPayments": 5000,
+    "totalPayments": 0,
     "amountOwed": 0,
-    "refund": 1116.5,
-    "effectiveRate": 0.08,
-    "marginalRate": 0.12,
-    "breakdown": [
-      {
-        "rate": 0.1,
-        "lowerBound": 0,
-        "taxableAmount": 11925,
-        "taxAmount": 1192.5,
-        "upperBound": 11925
-      },
-      {
-        "rate": 0.12,
-        "lowerBound": 11925,
-        "taxableAmount": 22425,
-        "taxAmount": 2691,
-        "upperBound": 48475
-      }
-    ]
+    "refund": 0,
+    "effectiveRate": 0,
+    "marginalRate": 0,
+    "breakdown": []
   }
 }

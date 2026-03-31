@@ -231,10 +231,7 @@ export function calculateFederalTax(
   input: TaxCalculationInput,
 ): TaxCalculationResult {
   const selfEmploymentTax = calculateSelfEmploymentTax(input.scheduleCNet);
-  const selfEmploymentTaxDeduction =
-    input.adjustments.selfEmploymentTaxDeduction > 0
-      ? input.adjustments.selfEmploymentTaxDeduction
-      : roundCurrency(selfEmploymentTax / 2);
+  const selfEmploymentTaxDeduction = roundCurrency(selfEmploymentTax / 2);
   const totalAdjustments = roundCurrency(
     input.adjustments.educatorExpenses +
       input.adjustments.hsaDeduction +

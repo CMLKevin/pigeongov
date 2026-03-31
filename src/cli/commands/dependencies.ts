@@ -1,11 +1,12 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit, emitError } from "../output.js";
+import { PigeonGovError, CLI_EXIT_CODES } from "../support.js";
 import {
   getDependencies,
 } from "../../advisory/dependencies/graph.js";
+import { normalizeWorkflowId } from "../../workflows/registry.js";
 
 const RELATIONSHIP_GLYPHS: Record<string, (text: string) => string> = {
   triggers: (t) => chalk.green(`\u2192 ${t}`),
@@ -38,10 +39,23 @@ export function registerDependenciesCommand(program: Command): void {
     $ pigeongov deps tax/1040 --json`,
     )
     .action((workflowId: string) => {
+      try {
+        normalizeWorkflowId(workflowId);
+      } catch {
+        const err = new PigeonGovError({
+          code: "not_found",
+          message: `Unknown workflow: ${workflowId}`,
+          exitCode: CLI_EXIT_CODES.notFound,
+          suggestion: "Run 'pigeongov list' to see available workflows.",
+        });
+        emitError(err);
+        return;
+      }
+
       const chain = getDependencies(workflowId);
 
       if (isJsonMode()) {
-        emitJson(chain);
+        emit(chain);
         return;
       }
 

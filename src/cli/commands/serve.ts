@@ -1,13 +1,27 @@
 import { access } from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 import type { Command } from "commander";
 
 import { startApiServer } from "../../api/index.js";
+import { PigeonGovError } from "../support.js";
+import { emitError } from "../output.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const packageRoot = path.resolve(path.dirname(__filename), "../../../..");
 
 async function ensureBuilt(filePath: string): Promise<void> {
-  await access(filePath);
+  try {
+    await access(filePath);
+  } catch {
+    throw new PigeonGovError({
+      code: "MCP_NOT_BUILT",
+      message: `MCP server not built. Run \`pnpm build:mcp\` from the project root, or if installed via npm, the MCP server may not be included in this distribution. (expected: ${filePath})`,
+      suggestion: "Run `pnpm build:mcp` from the project root.",
+    });
+  }
 }
 
 export function registerServeCommand(program: Command): void {
@@ -18,10 +32,14 @@ export function registerServeCommand(program: Command): void {
     .option("--rest", "Also start REST API (routes under /api/*)")
     .option("--port <number>", "HTTP port", "3847")
     .action(async (options) => {
-      const cwd = process.cwd();
       const port = Number(options.port) || 3847;
-      const stdioEntry = path.join(cwd, "dist/mcp/stdio.js");
-      await ensureBuilt(stdioEntry);
+      const stdioEntry = path.join(packageRoot, "dist/mcp/stdio.js");
+      try {
+        await ensureBuilt(stdioEntry);
+      } catch (err) {
+        emitError(err);
+        return;
+      }
 
       // REST API server
       if (options.rest) {
@@ -30,8 +48,13 @@ export function registerServeCommand(program: Command): void {
       }
 
       if (options.http) {
-        const httpEntry = path.join(cwd, "dist/mcp/http.js");
-        await ensureBuilt(httpEntry);
+        const httpEntry = path.join(packageRoot, "dist/mcp/http.js");
+        try {
+          await ensureBuilt(httpEntry);
+        } catch (err) {
+          emitError(err);
+          return;
+        }
 
         // If REST is also enabled, use a different port for MCP HTTP
         const mcpPort = options.rest ? port + 1 : port;

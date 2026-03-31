@@ -20,6 +20,17 @@ export function fplPercent(income: number, householdSize: number): number {
   return (income / getFpl(householdSize)) * 100;
 }
 
+// --- State-specific data ---
+
+/** States that have NOT expanded Medicaid under ACA as of 2025 */
+const NON_EXPANSION_STATES = new Set([
+  "AL", "FL", "GA", "KS", "MS", "SC", "TN", "TX", "WI", "WY",
+]);
+
+export function isMedicaidExpansionState(state: string): boolean {
+  return !NON_EXPANSION_STATES.has(state.toUpperCase());
+}
+
 // --- Program definitions ---
 
 export interface ProgramDefinition {
@@ -28,11 +39,11 @@ export interface ProgramDefinition {
   /** FPL percentage cutoff — income above this kills eligibility */
   cutoffFplPercent: number;
   /** Whether this household size + income qualifies */
-  isEligible: (income: number, householdSize: number) => boolean;
+  isEligible: (income: number, householdSize: number, state?: string) => boolean;
   /** Monthly benefit value at given income */
-  monthlyBenefit: (income: number, householdSize: number) => number;
+  monthlyBenefit: (income: number, householdSize: number, state?: string) => number;
   /** Income at which eligibility ends */
-  cutoffIncome: (householdSize: number) => number;
+  cutoffIncome: (householdSize: number, state?: string) => number;
 }
 
 // SNAP max monthly allotments by household size (FY2025)
@@ -76,15 +87,21 @@ export const PROGRAMS: ProgramDefinition[] = [
     id: "medicaid",
     name: "Medicaid",
     cutoffFplPercent: 138,
-    isEligible: (income, hs) => income <= getFpl(hs) * 1.38,
+    isEligible: (income, hs, state) => {
+      const cutoff = isMedicaidExpansionState(state ?? "CA") ? 1.38 : 0.40;
+      return income <= getFpl(hs) * cutoff;
+    },
     monthlyBenefit: (_income, _hs) => 600,
-    cutoffIncome: (hs) => Math.floor(getFpl(hs) * 1.38),
+    cutoffIncome: (hs, state) => {
+      const cutoff = isMedicaidExpansionState(state ?? "CA") ? 1.38 : 0.40;
+      return Math.floor(getFpl(hs) * cutoff);
+    },
   },
   {
     id: "wic",
     name: "WIC",
     cutoffFplPercent: 185,
-    isEligible: (income, hs) => income <= getFpl(hs) * 1.85,
+    isEligible: (income, hs) => hs >= 2 && income <= getFpl(hs) * 1.85,
     monthlyBenefit: (_income, _hs) => 75,
     cutoffIncome: (hs) => Math.floor(getFpl(hs) * 1.85),
   },
@@ -117,7 +134,7 @@ export const PROGRAMS: ProgramDefinition[] = [
     id: "chip",
     name: "CHIP (Children's Health Insurance)",
     cutoffFplPercent: 200,
-    isEligible: (income, hs) => income <= getFpl(hs) * 2.0,
+    isEligible: (income, hs) => hs >= 2 && income <= getFpl(hs) * 2.0,
     monthlyBenefit: (_income, _hs) => 200,
     cutoffIncome: (hs) => Math.floor(getFpl(hs) * 2.0),
   },

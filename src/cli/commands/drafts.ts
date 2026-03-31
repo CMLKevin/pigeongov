@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { listDrafts, deleteDraft, cleanupDrafts } from "../../storage/drafts.js";
 
 export function registerDraftsCommand(program: Command): void {
@@ -19,7 +18,7 @@ export function registerDraftsCommand(program: Command): void {
       const items = await listDrafts(options.workflow);
 
       if (isJsonMode()) {
-        emitJson({ drafts: items });
+        emit({ drafts: items });
         return;
       }
 

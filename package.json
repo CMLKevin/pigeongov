@@ -1,6 +1,6 @@
 {
   "name": "pigeongov",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "Local-first CLI, TUI, MCP server, and web planner for U.S. government workflows and forms. 34 workflows across 13 domains — tax, immigration, healthcare, education, benefits, veterans, identity, legal, estate, retirement, and more.",
   "type": "module",
   "bin": {
@@ -59,7 +59,7 @@
     "test:snapshots": "vitest run test/snapshots/",
     "test:fuzz": "vitest run test/fuzz/ --timeout 30000",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "prepublishOnly": "pnpm build:cli"
+    "prepublishOnly": "pnpm build:mcp && pnpm build:cli"
   },
   "dependencies": {
     "@inquirer/prompts": "^8.3.2",

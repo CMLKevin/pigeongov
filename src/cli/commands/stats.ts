@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { getLocalStats, formatStats } from "../../analytics/stats.js";
 
 export function registerStatsCommand(program: Command): void {
@@ -12,7 +11,7 @@ export function registerStatsCommand(program: Command): void {
       const stats = await getLocalStats();
 
       if (isJsonMode()) {
-        emitJson(stats);
+        emit(stats);
         return;
       }
 

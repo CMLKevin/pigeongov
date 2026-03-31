@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit, emitError } from "../output.js";
+import { PigeonGovError, CLI_EXIT_CODES } from "../support.js";
 import { calculateCliff } from "../../advisory/cliff/calculator.js";
 
 export function registerCliffCommand(program: Command): void {
@@ -30,20 +30,26 @@ export function registerCliffCommand(program: Command): void {
       const state = options.state.toUpperCase();
 
       if (isNaN(annualIncome) || annualIncome < 0) {
-        console.error(chalk.red("--income must be a non-negative number"));
-        process.exitCode = 4;
+        emitError(new PigeonGovError({
+          code: "invalid_input",
+          message: "--income must be a non-negative number",
+          exitCode: CLI_EXIT_CODES.invalidInput,
+        }));
         return;
       }
       if (isNaN(householdSize) || householdSize < 1) {
-        console.error(chalk.red("--household must be a positive integer"));
-        process.exitCode = 4;
+        emitError(new PigeonGovError({
+          code: "invalid_input",
+          message: "--household must be a positive integer",
+          exitCode: CLI_EXIT_CODES.invalidInput,
+        }));
         return;
       }
 
       const result = calculateCliff({ annualIncome, householdSize, state });
 
       if (isJsonMode()) {
-        emitJson(result);
+        emit(result);
         return;
       }
 

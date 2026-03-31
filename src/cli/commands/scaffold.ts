@@ -4,7 +4,7 @@ import path from "node:path";
 import chalk from "chalk";
 
 import { input, confirm } from "@inquirer/prompts";
-import { isNonInteractive } from "../output.js";
+import { isDryRun, isNonInteractive } from "../output.js";
 
 interface SectionSpec {
   id: string;
@@ -288,6 +288,24 @@ export function registerScaffoldCommand(program: Command): void {
             default: false,
           });
         }
+      }
+
+      // --- Dry-run: report what would be created without writing ---
+      if (isDryRun()) {
+        const schemaFile = path.join(srcRoot, "schemas", `${domain}.ts`);
+        const domainFile = path.join(srcRoot, "domains", `${domain}.ts`);
+        console.log(chalk.bold("Dry run — no files written.\n"));
+        console.log(`Would create/update schema: ${schemaFile}`);
+        console.log(`Would create/update domain: ${domainFile}`);
+        console.log(
+          `Sections: ${sections.map((s) => s.id).join(", ")} (${sections.length} total)`,
+        );
+        console.log(
+          chalk.dim(
+            "\nRe-run without --dry-run to actually write files.",
+          ),
+        );
+        return;
       }
 
       // --- Schema file ---

@@ -1,8 +1,8 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { input, select, confirm, number } from "@inquirer/prompts";
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit, emitError } from "../output.js";
+import { PigeonGovError, CLI_EXIT_CODES } from "../support.js";
 import { screenerInputSchema, SCREENER_QUESTIONS } from "../../advisory/screener/intake.js";
 import type { ScreenerInput } from "../../advisory/screener/intake.js";
 import { screenEligibility, formatScreenerResults } from "../../advisory/screener/engine.js";
@@ -48,8 +48,12 @@ export function registerScreenCommand(program: Command): void {
         const raw = await readFile(options.input, "utf-8");
         const parsed = screenerInputSchema.safeParse(JSON.parse(raw));
         if (!parsed.success) {
-          console.error(chalk.red("Invalid screener input:"), parsed.error.message);
-          process.exitCode = 8;
+          emitError(new PigeonGovError({
+            code: "schema_error",
+            message: `Invalid screener input: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
+            exitCode: CLI_EXIT_CODES.schemaError,
+            suggestion: "See 'pigeongov guide screen' for the expected input format.",
+          }));
           return;
         }
         screenerData = parsed.data;
@@ -119,7 +123,7 @@ export function registerScreenCommand(program: Command): void {
       const results = screenEligibility(screenerData);
 
       if (isJsonMode()) {
-        emitJson({ input: screenerData, results });
+        emit({ input: screenerData, results });
         return;
       }
 

@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 
 const MAIN_GUIDE = `
 PigeonGov Agent Guide
@@ -255,7 +254,7 @@ export function registerGuideCommand(program: Command): void {
     .action((topic?: string) => {
       if (!topic) {
         if (isJsonMode()) {
-          emitJson({
+          emit({
             guide: "PigeonGov Agent Guide",
             pipeline: [
               "pigeongov list --json",
@@ -297,7 +296,7 @@ export function registerGuideCommand(program: Command): void {
       if (!guide) {
         const available = Object.keys(TOPIC_GUIDES).join(", ");
         if (isJsonMode()) {
-          emitJson({
+          emit({
             error: `Unknown guide topic: ${topic}`,
             availableTopics: Object.keys(TOPIC_GUIDES),
           });
@@ -311,7 +310,7 @@ export function registerGuideCommand(program: Command): void {
 
       if (isJsonMode()) {
         const jsonGuide = TOPIC_GUIDES_JSON[topic]!;
-        emitJson({
+        emit({
           topic,
           title: jsonGuide.title,
           content: jsonGuide.content,

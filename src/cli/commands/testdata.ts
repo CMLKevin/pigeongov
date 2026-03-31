@@ -3,8 +3,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
 
-import { emitJson } from "../support.js";
-import { isJsonMode } from "../output.js";
+import { isJsonMode, emit } from "../output.js";
 import { generateRandomInput } from "../../testing/synthetic.js";
 
 export function registerTestdataCommand(program: Command): void {
@@ -37,7 +36,7 @@ export function registerTestdataCommand(program: Command): void {
 
       // JSON mode: print to stdout
       if (isJsonMode()) {
-        emitJson({ workflowId, seed: baseSeed, count, fixtures });
+        emit({ workflowId, seed: baseSeed, count, fixtures });
         return;
       }
 

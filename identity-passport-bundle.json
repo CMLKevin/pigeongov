@@ -1,0 +1,135 @@
+{
+  "workflowId": "identity/passport",
+  "domain": "identity",
+  "title": "Passport application planner",
+  "summary": "Passport application readiness bundle. PigeonGov does not submit passport applications.",
+  "household": [],
+  "evidence": [
+    {
+      "id": "citizenship-proof",
+      "label": "US birth certificate",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "photo",
+      "label": "Passport photo (2x2 inches)",
+      "required": true,
+      "status": "missing",
+      "source": "user-input"
+    },
+    {
+      "id": "current-passport",
+      "label": "Current/most recent passport",
+      "required": false,
+      "status": "missing",
+      "source": "user-input"
+    }
+  ],
+  "answers": {
+    "applicantName": "Sofia Santos",
+    "dob": "2018-03-15",
+    "citizenshipProof": "birth_certificate",
+    "isRenewal": false,
+    "hasNameChange": false,
+    "isMinor": true,
+    "processingSpeed": "routine"
+  },
+  "derived": {
+    "recommendedForm": "DS-11",
+    "canRenewByMail": false,
+    "applicationFee": 165,
+    "executionFee": 35,
+    "expediteFee": 0,
+    "totalFees": 200,
+    "estimatedProcessingTime": "6-8 weeks"
+  },
+  "validation": {
+    "checks": [
+      {
+        "id": "applicant-name",
+        "label": "Applicant name provided",
+        "passed": true,
+        "severity": "error",
+        "message": "Full legal name is required."
+      },
+      {
+        "id": "dob",
+        "label": "Date of birth provided",
+        "passed": true,
+        "severity": "error",
+        "message": "Date of birth is required."
+      }
+    ],
+    "flaggedFields": [
+      {
+        "field": "isMinor",
+        "severity": "review",
+        "message": "Minor passport applications require both parents' consent or sole custody documentation. Both parents must appear in person for DS-11.",
+        "source": "workflow"
+      }
+    ]
+  },
+  "review": {
+    "headline": "Passport application: DS-11 — 6-8 weeks (1/3 evidence items ready)",
+    "notes": [
+      "Recommended form: DS-11 (in-person submission).",
+      "Total fees: $200.00 (application: $165.00, execution: $35.00).",
+      "Estimated processing time: 6-8 weeks."
+    ],
+    "flaggedFields": [
+      {
+        "field": "isMinor",
+        "severity": "review",
+        "message": "Minor passport applications require both parents' consent or sole custody documentation. Both parents must appear in person for DS-11.",
+        "source": "workflow"
+      }
+    ]
+  },
+  "outputArtifacts": [
+    {
+      "kind": "bundle",
+      "label": "Workflow bundle JSON",
+      "format": "json",
+      "path": "identity-passport-bundle.json"
+    },
+    {
+      "kind": "review",
+      "label": "Review PDF",
+      "format": "pdf",
+      "path": "identity-passport-review.pdf"
+    },
+    {
+      "kind": "checklist",
+      "label": "Evidence checklist",
+      "format": "checklist",
+      "content": [
+        {
+          "id": "citizenship-proof",
+          "label": "US birth certificate",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "photo",
+          "label": "Passport photo (2x2 inches)",
+          "required": true,
+          "status": "missing",
+          "source": "user-input"
+        },
+        {
+          "id": "current-passport",
+          "label": "Current/most recent passport",
+          "required": false,
+          "status": "missing",
+          "source": "user-input"
+        }
+      ]
+    }
+  ],
+  "provenance": [
+    "workflow-registry"
+  ]
+}

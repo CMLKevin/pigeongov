@@ -68,16 +68,48 @@ export function selectFields(
   return result;
 }
 
+/**
+ * Find the single array property in a wrapper object like `{ workflows: [...] }`.
+ * Returns the array if found, otherwise null.
+ */
+function unwrapSingleArray(data: unknown): unknown[] | null {
+  if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
+  const entries = Object.entries(data as Record<string, unknown>);
+  if (entries.length === 1 && Array.isArray(entries[0]![1])) {
+    return entries[0]![1] as unknown[];
+  }
+  return null;
+}
+
 export function emit(data: unknown): void {
   const opts = currentOptions;
 
+  // For --fields: apply to each item in a single-array wrapper (e.g. { workflows: [...] })
   if (opts.fields && typeof data === "object" && data !== null && !Array.isArray(data)) {
-    data = selectFields(data as Record<string, unknown>, opts.fields);
+    const innerArray = unwrapSingleArray(data);
+    if (innerArray) {
+      const filtered = innerArray.map((item) =>
+        typeof item === "object" && item !== null && !Array.isArray(item)
+          ? selectFields(item as Record<string, unknown>, opts.fields!)
+          : item,
+      );
+      const key = Object.keys(data as Record<string, unknown>)[0]!;
+      data = { [key]: filtered };
+    } else {
+      data = selectFields(data as Record<string, unknown>, opts.fields);
+    }
   }
 
-  if (opts.jsonl && Array.isArray(data)) {
-    emitJsonl(data);
-  } else if (opts.json || opts.jsonl) {
+  // For --jsonl: emit items from a single-array wrapper as JSONL
+  if (opts.jsonl) {
+    const items = Array.isArray(data) ? data : unwrapSingleArray(data);
+    if (items) {
+      emitJsonl(items);
+      return;
+    }
+  }
+
+  if (opts.json || opts.jsonl) {
     if (opts.compact) {
       emitJsonCompact(data);
     } else {

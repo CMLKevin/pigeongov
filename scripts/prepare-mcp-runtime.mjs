@@ -51,6 +51,22 @@ async function patchVercelFunctionPackage() {
 
 await copyRuntimeForLocalServe();
 
+// Patch MCP serverInfo with correct name and version
+const packageJson = JSON.parse(await readFile(path.join(rootDir, "package.json"), "utf8"));
+for (const entry of ["stdio.js", "http.js"]) {
+  const filePath = path.join(runtimeDir, entry);
+  try {
+    let content = await readFile(filePath, "utf8");
+    content = content.replace(
+      'name:"MCP Server",version:"0.0.1"',
+      `name:"pigeongov",version:"${packageJson.version}"`,
+    );
+    await writeFile(filePath, content);
+  } catch {
+    // File may not exist (e.g., http.js when only stdio is built)
+  }
+}
+
 if (shouldPatchVercel) {
   await patchVercelFunctionPackage();
 }

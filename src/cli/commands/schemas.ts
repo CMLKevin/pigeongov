@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 
-import { emitJson } from "../support.js";
+import { emit } from "../output.js";
 import { describeWorkflow, normalizeWorkflowId } from "../../workflows/registry.js";
 
 export function registerSchemasCommand(program: Command): void {
@@ -11,6 +11,6 @@ export function registerSchemasCommand(program: Command): void {
     .description("Describe the workflow schema, sections, and starter data")
     .action((workflowId) => {
       const normalizedId = normalizeWorkflowId(String(workflowId));
-      emitJson(describeWorkflow(normalizedId));
+      emit(describeWorkflow(normalizedId));
     });
 }
