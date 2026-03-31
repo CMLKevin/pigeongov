@@ -3,3 +3,9 @@ node_modules
 dist
 .vercel
 .xmcp
+
+# Generated files
+*.tgz
+*-bundle.json
+*-filled.json
+.claude/worktrees/
