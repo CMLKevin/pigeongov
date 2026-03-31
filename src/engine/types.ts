@@ -63,6 +63,14 @@ export interface TaxOrchestratorInput {
   hsaActivity?: HsaInput | undefined;
   cryptoTransactions?: CryptoTransactionInput[] | undefined;
   equityCompensation?: EquityCompensationInput[] | undefined;
+
+  // OBBB Act fields — all optional with 0 defaults
+  tipIncome?: number | undefined;
+  overtimePay?: number | undefined;
+  autoLoanInterest?: number | undefined;
+  taxpayerAge?: number | undefined;
+  spouseAge?: number | undefined;
+  saltDeduction?: number | undefined;
 }
 
 // ---------------------------------------------------------------------------

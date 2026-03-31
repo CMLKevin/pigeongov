@@ -1,6 +1,13 @@
 import type { ImportedDocument, PersonIdentity } from "../types.js";
-import { calculateFederalTax, type TaxCalculationInput } from "./tax-calculator.js";
-import { f1040Schema, schedule1Schema, scheduleCSchema } from "../schemas/2025/index.js";
+import { calculateFederalTax, type TaxCalculationInput, type TaxCalculationResult } from "./tax-calculator.js";
+import type { StateTaxIntegrationResult } from "./state-tax-integration.js";
+import {
+  f1040Schema,
+  schedule1Schema,
+  scheduleCSchema,
+  scheduleDSchema,
+  type ScheduleDSchema,
+} from "../schemas/2025/index.js";
 
 export interface BuildReturnBundleInput {
   formId: "1040";
@@ -20,10 +27,13 @@ export interface ReturnBundle {
   spouse?: PersonIdentity;
   dependents: TaxCalculationInput["dependents"];
   importedDocuments: ImportedDocument[];
-  calculation: ReturnType<typeof calculateFederalTax>;
+  calculation: TaxCalculationResult;
   form1040: ReturnType<typeof f1040Schema.parse>;
   schedule1: ReturnType<typeof schedule1Schema.parse>;
   scheduleC?: ReturnType<typeof scheduleCSchema.parse>;
+  scheduleD?: ScheduleDSchema;
+  /** State tax result — present when stateCode was provided in the input */
+  stateTaxResult?: StateTaxIntegrationResult | undefined;
 }
 
 function roundCurrency(value: number): number {
@@ -66,6 +76,11 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
     Math.max(0, input.taxInput.federalWithheld - federalWithheldW2 - federalWithheld1099),
   );
 
+  // OBBB Act above-the-line deductions map to Schedule 1 Part II.
+  const tipDeduction = calculation.tipIncomeDeduction || undefined;
+  const overtimeDeduction = calculation.overtimePayDeduction || undefined;
+  const autoLoanDeduction = calculation.autoLoanInterestDeduction || undefined;
+
   const schedule1 = schedule1Schema.parse({
     taxYear: input.taxYear,
     filingStatus: input.filingStatus,
@@ -86,13 +101,20 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
       line20IraDeductions: input.taxInput.adjustments.iraDeduction || undefined,
       line21StudentLoanInterestDeduction:
         input.taxInput.adjustments.studentLoanInterest || undefined,
+      line24ArcherMSADeduction: autoLoanDeduction,
+      line25Reserved: tipDeduction,
+      line26TuitionAndFeesDeduction: overtimeDeduction,
       line27TotalAdjustments:
-        calculation.grossIncome - calculation.adjustedGrossIncome || undefined,
+        roundCurrency(
+          calculation.grossIncome -
+            calculation.adjustedGrossIncome -
+            (calculation.capitalGainsDetail?.capitalLossDeduction ?? 0),
+        ) || undefined,
     },
   });
 
   const scheduleC =
-    input.taxInput.scheduleCNet > 0
+    input.taxInput.scheduleCNet !== 0
       ? scheduleCSchema.parse({
           taxYear: input.taxYear,
           ownerName: `${input.taxpayer.firstName} ${input.taxpayer.lastName}`,
@@ -110,6 +132,42 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
         })
       : undefined;
 
+  // --- Schedule D (if capital gains present) ---
+  const cgDetail = calculation.capitalGainsDetail;
+  let scheduleD: ScheduleDSchema | undefined;
+  let line7CapitalGain: number | undefined;
+
+  if (cgDetail) {
+    const combinedGainOrLoss = cgDetail.totalNetGain;
+    const line21 =
+      combinedGainOrLoss >= 0
+        ? combinedGainOrLoss
+        : -cgDetail.capitalLossDeduction;
+
+    scheduleD = scheduleDSchema.parse({
+      taxYear: input.taxYear,
+      filingStatus: input.filingStatus,
+      part1ShortTerm: {
+        line7NetShortTermGainOrLoss: cgDetail.netShortTerm || undefined,
+      },
+      part2LongTerm: {
+        line15NetLongTermGainOrLoss: cgDetail.netLongTerm || undefined,
+      },
+      part3Summary: {
+        line16CombinedGainOrLoss: combinedGainOrLoss || undefined,
+        line21CapitalGainOrLoss: line21 || undefined,
+      },
+    });
+
+    // Capital gains/losses go on line 7 (income item, not adjustment).
+    // For gains this is positive; for losses it's negative (capped at -$3,000).
+    line7CapitalGain = line21 !== 0 ? line21 : undefined;
+  }
+
+  const totalFederalTax = roundCurrency(
+    calculation.federalTax + calculation.capitalGainsTax,
+  );
+
   const form1040 = f1040Schema.parse({
     taxYear: input.taxYear,
     filingStatus: input.filingStatus,
@@ -120,17 +178,25 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
     lines: {
       line1a: input.taxInput.wages || undefined,
       line2b: input.taxInput.taxableInterest || undefined,
+      line3a: input.taxInput.capitalGains?.qualifiedDividends || undefined,
       line3b: input.taxInput.ordinaryDividends || undefined,
+      line7: line7CapitalGain,
       line8: schedule1.additionalIncome.line10TotalAdditionalIncome,
-      line9: calculation.grossIncome,
+      line9: roundCurrency(
+        (input.taxInput.wages || 0) +
+          (input.taxInput.taxableInterest || 0) +
+          (input.taxInput.ordinaryDividends || 0) +
+          (line7CapitalGain ?? 0) +
+          (schedule1.additionalIncome.line10TotalAdditionalIncome ?? 0),
+      ),
       line10: schedule1.adjustments.line27TotalAdjustments,
       line11: calculation.adjustedGrossIncome,
       line12a: input.taxInput.useItemizedDeductions ? undefined : calculation.deduction,
       line12b: input.taxInput.useItemizedDeductions ? calculation.deduction : undefined,
       line12z: calculation.deduction,
       line13: calculation.taxableIncome,
-      line14: calculation.federalTax,
-      line16: calculation.federalTax,
+      line14: totalFederalTax || calculation.federalTax,
+      line16: totalFederalTax || calculation.federalTax,
       line17: calculation.selfEmploymentTax || undefined,
       line21: calculation.totalCredits || undefined,
       line24: calculation.totalTax,
@@ -160,6 +226,14 @@ export function buildReturnBundle(input: BuildReturnBundleInput): ReturnBundle {
   }
   if (scheduleC) {
     bundle.scheduleC = scheduleC;
+  }
+  if (scheduleD) {
+    bundle.scheduleD = scheduleD;
+  }
+
+  // Attach state tax result if present
+  if (calculation.stateTax) {
+    bundle.stateTaxResult = calculation.stateTax;
   }
 
   return bundle;

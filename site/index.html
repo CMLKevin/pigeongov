@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#6c3aed" />
-    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 34 workflows, 24 MCP tools, cross-agency intelligence. Zero cloud uploads." />
+    <meta name="description" content="PigeonGov is a local-first, privacy-first CLI, TUI, and MCP platform for US government workflows. 36 workflows, 26 MCP tools, cross-agency intelligence. Zero cloud uploads." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov</title>
     <link rel="stylesheet" href="/styles.css" />
@@ -40,11 +40,11 @@
             </p>
 
             <div class="hero-stats">
-              <span class="hero-stat-pill"><span class="stat-num">34</span> workflows</span>
+              <span class="hero-stat-pill"><span class="stat-num">36</span> workflows</span>
               <span class="hero-stat-pill"><span class="stat-num">13</span> domains</span>
               <span class="hero-stat-pill"><span class="stat-num">0</span> cloud uploads</span>
-              <span class="hero-stat-pill"><span class="stat-num">24</span> MCP tools</span>
-              <span class="hero-stat-pill"><span class="stat-num">4</span> intelligence tools</span>
+              <span class="hero-stat-pill"><span class="stat-num">26</span> MCP tools</span>
+              <span class="hero-stat-pill"><span class="stat-num">6</span> intelligence tools</span>
             </div>
 
             <div class="hero-actions">
@@ -94,6 +94,12 @@
             </div>
           </div>
         </section>
+
+        <!-- ══ v0.4.0 Banner ══ -->
+        <div class="version-banner">
+          <span class="version-tag">v0.4.0</span>
+          Capital gains &amp; NIIT &middot; OBBB Act deductions &middot; 10-state tax engine &middot; Student loan crisis tools &middot; SSI &amp; TANF &middot; 20 life events &middot; 351 tests
+        </div>
 
         <!-- ══ What can it do? ══ -->
         <section class="section-light">
@@ -190,9 +196,9 @@
               <div class="showcase-text">
                 <h3>Life happens. We help.</h3>
                 <p>
-                  Major life changes trigger cascading government paperwork. Tell PigeonGov
-                  what happened and get a prioritized action plan with deadlines, workflow
-                  mappings, and the order to do things in.
+                  Major life changes trigger cascading government paperwork. PigeonGov covers
+                  20 life events &mdash; tell it what happened and get a prioritized action plan
+                  with deadlines, workflow mappings, and the order to do things in.
                 </p>
                 <span class="inline-cmd">$ pigeongov life-event marriage</span>
               </div>
@@ -231,6 +237,47 @@
     <span class="dim">If applicable: spouse petition workflow</span>
 
 <span class="pink">Tip:</span> <span class="dim">Run workflows in order. Phase 1 deadlines are real.</span></div>
+              </div>
+            </div>
+
+            <!-- Showcase 4 -->
+            <div class="showcase reverse">
+              <div class="showcase-text">
+                <h3>Student loans in crisis? We help.</h3>
+                <p class="showcase-desc">
+                  The SAVE plan is dead. 7.5M borrowers need a new plan before September 2026.
+                  PigeonGov compares every option and shows you the math.
+                </p>
+                <span class="inline-cmd">$ pigeongov student-loans transition</span>
+              </div>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">student-loans &mdash; transition</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">student-loans</span> <span class="string">transition</span>
+
+<span class="heading">SAVE Plan Transition Advisor</span>
+<span class="dim">Current: SAVE (in forbearance)    Balance: $45,000</span>
+
+&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502; <span class="deadline">&#x26A0; URGENT: SAVE plan ended March 10, 2026</span>       &#x2502;
+&#x2502; <span class="deadline">&#x26A0; 8 months in forbearance (not counting!)</span>      &#x2502;
+&#x2502; <span class="deadline">&#x26A0; Switch to IBR or RAP immediately</span>             &#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+
+<span class="cyan">Plan Comparison:</span>
+  <span class="dim">Standard (10-yr)</span>     <span class="yellow">$488/mo</span>    $58,564 total
+  <span class="dim">IBR (post-2014)</span>      <span class="ok">$221/mo</span>    Forgiven at 20yr
+  <span class="dim">RAP</span>                  <span class="ok">$123/mo</span>    Forgiven at 30yr    <span class="pink">&#x2190; lowest payment</span>
+
+<span class="cyan">PSLF Progress:</span> 48/120 payments (40%)
+  72 payments remaining &#x2192; forgiveness ~2032
+
+<span class="ok">Recommendation:</span> Switch to IBR immediately. Your PSLF
+employment qualifies &#x2014; forgiveness in 6 years saves $39,000.</div>
               </div>
             </div>
 
@@ -324,6 +371,49 @@
   90%: 12.0 months</div>
               </div>
 
+              <!-- Terminal 5: State Tax Calculator -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">state tax</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">state-tax</span> <span class="string">CA</span> <span class="flag">--income</span> <span class="string">100000</span>
+
+<span class="heading">California State Tax &mdash; Single filer, $100,000</span>
+&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502; <span class="dim">State taxable</span>    <span class="cyan">$94,316</span>        &#x2502;
+&#x2502; <span class="dim">State tax</span>        <span class="yellow">$6,414</span>         &#x2502;
+&#x2502; <span class="dim">Effective rate</span>   <span class="cyan">6.41%</span>          &#x2502;
+&#x2502; <span class="dim">Withholding</span>      <span class="ok">$5,000</span>         &#x2502;
+&#x2502; <span class="dim">Owed</span>             <span class="deadline">$1,414</span>         &#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</div>
+              </div>
+
+              <!-- Terminal 6: Capital Gains + OBBB -->
+              <div class="terminal-window intel-terminal">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dot red"></div>
+                  <div class="terminal-dot yellow"></div>
+                  <div class="terminal-dot green"></div>
+                  <span class="terminal-title-text">tax/1040 &mdash; OBBB</span>
+                </div>
+                <div class="terminal-body"><span class="prompt">$</span> <span class="command">pigeongov</span> <span class="flag">fill</span> <span class="string">tax/1040</span> <span class="flag">--data</span> <span class="string">return.json</span>
+
+<span class="heading">PigeonGov v0.4.0 &mdash; tax/1040 (OBBB Act 2025)</span>
+&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502; <span class="dim">Gross income</span>              <span class="cyan">$158,700</span>     &#x2502;
+&#x2502; <span class="dim">Tip deduction (OBBB)</span>      <span class="ok">-$5,000</span>     &#x2502;
+&#x2502; <span class="dim">Capital gains tax</span>          <span class="yellow">$3,300</span>     &#x2502;
+&#x2502; <span class="dim">NIIT (3.8%)</span>                   <span class="ok">$0</span>     &#x2502;
+&#x2502; <span class="dim">CTC ($2,200 &#xD7; 1)</span>         <span class="ok">-$2,200</span>     &#x2502;
+&#x2502; <span class="dim">CA state tax</span>               <span class="yellow">$8,106</span>     &#x2502;
+&#x251C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2524;
+&#x2502; <span class="ok">REFUND</span>                     <span class="ok">$5,481</span>     &#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</div>
+              </div>
+
             </div>
           </div>
         </section>
@@ -346,7 +436,7 @@
         <section class="section-gradient" id="catalog">
           <div class="content-wrap">
             <div class="stripe-bar-wide"></div>
-            <h2>34 workflows across everything the government throws at you.</h2>
+            <h2>36 workflows across everything the government throws at you.</h2>
             <p class="section-sub">Click a domain to see its workflows. Or just search.</p>
 
             <input type="search" id="catalog-search" placeholder="Search workflows... (e.g. &quot;passport&quot;, &quot;medicaid&quot;, &quot;1040&quot;)" aria-label="Search workflows" />
@@ -372,9 +462,9 @@
               <div class="agent-text">
                 <p>
                   One <code style="font-family: var(--mono); color: var(--purple);">npx pigeongov serve</code> gives any MCP-compatible agent
-                  access to all 34 workflows, eligibility screening, life event planning,
+                  access to all 36 workflows, eligibility screening, life event planning,
                   form validation, dependency graphs, benefits cliff analysis, cost estimation,
-                  and USCIS case tracking. JSON in, JSON out. Deterministic exit codes.
+                  USCIS case tracking, student loan advising, and state tax calculation. JSON in, JSON out. Deterministic exit codes.
                 </p>
                 <p>
                   Works with Claude Code, Codex, or any agent that speaks MCP.
@@ -382,7 +472,7 @@
                   and <a href="/llms.txt" style="color: var(--purple);">llms.txt</a> for discovery.
                 </p>
                 <div class="agent-pills">
-                  <span class="agent-pill pill-purple">24 MCP tools</span>
+                  <span class="agent-pill pill-purple">26 MCP tools</span>
                   <span class="agent-pill pill-pink-soft">JSON output</span>
                   <span class="agent-pill pill-cyan-soft">Structured errors</span>
                   <span class="agent-pill pill-green-soft">Agent guide mode</span>
@@ -411,7 +501,9 @@
   <span class="command">dependencies</span>  <span class="dim">Cross-agency dependency graph</span>
   <span class="command">cliff</span>         <span class="dim">Benefits cliff calculator</span>
   <span class="command">cost</span>          <span class="dim">DIY vs. attorney cost estimator</span>
-  <span class="command">track</span>         <span class="dim">USCIS case status tracker</span></div>
+  <span class="command">track</span>         <span class="dim">USCIS case status tracker</span>
+  <span class="command">student-loans</span> <span class="dim">SAVE/IDR transition advisor</span>    <span class="pink">&#x2190; NEW</span>
+  <span class="command">state-tax</span>     <span class="dim">State income tax calculator</span>     <span class="pink">&#x2190; NEW</span></div>
               </div>
             </div>
           </div>

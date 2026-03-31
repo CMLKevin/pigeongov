@@ -1,0 +1,225 @@
+{
+  "workflowId": "benefits/tanf",
+  "domain": "benefits",
+  "title": "TANF cash assistance eligibility",
+  "summary": "TANF eligibility assessment with state-specific benefit estimation. PigeonGov does not submit applications.",
+  "household": [],
+  "evidence": [
+    {
+      "id": "identity",
+      "label": "Government-issued photo ID",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "income-verification",
+      "label": "Income verification (pay stubs, tax return)",
+      "required": true,
+      "status": "missing",
+      "source": "user-input"
+    },
+    {
+      "id": "children-proof",
+      "label": "Birth certificates or custody documents for children",
+      "required": false,
+      "status": "missing",
+      "source": "user-input"
+    },
+    {
+      "id": "citizenship-docs",
+      "label": "Citizenship or immigration status documentation",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "asset-docs",
+      "label": "Bank statements and financial records",
+      "required": false,
+      "status": "missing",
+      "source": "user-input"
+    },
+    {
+      "id": "residency",
+      "label": "Proof of state residency",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "employment-docs",
+      "label": "Employment verification or job search records",
+      "required": false,
+      "status": "missing",
+      "source": "user-input"
+    }
+  ],
+  "answers": {
+    "applicantName": "",
+    "state": "CA",
+    "householdSize": 1,
+    "numberOfChildren": 0,
+    "youngestChildAge": 0,
+    "monthlyGrossIncome": 0,
+    "countableAssets": 0,
+    "monthsReceived": 0,
+    "isEmployed": false,
+    "citizenshipStatus": "us_citizen"
+  },
+  "derived": {
+    "fpl": 15650,
+    "incomeThreshold50": 652.0833333333334,
+    "incomePass": true,
+    "hasChildren": false,
+    "assetsPass": true,
+    "stateAssetLimit": null,
+    "monthsRemaining": 60,
+    "timeLimitExhausted": false,
+    "workRequirementApplies": false,
+    "workHoursNeeded": 20,
+    "maxBenefit": 878,
+    "estimatedMonthlyBenefit": 878,
+    "triggersSNAP": false,
+    "triggersMedicaid": false
+  },
+  "validation": {
+    "checks": [
+      {
+        "id": "has-children",
+        "label": "Has dependent children",
+        "passed": false,
+        "severity": "error",
+        "message": "Must have at least one child under 18."
+      },
+      {
+        "id": "income-test",
+        "label": "Income below ~50% FPL",
+        "passed": true,
+        "severity": "error",
+        "message": "Monthly income must be at or below ~$652.08."
+      },
+      {
+        "id": "asset-test",
+        "label": "Assets within state limit",
+        "passed": true,
+        "severity": "error",
+        "message": "No asset test in this state."
+      },
+      {
+        "id": "time-limit",
+        "label": "Within 60-month federal limit",
+        "passed": true,
+        "severity": "error",
+        "message": "60 months remaining of 60-month limit."
+      },
+      {
+        "id": "citizenship",
+        "label": "Citizenship/immigration status",
+        "passed": true,
+        "severity": "error",
+        "message": "Must be US citizen or qualified alien."
+      }
+    ],
+    "flaggedFields": [
+      {
+        "field": "numberOfChildren",
+        "severity": "error",
+        "message": "TANF requires at least one dependent child under 18 in the household.",
+        "source": "workflow"
+      }
+    ]
+  },
+  "review": {
+    "headline": "TANF eligibility: may not qualify (3/7 evidence items ready)",
+    "notes": [
+      "Applicant: (not provided). State: CA. Household size: 1.",
+      "Children: 0. Youngest child age: 0.",
+      "Monthly gross income: $0.00. ~50% FPL threshold: $652.08.",
+      "Assets: $0.00. CA has no asset test.",
+      "Federal time limit: 0/60 months used. 60 months remaining.",
+      "Estimated monthly benefit: $878.00 (state max: $878.00)."
+    ],
+    "flaggedFields": [
+      {
+        "field": "numberOfChildren",
+        "severity": "error",
+        "message": "TANF requires at least one dependent child under 18 in the household.",
+        "source": "workflow"
+      }
+    ]
+  },
+  "outputArtifacts": [
+    {
+      "kind": "bundle",
+      "label": "Workflow bundle JSON",
+      "format": "json",
+      "path": "benefits-tanf-bundle.json"
+    },
+    {
+      "kind": "review",
+      "label": "Review PDF",
+      "format": "pdf",
+      "path": "benefits-tanf-review.pdf"
+    },
+    {
+      "kind": "checklist",
+      "label": "Evidence checklist",
+      "format": "checklist",
+      "content": [
+        {
+          "id": "identity",
+          "label": "Government-issued photo ID",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "income-verification",
+          "label": "Income verification (pay stubs, tax return)",
+          "required": true,
+          "status": "missing",
+          "source": "user-input"
+        },
+        {
+          "id": "children-proof",
+          "label": "Birth certificates or custody documents for children",
+          "required": false,
+          "status": "missing",
+          "source": "user-input"
+        },
+        {
+          "id": "citizenship-docs",
+          "label": "Citizenship or immigration status documentation",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "asset-docs",
+          "label": "Bank statements and financial records",
+          "required": false,
+          "status": "missing",
+          "source": "user-input"
+        },
+        {
+          "id": "residency",
+          "label": "Proof of state residency",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "employment-docs",
+          "label": "Employment verification or job search records",
+          "required": false,
+          "status": "missing",
+          "source": "user-input"
+        }
+      ]
+    }
+  ],
+  "provenance": [
+    "workflow-registry"
+  ]
+}

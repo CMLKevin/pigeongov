@@ -277,6 +277,11 @@ interface RepaymentPlan {
   note?: string | undefined;
 }
 
+/** Discretionary income at 225% FPL (used by RAP). */
+function discretionaryIncome225(annualIncome: number, householdSize: number): number {
+  return Math.max(0, annualIncome - 2.25 * federalPovertyLevel(householdSize));
+}
+
 function computeRepaymentPlans(input: StudentLoanRepaymentInput): RepaymentPlan[] {
   const federalLoans = input.loans.filter((l) => l.type === "federal");
   const totalFederalBalance = federalLoans.reduce((s, l) => s + l.balance, 0);
@@ -300,16 +305,14 @@ function computeRepaymentPlans(input: StudentLoanRepaymentInput): RepaymentPlan[
     eligible: totalFederalBalance > 0,
   });
 
-  // SAVE: 10% of discretionary income, 20-25 year forgiveness (use 240 for undergrad)
-  const saveMonthly = Math.round(monthlyDI * 0.1 * 100) / 100;
-  const saveTerm = 240;
+  // SAVE/REPAYE: Permanently ended March 10, 2026 by court order
   plans.push({
     name: "SAVE",
-    monthlyPayment: saveMonthly,
-    totalPaid: Math.round(saveMonthly * saveTerm * 100) / 100,
-    termMonths: saveTerm,
-    eligible: totalFederalBalance > 0,
-    note: "Replaces REPAYE. Lowest payment for most borrowers.",
+    monthlyPayment: 0,
+    totalPaid: 0,
+    termMonths: 0,
+    eligible: false,
+    note: "SAVE/REPAYE permanently ended March 10, 2026 by court order. Borrowers must transition to another plan by September 30, 2026.",
   });
 
   // PAYE: 10% of discretionary income, 20-year forgiveness
@@ -324,16 +327,41 @@ function computeRepaymentPlans(input: StudentLoanRepaymentInput): RepaymentPlan[
     note: "Capped at Standard payment amount.",
   });
 
-  // IBR: 15% of discretionary income, 25-year forgiveness
-  const ibrMonthly = Math.round(monthlyDI * 0.15 * 100) / 100;
-  const ibrTerm = 300;
+  // IBR (old): 15% of discretionary income (150% FPL), 25-year forgiveness
+  const ibrOldMonthly = Math.round(monthlyDI * 0.15 * 100) / 100;
+  const ibrOldTerm = 300;
   plans.push({
-    name: "IBR",
-    monthlyPayment: ibrMonthly,
-    totalPaid: Math.round(ibrMonthly * ibrTerm * 100) / 100,
-    termMonths: ibrTerm,
+    name: "IBR (pre-2014)",
+    monthlyPayment: ibrOldMonthly,
+    totalPaid: Math.round(ibrOldMonthly * ibrOldTerm * 100) / 100,
+    termMonths: ibrOldTerm,
     eligible: totalFederalBalance > 0,
-    note: "New borrowers after 2014 get 10% / 20-year terms.",
+    note: "15% of discretionary income. Forgiveness at 25 years.",
+  });
+
+  // IBR (new): 10% of discretionary income (150% FPL), 20-year forgiveness
+  const ibrNewMonthly = Math.round(monthlyDI * 0.10 * 100) / 100;
+  const ibrNewTerm = 240;
+  plans.push({
+    name: "IBR (post-July 2014)",
+    monthlyPayment: ibrNewMonthly,
+    totalPaid: Math.round(ibrNewMonthly * ibrNewTerm * 100) / 100,
+    termMonths: ibrNewTerm,
+    eligible: totalFederalBalance > 0,
+    note: "10% of discretionary income. Forgiveness at 20 years. Available for borrowers with no balance before July 1, 2014.",
+  });
+
+  // RAP (new): 10% of (AGI - 225% FPL), minimum $10/month, 30-year forgiveness
+  const rapDI = discretionaryIncome225(input.annualIncome, input.householdSize);
+  const rapMonthly = Math.max(10, Math.round((rapDI * 0.10) / 12 * 100) / 100);
+  const rapTerm = 360;
+  plans.push({
+    name: "RAP",
+    monthlyPayment: rapMonthly,
+    totalPaid: Math.round(rapMonthly * rapTerm * 100) / 100,
+    termMonths: rapTerm,
+    eligible: totalFederalBalance > 0,
+    note: "New plan (2026). Minimum $10/month — no $0 option. Uses 225% FPL threshold. Unpaid interest capitalizes. Forgiveness at 30 years.",
   });
 
   // ICR: 20% of discretionary income or fixed 12-year payment, whichever is lower
@@ -380,6 +408,11 @@ const studentLoanRepaymentWorkflow = {
     householdSize: 1,
     employerType: "private",
     monthsOfQualifyingPayments: 0,
+    currentPlan: "none",
+    monthsInSaveForbearance: 0,
+    isParentPlusLoan: false,
+    hasConsolidatedLoans: false,
+    monthsOfPSLFEmployment: 0,
   } satisfies StudentLoanRepaymentInput,
   sections: [
     {
@@ -423,9 +456,41 @@ const studentLoanRepaymentWorkflow = {
       ],
     },
     {
+      id: "save-transition",
+      title: "SAVE Transition (2026 Crisis)",
+      description: "SAVE/REPAYE ended March 10, 2026. 7.5M borrowers must transition by September 30, 2026.",
+      fields: [
+        {
+          key: "currentPlan",
+          label: "Current repayment plan",
+          type: "select" as const,
+          options: [
+            { label: "None / not enrolled", value: "none" },
+            { label: "SAVE (ended)", value: "SAVE" },
+            { label: "REPAYE (ended)", value: "REPAYE" },
+            { label: "PAYE", value: "PAYE" },
+            { label: "IBR", value: "IBR" },
+            { label: "ICR", value: "ICR" },
+            { label: "Standard", value: "standard" },
+          ],
+        },
+        { key: "monthsInSaveForbearance", label: "Months in SAVE forbearance (do NOT count toward forgiveness)", type: "number" as const },
+        { key: "isParentPlusLoan", label: "Parent PLUS loan?", type: "confirm" as const },
+        { key: "hasConsolidatedLoans", label: "Already consolidated into Direct Consolidation Loan?", type: "confirm" as const },
+      ],
+    },
+    {
+      id: "pslf-tracking",
+      title: "PSLF Tracking",
+      description: "Public Service Loan Forgiveness — 120 qualifying payments required.",
+      fields: [
+        { key: "monthsOfPSLFEmployment", label: "Months of qualifying PSLF employment", type: "number" as const },
+      ],
+    },
+    {
       id: "repayment-goals",
       title: "Repayment Goals",
-      description: "PigeonGov will compare repayment plans automatically.",
+      description: "PigeonGov will compare repayment plans automatically, including the new RAP plan.",
       fields: [],
     },
   ],
@@ -470,13 +535,57 @@ const studentLoanRepaymentWorkflow = {
       );
     }
 
+    // SAVE transition warnings
+    if (input.currentPlan === "SAVE" || input.currentPlan === "REPAYE") {
+      flags.push(
+        makeFlag(
+          "currentPlan",
+          "error",
+          "SAVE/REPAYE permanently ended March 10, 2026. You must select a new plan by September 30, 2026 or you will be placed on the standard plan.",
+        ),
+      );
+    }
+
+    if (input.monthsInSaveForbearance > 0) {
+      flags.push(
+        makeFlag(
+          "monthsInSaveForbearance",
+          "warning",
+          `${input.monthsInSaveForbearance} months in SAVE forbearance do NOT count toward IDR or PSLF forgiveness.`,
+        ),
+      );
+    }
+
+    // Parent PLUS consolidation deadline
+    if (input.isParentPlusLoan && !input.hasConsolidatedLoans) {
+      flags.push(
+        makeFlag(
+          "isParentPlusLoan",
+          "error",
+          "URGENT: Consolidate Parent PLUS loans before July 1, 2026 to access IBR. After that date, only ICR (most expensive IDR plan) will be available.",
+        ),
+      );
+    }
+
+    // PSLF non-profit employer risk under 2026 rules
+    if (pslf && input.employerType === "nonprofit") {
+      flags.push(
+        makeFlag(
+          "employerType",
+          "review",
+          "Under 2026 PSLF changes, forgiveness is denied if non-profit employer engages in politically targeted activities. Verify employer certification annually.",
+        ),
+      );
+    }
+
     const plans = computeRepaymentPlans(input);
     const eligiblePlans = plans.filter((p) => p.eligible);
     const lowestPayment = eligiblePlans.length > 0
       ? eligiblePlans.reduce((min, p) => (p.monthlyPayment < min.monthlyPayment ? p : min), eligiblePlans[0]!)
       : null;
 
-    const pslMonthsRemaining = pslf ? Math.max(0, 120 - input.monthsOfQualifyingPayments) : null;
+    const qualifyingPSLFPayments = Math.min(input.monthsOfPSLFEmployment, input.monthsOfQualifyingPayments);
+    const pslMonthsRemaining = pslf ? Math.max(0, 120 - qualifyingPSLFPayments) : null;
 
     const checks = [
       makeCheck(
@@ -512,8 +621,19 @@ const studentLoanRepaymentWorkflow = {
         totalFederalBalance,
         pslf,
         pslMonthsRemaining,
+        qualifyingPSLFPayments: pslf ? qualifyingPSLFPayments : 0,
+        monthsOfPSLFEmployment: input.monthsOfPSLFEmployment,
         discretionaryIncome: discretionaryIncome(input.annualIncome, input.householdSize),
         fpl: federalPovertyLevel(input.householdSize),
+        saveTransition: {
+          currentPlan: input.currentPlan,
+          monthsInSaveForbearance: input.monthsInSaveForbearance,
+          isParentPlusLoan: input.isParentPlusLoan,
+          hasConsolidatedLoans: input.hasConsolidatedLoans,
+          consolidationDeadline: input.isParentPlusLoan && !input.hasConsolidatedLoans ? "2026-07-01" : null,
+          saveEnded: true,
+          transitionDeadline: "2026-09-30",
+        },
       },
       validation: { checks, flaggedFields: flags },
       review: buildGenericSummary(
@@ -529,6 +649,15 @@ const studentLoanRepaymentWorkflow = {
             ? `Lowest monthly payment: ${lowestPayment.name} at ${currency(lowestPayment.monthlyPayment)}/month.`
             : "No eligible IDR plans.",
           `PSLF eligible: ${pslf ? "yes" : "no"}.${pslf && pslMonthsRemaining !== null ? ` ${pslMonthsRemaining} qualifying months remaining.` : ""}`,
+          ...(input.currentPlan === "SAVE" || input.currentPlan === "REPAYE"
+            ? ["SAVE/REPAYE ended March 10, 2026. Transition to a new plan by September 30, 2026."]
+            : []),
+          ...(input.monthsInSaveForbearance > 0
+            ? [`${input.monthsInSaveForbearance} months in SAVE forbearance did NOT count toward forgiveness.`]
+            : []),
+          ...(input.isParentPlusLoan && !input.hasConsolidatedLoans
+            ? ["URGENT: Consolidate Parent PLUS loans before July 1, 2026 to preserve IBR access."]
+            : []),
         ],
       ),
       outputArtifacts: genericArtifacts("education-student-loan-repayment", evidence),

@@ -25,17 +25,25 @@ const LIFE_EVENTS = [
   { id: "job-loss", icon: "Alert", label: "Job loss", description: "Unemployment, insurance, benefits screening.", workflowCount: 6 },
   { id: "retirement", icon: "Clock", label: "Retirement", description: "Social Security, Medicare, estate planning.", workflowCount: 6 },
   { id: "moving-states", icon: "Map", label: "Moving states", description: "Voter registration, ID, state taxes, benefits transfer.", workflowCount: 5 },
-  { id: "death-of-spouse", icon: "Heart", label: "Death of spouse", description: "Survivor benefits, probate, tax, insurance.", workflowCount: 5 },
+  { id: "death-of-spouse", icon: "Heart", label: "Death of spouse", description: "Survivor benefits, probate, tax, insurance.", workflowCount: 21 },
   { id: "buying-home", icon: "Home", label: "Buying a home", description: "Tax deductions, permits, estate planning.", workflowCount: 4 },
   { id: "starting-business", icon: "Biz", label: "Starting a business", description: "Licenses, permits, Schedule C, insurance.", workflowCount: 4 },
   { id: "becoming-disabled", icon: "Aid", label: "Becoming disabled", description: "SSDI, Medicaid, VA claims, estate directives.", workflowCount: 7 },
   { id: "aging-into-medicare", icon: "65", label: "Turning 65", description: "Medicare enrollment, Social Security, directives.", workflowCount: 3 },
   { id: "immigration-status-change", icon: "Flag", label: "Immigration status change", description: "Naturalization, work auth, voter reg, passport.", workflowCount: 7 },
+  { id: "lost-health-insurance", icon: "Med", label: "Lost health insurance", description: "ACA special enrollment, Medicaid, CHIP, COBRA options.", workflowCount: 5 },
+  { id: "had-income-change", icon: "$$", label: "Income change", description: "Benefits recertification, IDR recalc, APTC adjustment.", workflowCount: 6 },
+  { id: "arrested-or-convicted", icon: "Gavel", label: "Arrested or convicted", description: "Expungement, collateral consequences, benefit impacts.", workflowCount: 5 },
+  { id: "natural-disaster", icon: "Storm", label: "Natural disaster", description: "D-SNAP, LIHEAP emergency, casualty loss, FEMA aid.", workflowCount: 5 },
+  { id: "turning-18", icon: "18", label: "Turning 18", description: "Voter registration, FAFSA, REAL ID, selective service.", workflowCount: 6 },
+  { id: "turning-26", icon: "26", label: "Turning 26", description: "Aging off parent's insurance, ACA enrollment.", workflowCount: 3 },
+  { id: "child-turning-18", icon: "Grad", label: "Child turning 18", description: "SSI/SSDI transition, child support, tax changes.", workflowCount: 5 },
+  { id: "received-inheritance", icon: "Gift", label: "Received inheritance", description: "Medicaid/SSI asset reporting, estate tax, probate.", workflowCount: 5 },
 ];
 
-// All 34 workflows
+// All 36 workflows
 const ALL_WORKFLOWS = [
-  { id: "tax/1040", domain: "tax", title: "Federal individual return", summary: "Form 1040 with Schedule 1, Schedule C, Schedule B, Schedule D, and Form 8949 for the 2025 filing season.", status: "active", audience: "household" },
+  { id: "tax/1040", domain: "tax", title: "Federal individual return", summary: "Form 1040 with OBBB Act deductions, capital gains (Schedule D/8949), NIIT, and 10-state tax integration for the 2025 filing season.", status: "active", audience: "household" },
   { id: "immigration/family-visa-intake", domain: "immigration", title: "Family visa packet intake", summary: "Build a household-centered family visa or adjustment packet checklist before attorney or human review.", status: "active", audience: "household" },
   { id: "immigration/naturalization", domain: "immigration", title: "Naturalization eligibility review", summary: "N-400 eligibility assessment with residence, physical presence, and civics readiness checks.", status: "active", audience: "individual" },
   { id: "immigration/green-card-renewal", domain: "immigration", title: "Green card renewal", summary: "I-90 filing organizer for green card renewal or replacement.", status: "active", audience: "individual" },
@@ -44,7 +52,7 @@ const ALL_WORKFLOWS = [
   { id: "healthcare/aca-enrollment", domain: "healthcare", title: "Healthcare enrollment planner", summary: "Organize household, income, and coverage evidence for marketplace enrollment review.", status: "active", audience: "household" },
   { id: "healthcare/medicare-enrollment", domain: "healthcare", title: "Medicare enrollment planner", summary: "Medicare eligibility assessment with IRMAA calculation and late enrollment penalty estimation.", status: "active", audience: "individual" },
   { id: "education/fafsa", domain: "education", title: "FAFSA readiness planner", summary: "FAFSA readiness assessment with dependency status, income documentation, and school selection.", status: "active", audience: "individual" },
-  { id: "education/student-loan-repayment", domain: "education", title: "Student loan repayment planner", summary: "IDR comparison for federal student loans with SAVE, PAYE, IBR, and ICR estimates.", status: "active", audience: "individual" },
+  { id: "education/student-loan-repayment", domain: "education", title: "Student loan repayment planner", summary: "IDR comparison with SAVE transition advisor, PSLF tracking, and RAP/IBR/ICR plan comparison.", status: "active", audience: "individual" },
   { id: "education/529-planner", domain: "education", title: "529 savings planner", summary: "Project 529 plan growth and explore state tax deduction benefits.", status: "active", audience: "household" },
   { id: "unemployment/claim-intake", domain: "unemployment", title: "Unemployment claim intake", summary: "Organize claimant identity, separation facts, and wage evidence for state unemployment review.", status: "active", audience: "individual" },
   { id: "benefits/snap", domain: "benefits", title: "SNAP benefits eligibility", summary: "SNAP (food stamps) eligibility assessment using FPL-based income tests and benefit estimation.", status: "active", audience: "household" },
@@ -69,6 +77,8 @@ const ALL_WORKFLOWS = [
   { id: "retirement/ssa-estimator", domain: "retirement", title: "Social Security benefit estimator", summary: "Estimate Social Security retirement benefits at ages 62, 67, and 70 using AIME/PIA calculation.", status: "active", audience: "individual" },
   { id: "business/license-starter", domain: "business", title: "Business license planner", summary: "Map local license, zoning, and entity-registration follow-up tasks for a new business.", status: "preview", audience: "business" },
   { id: "permits/local-permit-planner", domain: "permits", title: "Local permit planner", summary: "Local permit scoping and evidence collection for construction, renovation, and zoning.", status: "preview", audience: "individual" },
+  { id: "benefits/ssi", domain: "benefits", title: "SSI eligibility assessment", summary: "Supplemental Security Income eligibility for aged 65+, blind, or disabled with income exclusion math and state supplements.", status: "active", audience: "individual" },
+  { id: "benefits/tanf", domain: "benefits", title: "TANF cash assistance", summary: "Temporary Assistance for Needy Families with state-specific benefits, time limits, and categorical eligibility chains.", status: "active", audience: "household" },
 ];
 
 async function loadCatalog() {

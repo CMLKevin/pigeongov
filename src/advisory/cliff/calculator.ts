@@ -10,7 +10,7 @@
  */
 
 import type { CliffAnalysis } from "../../types.js";
-import { PROGRAMS, fplPercent, getFpl } from "./programs.js";
+import { PROGRAMS, fplPercent, getFpl, SSI_FBR_INDIVIDUAL_ANNUAL } from "./programs.js";
 
 export interface CliffInput {
   annualIncome: number;
@@ -162,6 +162,13 @@ function buildRecommendation(
     text +=
       `To safely increase income without a net loss, aim for at least ` +
       `$${safeThreshold.toLocaleString()}/year — a raise of $${raiseNeeded.toLocaleString()}/year.`;
+  }
+
+  // Note potential SSI eligibility (requires age/blind/disabled which
+  // cliff analysis doesn't track)
+  if (income < SSI_FBR_INDIVIDUAL_ANNUAL) {
+    text +=
+      ` Note: If any household member is 65+, blind, or disabled, they may also qualify for SSI (Supplemental Security Income).`;
   }
 
   return text;

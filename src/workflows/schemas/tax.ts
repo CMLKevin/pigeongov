@@ -49,6 +49,29 @@ export const taxInputSchema = z
     itemizedDeductions: z.coerce.number().default(0),
     federalWithheld: z.coerce.number().default(0),
     estimatedPayments: z.coerce.number().default(0),
+    // OBBB Act fields
+    tipIncome: z.coerce.number().default(0),
+    overtimePay: z.coerce.number().default(0),
+    autoLoanInterest: z.coerce.number().default(0),
+    taxpayerAge: z.coerce.number().default(0),
+    spouseAge: z.coerce.number().default(0),
+    saltDeduction: z.coerce.number().default(0),
+    // Capital gains
+    capitalGains: z
+      .object({
+        shortTermGains: z.coerce.number().default(0),
+        shortTermLosses: z.coerce.number().default(0),
+        longTermGains: z.coerce.number().default(0),
+        longTermLosses: z.coerce.number().default(0),
+        qualifiedDividends: z.coerce.number().default(0),
+        carryforwardLoss: z.coerce.number().default(0),
+      })
+      .strict()
+      .optional(),
+    // State tax fields
+    stateCode: z.string().trim().toUpperCase().optional(),
+    stateWithheld: z.coerce.number().default(0),
+    stateEstimatedPayments: z.coerce.number().default(0),
   })
   .strict();
 

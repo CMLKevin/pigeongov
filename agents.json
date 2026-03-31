@@ -1,6 +1,6 @@
 {
   "name": "pigeongov",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "Local-first, privacy-preserving government workflow platform for U.S. forms and applications",
   "capabilities": ["cli", "mcp", "rest"],
   "cli": {
@@ -38,7 +38,9 @@
       "profile": { "description": "Manage household profile", "args": "show|set|import" },
       "merge": { "description": "Merge multiple PDFs with cover page", "args": "<files...> --output <path>" },
       "serve": { "description": "Start MCP server", "args": "[--port <port>]" },
-      "doctor": { "description": "System diagnostics", "args": "" }
+      "doctor": { "description": "System diagnostics", "args": "" },
+      "student-loans": { "description": "Student loan tools: SAVE transition, PSLF tracking, IDR comparison", "args": "transition|pslf|compare" },
+      "state-tax": { "description": "State income tax calculator for 10 states", "args": "[state-code]|list" }
     }
   },
   "mcp": {
@@ -60,7 +62,9 @@
       "pigeongov_screen_eligibility",
       "pigeongov_plan_life_event",
       "pigeongov_list_drafts",
-      "pigeongov_load_draft"
+      "pigeongov_load_draft",
+      "pigeongov_student_loan_transition",
+      "calculate-state-tax"
     ]
   },
   "privacy": {

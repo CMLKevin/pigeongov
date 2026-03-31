@@ -74,6 +74,15 @@ export const studentLoanRepaymentInputSchema = z
     householdSize: z.coerce.number().int().positive().default(1),
     employerType: z.enum(["public", "private", "nonprofit"]),
     monthsOfQualifyingPayments: z.coerce.number().int().nonnegative().default(0),
+    // SAVE transition fields (2026 crisis)
+    currentPlan: z
+      .enum(["SAVE", "PAYE", "IBR", "ICR", "REPAYE", "standard", "none"])
+      .default("none"),
+    monthsInSaveForbearance: z.coerce.number().int().nonnegative().default(0),
+    isParentPlusLoan: z.boolean().default(false),
+    hasConsolidatedLoans: z.boolean().default(false),
+    // PSLF tracking
+    monthsOfPSLFEmployment: z.coerce.number().int().nonnegative().default(0),
   })
   .strict();
 

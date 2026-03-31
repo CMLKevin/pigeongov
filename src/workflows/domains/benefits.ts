@@ -24,6 +24,8 @@ import type {
   SsdiInput,
   WicInput,
 } from "../schemas/benefits.js";
+import { ssiInputSchema, type SsiInput } from "../schemas/ssi.js";
+import { tanfInputSchema, type TanfInput } from "../schemas/tanf.js";
 
 // ---------------------------------------------------------------------------
 // FPL tables (2025)
@@ -507,6 +509,380 @@ function buildSsdiBundle(input: SsdiInput): WorkflowBundle {
 }
 
 // ---------------------------------------------------------------------------
+// SSI constants (2025)
+// ---------------------------------------------------------------------------
+
+/** Federal Benefit Rate 2025 */
+const SSI_FBR_INDIVIDUAL = 967;
+const SSI_FBR_COUPLE = 1_450;
+const SSI_ASSET_LIMIT_INDIVIDUAL = 2_000;
+const SSI_ASSET_LIMIT_COUPLE = 3_000;
+
+/** State SSI supplements — many states add to the federal rate.
+ *  Values are approximate monthly supplement amounts. */
+const SSI_STATE_SUPPLEMENTS: Record<string, { individual: number; couple: number; label: string }> = {
+  CA: { individual: 160, couple: 407, label: "California SSP" },
+  NY: { individual: 87, couple: 104, label: "New York SSI supplement" },
+  MA: { individual: 114, couple: 172, label: "Massachusetts SSI supplement" },
+  NJ: { individual: 37, couple: 51, label: "New Jersey SSI supplement" },
+  CT: { individual: 267, couple: 381, label: "Connecticut SSI supplement" },
+  PA: { individual: 28, couple: 44, label: "Pennsylvania SSI supplement" },
+  VT: { individual: 80, couple: 123, label: "Vermont SSI supplement" },
+  HI: { individual: 12, couple: 18, label: "Hawaii SSI supplement" },
+  WA: { individual: 47, couple: 72, label: "Washington SSI supplement" },
+  NV: { individual: 14, couple: 21, label: "Nevada SSI supplement" },
+};
+
+function computeCountableIncome(
+  earnedMonthly: number,
+  unearnedMonthly: number,
+): { countableEarned: number; countableUnearned: number; totalCountable: number } {
+  // SSI earned income exclusion: first $65 + half remainder
+  const countableEarned = Math.max(0, (earnedMonthly - 65) / 2);
+  // SSI unearned income exclusion: $20 general exclusion
+  const countableUnearned = Math.max(0, unearnedMonthly - 20);
+  return {
+    countableEarned,
+    countableUnearned,
+    totalCountable: countableEarned + countableUnearned,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// benefits/ssi
+// ---------------------------------------------------------------------------
+
+function buildSsiBundle(input: SsiInput): WorkflowBundle {
+  const isCoupleUnit = input.maritalStatus === "married";
+  const fbr = isCoupleUnit ? SSI_FBR_COUPLE : SSI_FBR_INDIVIDUAL;
+  const assetLimit = isCoupleUnit ? SSI_ASSET_LIMIT_COUPLE : SSI_ASSET_LIMIT_INDIVIDUAL;
+
+  // Categorical eligibility: age 65+ OR blind OR disabled
+  const categoricallyEligible = input.age >= 65 || input.isBlind || input.isDisabled;
+
+  // Asset test
+  const assetsPass = input.countableAssets <= assetLimit;
+
+  // Income test
+  const { countableEarned, countableUnearned, totalCountable } = computeCountableIncome(
+    input.monthlyEarnedIncome,
+    input.monthlyUnearnedIncome,
+  );
+  const incomePass = totalCountable < fbr;
+
+  // Estimated monthly SSI payment
+  const estimatedPayment = Math.max(0, Math.round(fbr - totalCountable));
+
+  // State supplement
+  const stateSupplement = SSI_STATE_SUPPLEMENTS[input.state.toUpperCase()];
+  const supplementAmount = stateSupplement
+    ? (isCoupleUnit ? stateSupplement.couple : stateSupplement.individual)
+    : 0;
+  const totalEstimatedMonthly = estimatedPayment + supplementAmount;
+
+  // Living arrangement reduction (Value of the Third, or VTR)
+  const livingReduction =
+    input.livingArrangement === "others_household"
+      ? Math.round(fbr / 3)
+      : input.livingArrangement === "institution"
+        ? Math.max(0, fbr - 30) // Institutional rate: $30/month
+        : 0;
+  const adjustedPayment = Math.max(0, totalEstimatedMonthly - livingReduction);
+
+  // Immediate Medicaid in most states
+  const immediatelMedicaid = input.state.toUpperCase() !== "CT" &&
+    input.state.toUpperCase() !== "HI" &&
+    input.state.toUpperCase() !== "MN" &&
+    input.state.toUpperCase() !== "ND" &&
+    input.state.toUpperCase() !== "OK";
+
+  // Evidence checklist
+  const evidence = [
+    buildEvidenceItem("identity", "Government-issued photo ID", true, true),
+    buildEvidenceItem("ssn-proof", "Social Security card or SSN verification", true, true),
+    buildEvidenceItem("medical-records", "Medical records (if claiming disability)", input.isDisabled, input.isDisabled),
+    buildEvidenceItem("vision-records", "Vision exam records (if claiming blindness)", input.isBlind, input.isBlind),
+    buildEvidenceItem("financial-statements", "Bank statements and financial records", true, input.countableAssets > 0),
+    buildEvidenceItem("income-proof", "Income documentation (pay stubs, benefits letters)", true, input.monthlyEarnedIncome > 0 || input.monthlyUnearnedIncome > 0),
+    buildEvidenceItem("living-arrangement", "Proof of living arrangement (lease, mortgage, letter)", true, input.livingArrangement !== "own_household"),
+    buildEvidenceItem("birth-certificate", "Birth certificate or proof of age", input.age >= 65, input.age >= 65),
+  ];
+
+  const flags: ValidationFlag[] = [];
+  if (!categoricallyEligible) {
+    flags.push(makeFlag("categoricalEligibility", "error", "SSI requires age 65+, blindness, or disability. None of these criteria are met."));
+  }
+  if (!assetsPass) {
+    flags.push(makeFlag("countableAssets", "error", `Countable assets of ${currency(input.countableAssets)} exceed the ${currency(assetLimit)} limit for ${isCoupleUnit ? "couples" : "individuals"}.`));
+  }
+  if (!incomePass) {
+    flags.push(makeFlag("income", "error", `Countable income of ${currency(totalCountable)}/month exceeds the FBR of ${currency(fbr)}/month.`));
+  }
+  if (input.livingArrangement === "institution") {
+    flags.push(makeFlag("livingArrangement", "review", "Institutional living reduces SSI to $30/month. Medicaid typically covers institutional care costs."));
+  }
+  if (input.livingArrangement === "others_household") {
+    flags.push(makeFlag("livingArrangement", "review", "Living in another's household reduces SSI by one-third of the FBR."));
+  }
+  if (input.receivingSSA) {
+    flags.push(makeFlag("receivingSSA", "review", "Other SSA benefits (e.g. Social Security retirement) count as unearned income and reduce SSI dollar-for-dollar after the $20 exclusion."));
+  }
+  if (stateSupplement) {
+    flags.push(makeFlag("stateSupplement", "review", `${input.state.toUpperCase()} provides a state SSI supplement (${stateSupplement.label}): approximately ${currency(isCoupleUnit ? stateSupplement.couple : stateSupplement.individual)}/month.`));
+  }
+  if (immediatelMedicaid && categoricallyEligible && assetsPass && incomePass) {
+    flags.push(makeFlag("medicaid", "review", "SSI recipients in most states are automatically eligible for Medicaid — no separate application needed."));
+  }
+
+  const checks = [
+    makeCheck("categorical", "Categorical eligibility (65+, blind, or disabled)", categoricallyEligible, "error", "Must be age 65+, blind, or disabled."),
+    makeCheck("assets", `Assets under ${currency(assetLimit)}`, assetsPass, "error", `Countable assets must be at or below ${currency(assetLimit)}.`),
+    makeCheck("income", "Income below FBR", incomePass, "error", `Countable income must be below the FBR of ${currency(fbr)}/month.`),
+  ];
+
+  const eligible = categoricallyEligible && assetsPass && incomePass;
+  const readiness = eligible ? "likely eligible" : "may not qualify";
+
+  return {
+    workflowId: "benefits/ssi",
+    domain: "benefits",
+    title: "SSI eligibility assessment",
+    summary: "Supplemental Security Income eligibility assessment with income exclusion calculations. PigeonGov does not submit applications.",
+    applicant: undefined,
+    household: [],
+    evidence,
+    answers: input as unknown as Record<string, unknown>,
+    derived: {
+      fbr,
+      assetLimit,
+      categoricallyEligible,
+      assetsPass,
+      incomePass,
+      countableEarned,
+      countableUnearned,
+      totalCountable,
+      estimatedFederalPayment: estimatedPayment,
+      stateSupplement: supplementAmount,
+      livingReduction,
+      estimatedMonthlyPayment: adjustedPayment,
+      immediatelMedicaid,
+    },
+    validation: { checks, flaggedFields: flags },
+    review: buildGenericSummary(
+      "SSI eligibility",
+      readiness,
+      evidence,
+      flags,
+      [
+        `Applicant: ${input.applicantName || "(not provided)"}. Age: ${input.age}. Marital status: ${input.maritalStatus}.`,
+        `Categorical eligibility: ${categoricallyEligible ? "PASS" : "FAIL"} (${[input.age >= 65 ? "age 65+" : "", input.isBlind ? "blind" : "", input.isDisabled ? "disabled" : ""].filter(Boolean).join(", ") || "none"}).`,
+        `Asset test: ${assetsPass ? "PASS" : "FAIL"}. Assets: ${currency(input.countableAssets)}. Limit: ${currency(assetLimit)}.`,
+        `Earned income: ${currency(input.monthlyEarnedIncome)}/mo. Countable after exclusions: ${currency(countableEarned)}/mo.`,
+        `Unearned income: ${currency(input.monthlyUnearnedIncome)}/mo. Countable after exclusions: ${currency(countableUnearned)}/mo.`,
+        `Total countable income: ${currency(totalCountable)}/mo. FBR: ${currency(fbr)}/mo.`,
+        `Estimated federal SSI payment: ${currency(estimatedPayment)}/mo.`,
+        stateSupplement ? `State supplement (${stateSupplement.label}): ${currency(supplementAmount)}/mo.` : "",
+        livingReduction > 0 ? `Living arrangement reduction: -${currency(livingReduction)}/mo.` : "",
+        `Estimated total monthly payment: ${currency(adjustedPayment)}/mo.`,
+        immediatelMedicaid && eligible ? "Automatic Medicaid eligibility in this state." : "",
+      ].filter(Boolean),
+    ),
+    outputArtifacts: genericArtifacts("benefits-ssi", evidence),
+    provenance: ["workflow-registry"],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// TANF constants and state benefit lookup
+// ---------------------------------------------------------------------------
+
+/** TANF maximum monthly benefits for top-10 states (family of 3, 2025 approx).
+ *  All others use a federal average. */
+const TANF_STATE_MAX_BENEFITS: Record<string, number> = {
+  CA: 878,
+  NY: 789,
+  MA: 633,
+  CT: 698,
+  NH: 1_086,
+  WA: 621,
+  VT: 699,
+  MN: 532,
+  WI: 653,
+  MD: 727,
+};
+
+const TANF_FEDERAL_AVERAGE = 492; // Approximate national average TANF max for family of 3
+
+/** TANF asset limits by state (approximate). Most states are $2,000-$3,000;
+ *  some have eliminated asset tests entirely. */
+const TANF_STATE_ASSET_LIMITS: Record<string, number | null> = {
+  CA: null,   // No asset test
+  NY: 2_000,
+  TX: 1_000,
+  FL: 2_000,
+  OH: null,   // No asset test
+  IL: null,   // No asset test
+  VA: null,   // No asset test
+  AL: 2_000,
+  LA: 2_000,
+  CO: null,   // No asset test
+};
+
+const TANF_DEFAULT_ASSET_LIMIT = 2_000;
+const TANF_FEDERAL_TIME_LIMIT = 60; // months
+
+function getTanfMaxBenefit(state: string): number {
+  return TANF_STATE_MAX_BENEFITS[state.toUpperCase()] ?? TANF_FEDERAL_AVERAGE;
+}
+
+function getTanfAssetLimit(state: string): number | null {
+  const upper = state.toUpperCase();
+  if (upper in TANF_STATE_ASSET_LIMITS) {
+    return TANF_STATE_ASSET_LIMITS[upper]!;
+  }
+  return TANF_DEFAULT_ASSET_LIMIT;
+}
+
+// ---------------------------------------------------------------------------
+// benefits/tanf
+// ---------------------------------------------------------------------------
+
+function buildTanfBundle(input: TanfInput): WorkflowBundle {
+  const fpl = fplForSize(input.householdSize);
+  const monthlyFpl = fpl / 12;
+
+  // Has children test
+  const hasChildren = input.numberOfChildren > 0;
+
+  // Income test: typically 50% FPL for initial eligibility
+  const incomeThreshold50 = monthlyFpl * 0.5;
+  const incomePass = input.monthlyGrossIncome <= incomeThreshold50;
+
+  // Asset test (state-dependent)
+  const stateAssetLimit = getTanfAssetLimit(input.state);
+  const assetsPass = stateAssetLimit === null || input.countableAssets <= stateAssetLimit;
+
+  // Time limit
+  const monthsRemaining = Math.max(0, TANF_FEDERAL_TIME_LIMIT - input.monthsReceived);
+  const timeLimitExhausted = monthsRemaining <= 0;
+
+  // Citizenship
+  const citizenshipPass = input.citizenshipStatus !== "other";
+
+  // Estimated benefit
+  const maxBenefit = getTanfMaxBenefit(input.state);
+  // Benefit reduces roughly by income: simplified model
+  const incomeReduction = Math.round(input.monthlyGrossIncome * 0.5);
+  const estimatedBenefit = Math.max(0, maxBenefit - incomeReduction);
+
+  // Work requirements
+  const workRequirementApplies = input.monthsReceived >= 24 && input.youngestChildAge >= 1;
+  const workHoursNeeded = input.youngestChildAge < 6 ? 20 : 30;
+
+  // Categorical eligibility triggers
+  const triggersSNAP = hasChildren && incomePass;
+  const triggersMedicaid = hasChildren && incomePass;
+
+  const evidence = [
+    buildEvidenceItem("identity", "Government-issued photo ID", true, true),
+    buildEvidenceItem("income-verification", "Income verification (pay stubs, tax return)", true, input.monthlyGrossIncome > 0),
+    buildEvidenceItem("children-proof", "Birth certificates or custody documents for children", hasChildren, hasChildren),
+    buildEvidenceItem("citizenship-docs", "Citizenship or immigration status documentation", true, input.citizenshipStatus === "us_citizen"),
+    buildEvidenceItem("asset-docs", "Bank statements and financial records", stateAssetLimit !== null, input.countableAssets > 0),
+    buildEvidenceItem("residency", "Proof of state residency", true, true),
+    buildEvidenceItem("employment-docs", "Employment verification or job search records", input.isEmployed || workRequirementApplies, input.isEmployed),
+  ];
+
+  const flags: ValidationFlag[] = [];
+  if (!hasChildren) {
+    flags.push(makeFlag("numberOfChildren", "error", "TANF requires at least one dependent child under 18 in the household."));
+  }
+  if (!incomePass) {
+    flags.push(makeFlag("monthlyGrossIncome", "error", `Monthly income ${currency(input.monthlyGrossIncome)} exceeds approximately 50% FPL threshold of ${currency(incomeThreshold50)}/month.`));
+  }
+  if (!assetsPass) {
+    flags.push(makeFlag("countableAssets", "error", `Countable assets ${currency(input.countableAssets)} exceed ${input.state.toUpperCase()} limit of ${currency(stateAssetLimit!)}.`));
+  }
+  if (timeLimitExhausted) {
+    flags.push(makeFlag("monthsReceived", "error", `Federal 60-month lifetime limit exhausted (${input.monthsReceived} months received). Some states offer extensions.`));
+  } else if (monthsRemaining <= 12) {
+    flags.push(makeFlag("monthsReceived", "warning", `Only ${monthsRemaining} month(s) remaining of the 60-month federal lifetime limit.`));
+  }
+  if (input.citizenshipStatus === "other") {
+    flags.push(makeFlag("citizenshipStatus", "error", "TANF generally requires US citizenship or qualified alien status (5-year waiting period for most qualified aliens)."));
+  }
+  if (workRequirementApplies) {
+    flags.push(makeFlag("workRequirement", "review", `Work requirement applies: ${workHoursNeeded} hours/week of work activity required after 24 months.`));
+  }
+  if (triggersSNAP) {
+    flags.push(makeFlag("snapEligibility", "review", "TANF receipt categorically qualifies your household for SNAP benefits."));
+  }
+  if (triggersMedicaid) {
+    flags.push(makeFlag("medicaidEligibility", "review", "TANF families often qualify for Medicaid — check your state's automatic enrollment rules."));
+  }
+
+  const checks = [
+    makeCheck("has-children", "Has dependent children", hasChildren, "error", "Must have at least one child under 18."),
+    makeCheck("income-test", "Income below ~50% FPL", incomePass, "error", `Monthly income must be at or below ~${currency(incomeThreshold50)}.`),
+    makeCheck("asset-test", "Assets within state limit", assetsPass, "error", stateAssetLimit !== null ? `Assets must be at or below ${currency(stateAssetLimit)}.` : "No asset test in this state."),
+    makeCheck("time-limit", "Within 60-month federal limit", !timeLimitExhausted, "error", `${monthsRemaining} months remaining of 60-month limit.`),
+    makeCheck("citizenship", "Citizenship/immigration status", citizenshipPass, "error", "Must be US citizen or qualified alien."),
+  ];
+
+  const eligible = hasChildren && incomePass && assetsPass && !timeLimitExhausted && citizenshipPass;
+  const readiness = eligible ? "likely eligible" : "may not qualify";
+
+  return {
+    workflowId: "benefits/tanf",
+    domain: "benefits",
+    title: "TANF cash assistance eligibility",
+    summary: "TANF eligibility assessment with state-specific benefit estimation. PigeonGov does not submit applications.",
+    applicant: undefined,
+    household: [],
+    evidence,
+    answers: input as unknown as Record<string, unknown>,
+    derived: {
+      fpl,
+      incomeThreshold50,
+      incomePass,
+      hasChildren,
+      assetsPass,
+      stateAssetLimit,
+      monthsRemaining,
+      timeLimitExhausted,
+      workRequirementApplies,
+      workHoursNeeded,
+      maxBenefit,
+      estimatedMonthlyBenefit: estimatedBenefit,
+      triggersSNAP,
+      triggersMedicaid,
+    },
+    validation: { checks, flaggedFields: flags },
+    review: buildGenericSummary(
+      "TANF eligibility",
+      readiness,
+      evidence,
+      flags,
+      [
+        `Applicant: ${input.applicantName || "(not provided)"}. State: ${input.state}. Household size: ${input.householdSize}.`,
+        `Children: ${input.numberOfChildren}. Youngest child age: ${input.youngestChildAge}.`,
+        `Monthly gross income: ${currency(input.monthlyGrossIncome)}. ~50% FPL threshold: ${currency(incomeThreshold50)}.`,
+        stateAssetLimit !== null
+          ? `Assets: ${currency(input.countableAssets)}. State limit: ${currency(stateAssetLimit)}.`
+          : `Assets: ${currency(input.countableAssets)}. ${input.state.toUpperCase()} has no asset test.`,
+        `Federal time limit: ${input.monthsReceived}/${TANF_FEDERAL_TIME_LIMIT} months used. ${monthsRemaining} months remaining.`,
+        `Estimated monthly benefit: ${currency(estimatedBenefit)} (state max: ${currency(maxBenefit)}).`,
+        workRequirementApplies ? `Work requirement: ${workHoursNeeded} hours/week after 24 months.` : "",
+        triggersSNAP ? "TANF receipt categorically qualifies for SNAP." : "",
+        triggersMedicaid ? "TANF families often qualify for Medicaid." : "",
+      ].filter(Boolean),
+    ),
+    outputArtifacts: genericArtifacts("benefits-tanf", evidence),
+    provenance: ["workflow-registry"],
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Export
 // ---------------------------------------------------------------------------
 
@@ -855,4 +1231,163 @@ export const benefitsWorkflows = {
     ],
     buildBundle: buildSsdiBundle,
   } satisfies WorkflowDefinition<SsdiInput>,
+
+  "benefits/ssi": {
+    summary: {
+      id: "benefits/ssi",
+      domain: "benefits",
+      title: "SSI eligibility assessment",
+      summary: "Supplemental Security Income eligibility with income exclusion calculations, asset testing, and state supplement information.",
+      status: "active",
+      audience: "individual",
+      tags: ["ssi", "supplemental-security-income", "disability", "elderly", "benefits", "ssa"],
+    },
+    inputSchema: ssiInputSchema,
+    starterData: {
+      applicantName: "",
+      age: 0,
+      isBlind: false,
+      isDisabled: false,
+      maritalStatus: "single",
+      countableAssets: 0,
+      monthlyEarnedIncome: 0,
+      monthlyUnearnedIncome: 0,
+      state: "CA",
+      receivingSSA: false,
+      livingArrangement: "own_household",
+    } satisfies SsiInput,
+    sections: [
+      {
+        id: "applicant",
+        title: "Applicant",
+        fields: [
+          { key: "applicantName", label: "Applicant name", type: "text" },
+          { key: "age", label: "Age", type: "number" },
+          {
+            key: "maritalStatus",
+            label: "Marital status",
+            type: "select",
+            options: [
+              { label: "Single", value: "single" },
+              { label: "Married", value: "married" },
+            ],
+          },
+          { key: "state", label: "State", type: "text" },
+        ],
+      },
+      {
+        id: "disability",
+        title: "Disability / Blindness",
+        fields: [
+          { key: "isDisabled", label: "Has a qualifying disability", type: "confirm" },
+          { key: "isBlind", label: "Is legally blind", type: "confirm" },
+        ],
+      },
+      {
+        id: "income",
+        title: "Monthly Income",
+        fields: [
+          { key: "monthlyEarnedIncome", label: "Monthly earned income (wages)", type: "currency" },
+          { key: "monthlyUnearnedIncome", label: "Monthly unearned income (SSA, pensions, etc.)", type: "currency" },
+          { key: "receivingSSA", label: "Receiving other Social Security benefits", type: "confirm" },
+        ],
+      },
+      {
+        id: "assets",
+        title: "Assets",
+        fields: [
+          { key: "countableAssets", label: "Total countable assets", type: "currency", helpText: "Exclude primary home, one vehicle, burial funds up to $1,500" },
+        ],
+      },
+      {
+        id: "living",
+        title: "Living Arrangement",
+        fields: [
+          {
+            key: "livingArrangement",
+            label: "Living arrangement",
+            type: "select",
+            options: [
+              { label: "Own household", value: "own_household" },
+              { label: "Living in another's household", value: "others_household" },
+              { label: "Institution (nursing home, etc.)", value: "institution" },
+            ],
+          },
+        ],
+      },
+    ],
+    buildBundle: buildSsiBundle,
+  } satisfies WorkflowDefinition<SsiInput>,
+
+  "benefits/tanf": {
+    summary: {
+      id: "benefits/tanf",
+      domain: "benefits",
+      title: "TANF cash assistance eligibility",
+      summary: "TANF eligibility assessment with state-specific benefit estimation, time limit tracking, and cross-program triggers.",
+      status: "active",
+      audience: "household",
+      tags: ["tanf", "cash-assistance", "welfare", "families", "children", "benefits"],
+    },
+    inputSchema: tanfInputSchema,
+    starterData: {
+      applicantName: "",
+      state: "CA",
+      householdSize: 1,
+      numberOfChildren: 0,
+      youngestChildAge: 0,
+      monthlyGrossIncome: 0,
+      countableAssets: 0,
+      monthsReceived: 0,
+      isEmployed: false,
+      citizenshipStatus: "us_citizen",
+    } satisfies TanfInput,
+    sections: [
+      {
+        id: "household",
+        title: "Household",
+        fields: [
+          { key: "applicantName", label: "Applicant name", type: "text" },
+          { key: "state", label: "State", type: "text" },
+          { key: "householdSize", label: "Household size", type: "number" },
+          { key: "numberOfChildren", label: "Number of children under 18", type: "number" },
+          { key: "youngestChildAge", label: "Age of youngest child", type: "number" },
+        ],
+      },
+      {
+        id: "income",
+        title: "Income & Assets",
+        fields: [
+          { key: "monthlyGrossIncome", label: "Monthly gross income", type: "currency" },
+          { key: "countableAssets", label: "Countable assets", type: "currency" },
+          { key: "isEmployed", label: "Currently employed", type: "confirm" },
+        ],
+      },
+      {
+        id: "history",
+        title: "TANF History",
+        fields: [
+          { key: "monthsReceived", label: "Months of TANF already received", type: "number", helpText: "Federal lifetime limit is 60 months" },
+        ],
+      },
+      {
+        id: "citizenship",
+        title: "Citizenship",
+        fields: [
+          {
+            key: "citizenshipStatus",
+            label: "Citizenship status",
+            type: "select",
+            options: [
+              { label: "US citizen", value: "us_citizen" },
+              { label: "Permanent resident", value: "permanent_resident" },
+              { label: "Qualified alien", value: "qualified_alien" },
+              { label: "Other", value: "other" },
+            ],
+          },
+        ],
+      },
+    ],
+    buildBundle: buildTanfBundle,
+  } satisfies WorkflowDefinition<TanfInput>,
 } as const;

@@ -15,7 +15,7 @@ export { form8949Meta, form8949Schema } from "./form-8949.js";
 export { schedule1Meta, schedule1Schema } from "./schedule-1.js";
 export { scheduleBMeta, scheduleBSchema } from "./schedule-b.js";
 export { scheduleCMeta, scheduleCSchema } from "./schedule-c.js";
-export { scheduleDMeta, scheduleDSchema } from "./schedule-d.js";
+export { scheduleDMeta, scheduleDSchema, type ScheduleDSchema } from "./schedule-d.js";
 export { w2Meta, w2Schema } from "./w2.js";
 
 export const schemaRegistry = {

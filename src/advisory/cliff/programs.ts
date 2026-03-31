@@ -6,6 +6,8 @@
  * continental baseline here — conservative is honest.
  */
 
+import { getStateMedicaidLimits } from "./state-medicaid.js";
+
 // --- FPL 2025 ---
 
 export const FPL_BASE = 15_650;
@@ -65,6 +67,16 @@ function getSnapMaxAllotment(householdSize: number): number {
   return (SNAP_MAX_ALLOTMENTS[8] ?? 1_756) + (householdSize - 8) * 220;
 }
 
+// SSI Federal Benefit Rate (2025)
+export const SSI_FBR_INDIVIDUAL_ANNUAL = 967 * 12; // $11,604/year
+
+// TANF simplified benefit model
+const TANF_AVG_MONTHLY = 492;
+
+// CCDF (childcare) — simplified: eligible below 85% state median income
+// We approximate state median income as ~200% FPL for simplicity
+const CCDF_INCOME_LIMIT_FPL_PCT = 200; // rough proxy for 85% state median
+
 export const PROGRAMS: ProgramDefinition[] = [
   {
     id: "snap",
@@ -88,13 +100,20 @@ export const PROGRAMS: ProgramDefinition[] = [
     name: "Medicaid",
     cutoffFplPercent: 138,
     isEligible: (income, hs, state) => {
-      const cutoff = isMedicaidExpansionState(state ?? "CA") ? 1.38 : 0.40;
-      return income <= getFpl(hs) * cutoff;
+      const limits = getStateMedicaidLimits(state ?? "CA");
+      // For cliff analysis (which doesn't know household composition),
+      // use adultLimit as primary. In non-expansion states with adultLimit=0,
+      // childless adults are simply ineligible — we can't assume children.
+      const cutoffPct = limits.adultLimit;
+      if (cutoffPct <= 0) return false;
+      return income <= getFpl(hs) * (cutoffPct / 100);
     },
     monthlyBenefit: (_income, _hs) => 600,
     cutoffIncome: (hs, state) => {
-      const cutoff = isMedicaidExpansionState(state ?? "CA") ? 1.38 : 0.40;
-      return Math.floor(getFpl(hs) * cutoff);
+      const limits = getStateMedicaidLimits(state ?? "CA");
+      const cutoffPct = limits.adultLimit;
+      if (cutoffPct <= 0) return 0;
+      return Math.floor(getFpl(hs) * (cutoffPct / 100));
     },
   },
   {
@@ -137,5 +156,50 @@ export const PROGRAMS: ProgramDefinition[] = [
     isEligible: (income, hs) => hs >= 2 && income <= getFpl(hs) * 2.0,
     monthlyBenefit: (_income, _hs) => 200,
     cutoffIncome: (hs) => Math.floor(getFpl(hs) * 2.0),
+  },
+  {
+    id: "tanf",
+    name: "TANF (Cash Assistance)",
+    cutoffFplPercent: 50,
+    isEligible: (income, hs) => hs >= 2 && income <= getFpl(hs) * 0.5,
+    monthlyBenefit: (income, hs) => {
+      if (hs < 2 || income > getFpl(hs) * 0.5) return 0;
+      // Base benefit scales with household size (national averages)
+      const baseBenefit = hs <= 1 ? 200 : hs === 2 ? 350 : hs === 3 ? 492 : hs === 4 ? 600 : 600 + (hs - 4) * 80;
+      const monthlyIncome = income / 12;
+      // TANF earned income disregard: $200 standard deduction, then 50% of remainder
+      const countableIncome = Math.max(0, monthlyIncome - 200) * 0.50;
+      return Math.max(0, Math.round(baseBenefit - countableIncome));
+    },
+    cutoffIncome: (hs) => {
+      // Cutoff based on household-size-scaled benefit
+      const baseBenefit = hs <= 1 ? 200 : hs === 2 ? 350 : hs === 3 ? 492 : hs === 4 ? 600 : 600 + (hs - 4) * 80;
+      // Income where benefit reaches 0: solve baseBenefit = (monthlyIncome - 200) * 0.50
+      // monthlyIncome = baseBenefit / 0.50 + 200
+      const impliedCutoff = Math.floor((baseBenefit / 0.50 + 200) * 12);
+      return Math.min(impliedCutoff, Math.floor(getFpl(hs) * 0.5));
+    },
+  },
+  // SSI removed from cliff analysis: eligibility requires categorical
+  // qualification (age 65+, blind, or disabled) that CliffInput doesn't
+  // capture. The benefits screener handles SSI correctly.
+  // If income < SSI_FBR_INDIVIDUAL_ANNUAL, the recommendation text will
+  // note potential SSI eligibility for qualified individuals.
+  {
+    id: "ccdf",
+    name: "CCDF (Childcare Subsidies)",
+    cutoffFplPercent: CCDF_INCOME_LIMIT_FPL_PCT,
+    isEligible: (income, hs) => hs >= 2 && income <= getFpl(hs) * (CCDF_INCOME_LIMIT_FPL_PCT / 100),
+    monthlyBenefit: (income, hs) => {
+      if (hs < 2 || income > getFpl(hs) * (CCDF_INCOME_LIMIT_FPL_PCT / 100)) return 0;
+      // Simplified benefit: ~$500-$1000/month depending on household size
+      // Larger households (more children) get more; lower income gets more
+      const baseBenefit = hs >= 4 ? 1_000 : hs >= 3 ? 750 : 500;
+      const pct = fplPercent(income, hs);
+      // Taper: full benefit at 0% FPL, 50% benefit at the cutoff
+      const taper = 1 - (pct / CCDF_INCOME_LIMIT_FPL_PCT) * 0.5;
+      return Math.max(0, Math.round(baseBenefit * taper));
+    },
+    cutoffIncome: (hs) => Math.floor(getFpl(hs) * (CCDF_INCOME_LIMIT_FPL_PCT / 100)),
   },
 ];

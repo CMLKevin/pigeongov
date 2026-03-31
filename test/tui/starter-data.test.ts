@@ -16,9 +16,9 @@ import {
 } from "../../src/workflows/registry.js";
 
 describe("TUI workflow catalog", () => {
-  test("lists all 34 workflows", () => {
+  test("lists all 36 workflows", () => {
     const workflows = listWorkflowSummaries();
-    expect(workflows.length).toBe(34);
+    expect(workflows.length).toBe(36);
   });
 
   test("every workflow has required summary fields", () => {

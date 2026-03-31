@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#7c3aed" />
-    <meta name="description" content="PigeonGov v0.3.0 documentation — CLI reference, workflow catalog, 24 MCP tools, intelligence layer, and developer guides." />
+    <meta name="description" content="PigeonGov v0.4.0 documentation — CLI reference, 36 workflows, 26 MCP tools, OBBB Act tax changes, capital gains, state tax, student loans, and developer guides." />
     <link rel="manifest" href="/manifest.json" />
     <title>PigeonGov Docs</title>
     <link rel="stylesheet" href="/styles.css" />
@@ -48,6 +48,12 @@
             <li><a href="#workflows-by-domain">Workflows by Domain</a></li>
             <li><a href="#tax-engine">Tax Engine</a></li>
             <li><a href="#intelligence">Intelligence Features</a></li>
+            <li><a href="#obbb-act">OBBB Act (2025 Tax)</a></li>
+            <li><a href="#capital-gains">Capital Gains</a></li>
+            <li><a href="#state-tax">State Income Tax</a></li>
+            <li><a href="#student-loans">Student Loan Tools</a></li>
+            <li><a href="#new-benefits">SSI &amp; TANF Benefits</a></li>
+            <li><a href="#life-events-v2">Life Events (20)</a></li>
             <li><a href="#for-agents">For Agents</a></li>
             <li><a href="#for-developers">For Developers</a></li>
             <li><a href="#privacy">Privacy</a></li>
@@ -88,7 +94,7 @@
                 <div class="terminal-dot green"></div>
                 <span class="terminal-title-text">getting started</span>
               </div>
-              <div class="terminal-body"><span class="comment"># List all 34 workflows</span>
+              <div class="terminal-body"><span class="comment"># List all 36 workflows</span>
 <span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">workflows list</span>
 
 <span class="comment"># Fill a federal tax return interactively</span>
@@ -218,6 +224,21 @@
   <span class="command">pigeongov example</span> <span class="string">&lt;workflow-id&gt;</span>
   <span class="dim">Show a complete example bundle for a workflow.</span>
 
+  <span class="command">pigeongov student-loans transition</span>
+  <span class="dim">SAVE plan transition advisor. Compare RAP, IBR, ICR, and Standard plans.</span>
+
+  <span class="command">pigeongov student-loans pslf</span>
+  <span class="dim">Track PSLF progress with employer risk assessment.</span>
+
+  <span class="command">pigeongov student-loans compare</span>
+  <span class="dim">Side-by-side repayment plan comparison table.</span>
+
+  <span class="command">pigeongov state-tax</span> <span class="string">&lt;code&gt;</span>
+  <span class="dim">State tax info and calculation for a supported state.</span>
+
+  <span class="command">pigeongov state-tax list</span>
+  <span class="dim">List all supported state tax calculators.</span>
+
 <span class="heading">Workspace &amp; Data</span>
 
   <span class="command">pigeongov tui</span> <span class="string">[workflow-id]</span>
@@ -272,7 +293,7 @@
           <section id="workflows-by-domain">
             <p class="docs-eyebrow">Catalog</p>
             <h2>Workflows by Domain</h2>
-            <p>PigeonGov includes 34 workflows across 13 government domains. All workflows share the same bundle contract, so the CLI, TUI, site, and MCP all inherit each workflow automatically.</p>
+            <p>PigeonGov includes 36 workflows across 13 government domains. All workflows share the same bundle contract, so the CLI, TUI, site, and MCP all inherit each workflow automatically.</p>
 
             <div class="docs-domain-group">
               <h3><span class="docs-domain-pill pill-tax">Tax</span> <span class="docs-domain-count">1 workflow</span></h3>
@@ -301,7 +322,7 @@
             </div>
 
             <div class="docs-domain-group">
-              <h3><span class="docs-domain-pill pill-benefits">Benefits</span> <span class="docs-domain-count">6 workflows</span></h3>
+              <h3><span class="docs-domain-pill pill-benefits">Benefits</span> <span class="docs-domain-count">8 workflows</span></h3>
               <div class="docs-workflow-grid">
                 <div class="docs-workflow-card"><strong>benefits/snap</strong> <span>SNAP eligibility with FPL income tests and benefit estimation.</span></div>
                 <div class="docs-workflow-card"><strong>benefits/section8</strong> <span>Section 8 Housing Choice Voucher eligibility assessment.</span></div>
@@ -309,6 +330,8 @@
                 <div class="docs-workflow-card"><strong>benefits/liheap</strong> <span>LIHEAP home energy assistance eligibility.</span></div>
                 <div class="docs-workflow-card"><strong>benefits/medicaid</strong> <span>MAGI-based Medicaid eligibility review.</span></div>
                 <div class="docs-workflow-card"><strong>benefits/ssdi-application</strong> <span>SSDI intake with SGA check and five-step evaluation.</span></div>
+                <div class="docs-workflow-card"><strong>benefits/ssi</strong> <span>SSI eligibility for aged 65+, blind, or disabled with asset tests and state supplements.</span></div>
+                <div class="docs-workflow-card"><strong>benefits/tanf</strong> <span>TANF cash assistance with state-specific benefits and categorical eligibility chains.</span></div>
               </div>
             </div>
 
@@ -466,7 +489,7 @@
 
             <h3>Life Event Engine</h3>
             <p>
-              12 life events mapped to prioritized workflow sequences with deadlines.
+              20 life events mapped to prioritized workflow sequences with deadlines.
               "I just lost my job" triggers unemployment, health insurance, benefits screening,
               and tax impact analysis in the right order.
             </p>
@@ -538,7 +561,7 @@
 <span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">screen</span>
 
 <span class="heading">Universal Eligibility Screener</span>
-<span class="dim">Checking 6 benefits programs...</span>
+<span class="dim">Checking 8 benefits programs...</span>
 
 <span class="ok">LIKELY ELIGIBLE</span>  <span class="command">benefits/snap</span>       <span class="dim">est. $459/mo</span>
 <span class="ok">LIKELY ELIGIBLE</span>  <span class="command">benefits/medicaid</span>   <span class="dim">MAGI-based</span>
@@ -668,6 +691,318 @@
             </p>
           </section>
 
+          <!-- ══ OBBB Act ══ -->
+          <section id="obbb-act">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>OBBB Act (2025 Tax Changes)</h2>
+            <p>PigeonGov v0.4.0 implements the One Big Beautiful Bill Act tax changes:</p>
+            <ul>
+              <li><strong>Child Tax Credit</strong>: $2,200 per qualifying child (up from $2,000)</li>
+              <li><strong>SALT Cap</strong>: $40,000 for MFJ/Single/HoH ($20,000 MFS)</li>
+              <li><strong>Tip Income Deduction</strong>: 100% of W-2 tips up to $25,000 (AGI under $160K)</li>
+              <li><strong>Overtime Deduction</strong>: 100% of overtime pay up to $10,000 (AGI under $160K)</li>
+              <li><strong>Auto Loan Interest</strong>: Up to $10,000 for US-manufactured vehicles</li>
+              <li><strong>Senior Deduction</strong>: Additional $2,000 (single) or $1,600/person (married) for age 65+</li>
+            </ul>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">obbb act fields</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">fill</span> <span class="string">tax/1040</span> <span class="flag">--json</span> <span class="flag">--data</span> <span class="string">./return.json</span>
+
+<span class="heading">OBBB Act Deductions Applied</span>
+<span class="cyan">Tip Income Deduction:</span>   -$18,500.00  <span class="dim">(W-2 tips, AGI qualifies)</span>
+<span class="cyan">Overtime Deduction:</span>     -$8,200.00   <span class="dim">(overtime pay, AGI qualifies)</span>
+<span class="cyan">Auto Loan Interest:</span>     -$4,800.00   <span class="dim">(US-manufactured vehicle)</span>
+<span class="cyan">Senior Deduction:</span>       -$2,000.00   <span class="dim">(age 65+, single filer)</span>
+<span class="cyan">SALT (capped):</span>          -$40,000.00  <span class="dim">(MFJ cap applied)</span>
+
+<span class="heading">Credits</span>
+<span class="ok">Child Tax Credit:</span>       -$6,600.00   <span class="dim">($2,200 x 3 qualifying children)</span>
+
+<span class="ok">Bundle saved to ./1040-bundle.json</span></div>
+            </div>
+          </section>
+
+          <!-- ══ Capital Gains ══ -->
+          <section id="capital-gains">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>Capital Gains &amp; Investment Income</h2>
+            <p>Schedule D and Form 8949 are now fully wired to the tax calculator:</p>
+            <ul>
+              <li>Long-term capital gains at 0%, 15%, or 20% preferential rates</li>
+              <li>Net Investment Income Tax (NIIT) at 3.8% for high earners</li>
+              <li>Capital loss netting with $3,000 annual deduction limit</li>
+              <li>Loss carryforward tracking</li>
+              <li>Qualified dividends at LTCG rates</li>
+            </ul>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">capital gains</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">fill</span> <span class="string">tax/1040</span> <span class="flag">--json</span> <span class="flag">--data</span> <span class="string">./investments.json</span>
+
+<span class="heading">Schedule D &mdash; Capital Gains Summary</span>
+<span class="cyan">Short-term gains:</span>    $12,400.00   <span class="dim">(8 transactions)</span>
+<span class="cyan">Short-term losses:</span>   -$3,200.00   <span class="dim">(2 transactions)</span>
+<span class="cyan">Long-term gains:</span>     $45,800.00   <span class="dim">(5 transactions)</span>
+<span class="cyan">Long-term losses:</span>    -$8,100.00   <span class="dim">(1 transaction)</span>
+
+<span class="heading">Tax Treatment</span>
+<span class="yellow">Net ST gain:</span>         $9,200.00    <span class="dim">&rarr; taxed at ordinary rates</span>
+<span class="ok">Net LT gain:</span>         $37,700.00   <span class="dim">&rarr; taxed at 15% preferential rate</span>
+<span class="yellow">NIIT (3.8%):</span>         $1,782.60    <span class="dim">(MAGI above $250K threshold)</span>
+<span class="cyan">Qualified dividends:</span> $2,100.00    <span class="dim">&rarr; taxed at LTCG rate</span>
+
+<span class="ok">Bundle saved to ./1040-bundle.json</span></div>
+            </div>
+          </section>
+
+          <!-- ══ State Tax ══ -->
+          <section id="state-tax">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>State Income Tax</h2>
+            <p>10 state tax calculators integrated: CA, NY, IL, PA, OH, GA, MI, NC, NJ, VA. Plus recognition of 9 no-income-tax states.</p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">state tax list</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">state-tax</span> <span class="string">list</span>
+
+<span class="heading">Supported State Tax Calculators</span>
+
+<span class="ok">Full calculators (10):</span>
+  CA  California         <span class="dim">progressive, 1%&ndash;13.3%</span>
+  NY  New York           <span class="dim">progressive, 4%&ndash;10.9%</span>
+  NJ  New Jersey         <span class="dim">progressive, 1.4%&ndash;10.75%</span>
+  IL  Illinois           <span class="dim">flat, 4.95%</span>
+  PA  Pennsylvania       <span class="dim">flat, 3.07%</span>
+  OH  Ohio               <span class="dim">progressive, 0%&ndash;3.75%</span>
+  GA  Georgia            <span class="dim">progressive, 1%&ndash;5.49%</span>
+  MI  Michigan           <span class="dim">flat, 4.25%</span>
+  NC  North Carolina     <span class="dim">flat, 4.5%</span>
+  VA  Virginia           <span class="dim">progressive, 2%&ndash;5.75%</span>
+
+<span class="dim">No income tax (9):</span> AK, FL, NV, NH, SD, TN, TX, WA, WY</div>
+            </div>
+            <div class="terminal-window docs-terminal" style="margin-top: 16px;">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">state tax calculation</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">state-tax</span> <span class="string">CA</span> <span class="flag">--income</span> <span class="string">95000</span> <span class="flag">--status</span> <span class="string">single</span>
+
+<span class="heading">California Income Tax</span>
+<span class="cyan">Taxable income:</span>  $95,000.00
+<span class="cyan">Filing status:</span>   Single
+
+<span class="heading">Bracket Breakdown</span>
+  1.00%  on first $10,412      <span class="dim">$104.12</span>
+  2.00%  on $10,413&ndash;$24,684   <span class="dim">$285.44</span>
+  4.00%  on $24,685&ndash;$38,959   <span class="dim">$570.96</span>
+  6.00%  on $38,960&ndash;$54,081   <span class="dim">$907.26</span>
+  8.00%  on $54,082&ndash;$68,350   <span class="dim">$1,141.44</span>
+  9.30%  on $68,351&ndash;$95,000   <span class="dim">$2,478.44</span>
+
+<span class="ok">Total CA tax:</span> <span class="ok">$5,487.66</span></div>
+            </div>
+          </section>
+
+          <!-- ══ Student Loans ══ -->
+          <section id="student-loans">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>Student Loan Crisis Tools</h2>
+            <p>The SAVE plan ended March 10, 2026. 7.5 million borrowers need to transition. PigeonGov helps:</p>
+            <ul>
+              <li><code>pigeongov student-loans transition</code> &mdash; Compare RAP, IBR, ICR, and Standard plans</li>
+              <li><code>pigeongov student-loans pslf</code> &mdash; Track PSLF progress with employer risk assessment</li>
+              <li><code>pigeongov student-loans compare</code> &mdash; Side-by-side plan comparison table</li>
+            </ul>
+            <p><strong>Critical deadline:</strong> Consolidate Parent PLUS loans before July 1, 2026.</p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">student loan transition</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">student-loans</span> <span class="string">transition</span>
+
+<span class="heading">SAVE Plan Transition Advisor</span>
+<span class="dim">SAVE ended March 10, 2026. Comparing available plans...</span>
+
+<span class="cyan">Loan balance:</span>    $48,200.00
+<span class="cyan">Monthly income:</span>  $4,800.00
+
+<span class="heading">Plan Comparison</span>
+  <span class="command">RAP</span>            $285/mo   <span class="dim">20 yr forgiveness   total: $68,400</span>
+  <span class="command">IBR</span>            $312/mo   <span class="dim">25 yr forgiveness   total: $93,600</span>
+  <span class="command">ICR</span>            $408/mo   <span class="dim">25 yr forgiveness   total: $122,400</span>
+  <span class="command">Standard</span>       $502/mo   <span class="dim">10 yr payoff        total: $60,240</span>
+
+<span class="ok">Recommended:</span> <span class="ok">RAP</span> <span class="dim">&mdash; lowest monthly payment with forgiveness</span>
+
+<span class="deadline">(!)</span> <span class="deadline">Parent PLUS: consolidate before July 1, 2026</span></div>
+            </div>
+            <div class="terminal-window docs-terminal" style="margin-top: 16px;">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">pslf tracker</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">student-loans</span> <span class="string">pslf</span>
+
+<span class="heading">PSLF Progress Tracker</span>
+
+<span class="cyan">Qualifying payments:</span>  87 / 120
+<span class="cyan">Remaining:</span>            33 payments (2 yr 9 mo)
+<span class="cyan">Employer:</span>             State University Medical Center
+<span class="ok">Employer status:</span>      <span class="ok">Verified 501(c)(3)</span>
+
+<span class="heading">Risk Assessment</span>
+  <span class="ok">&#x25cf;</span> Employer qualifies as public service
+  <span class="ok">&#x25cf;</span> Payment plan is IDR-eligible
+  <span class="yellow">&#x25cf;</span> Verify employment certification is current (last: 8 mo ago)</div>
+            </div>
+          </section>
+
+          <!-- ══ New Benefits ══ -->
+          <section id="new-benefits">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>New Benefits Workflows</h2>
+            <p>Two new workflows join the benefits domain:</p>
+            <ul>
+              <li><strong>SSI (Supplemental Security Income)</strong> &mdash; Asset-based eligibility for aged 65+, blind, or disabled. Income exclusion math, state supplements for 10 states.</li>
+              <li><strong>TANF (Temporary Assistance for Needy Families)</strong> &mdash; Cash assistance for families with children. State-specific benefits, categorical eligibility chains (TANF &rarr; auto-qualifies SNAP/Medicaid).</li>
+            </ul>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">ssi eligibility</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">fill</span> <span class="string">benefits/ssi</span> <span class="flag">--json</span>
+
+<span class="heading">SSI Eligibility Assessment</span>
+
+<span class="cyan">Category:</span>        Age 65+
+<span class="cyan">Countable income:</span> $482/mo  <span class="dim">(after $20 general + $65 earned exclusions)</span>
+<span class="cyan">Resources:</span>       $1,850    <span class="dim">(limit: $2,000 individual)</span>
+
+<span class="ok">LIKELY ELIGIBLE</span>
+<span class="cyan">Federal benefit:</span>  $943/mo   <span class="dim">(2025 FBR)</span>
+<span class="cyan">State supplement:</span> +$160/mo  <span class="dim">(California SSP)</span>
+<span class="ok">Estimated total:</span>  <span class="ok">$1,103/mo</span>
+
+<span class="dim">Categorical eligibility:</span> SSI &rarr; auto-qualifies Medicaid in most states</div>
+            </div>
+            <div class="terminal-window docs-terminal" style="margin-top: 16px;">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">tanf screening</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">fill</span> <span class="string">benefits/tanf</span> <span class="flag">--json</span>
+
+<span class="heading">TANF Eligibility Assessment</span>
+
+<span class="cyan">State:</span>           Texas
+<span class="cyan">Household:</span>       1 adult, 2 children
+<span class="cyan">Monthly income:</span>  $1,200
+
+<span class="ok">LIKELY ELIGIBLE</span>
+<span class="cyan">Estimated benefit:</span> $303/mo  <span class="dim">(TX family of 3)</span>
+<span class="cyan">Time limit:</span>        60 months lifetime <span class="dim">(federal)</span>
+
+<span class="dim">Categorical chains:</span>
+  <span class="ok">&rarr;</span> TANF receipt auto-qualifies <span class="command">benefits/snap</span>
+  <span class="ok">&rarr;</span> TANF receipt auto-qualifies <span class="command">benefits/medicaid</span></div>
+            </div>
+          </section>
+
+          <!-- ══ Life Events v2 ══ -->
+          <section id="life-events-v2">
+            <p class="docs-eyebrow">v0.4.0</p>
+            <h2>Life Events (20 Events)</h2>
+            <p>
+              Expanded from 12 to 20 life events with temporal deadlines and dependency ordering.
+            </p>
+            <p>
+              <strong>New events:</strong> lost-health-insurance, had-income-change, arrested-or-convicted,
+              natural-disaster, turning-18, turning-26, child-turning-18, received-inheritance
+            </p>
+            <p>Use <code>--date</code> to compute concrete deadline dates:</p>
+            <div class="terminal-window docs-terminal">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">life-event with date</span>
+              </div>
+              <div class="terminal-body"><span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">death-of-spouse</span> <span class="flag">--date</span> <span class="string">2026-03-15</span>
+
+<span class="heading">Life Event: Death of spouse</span>
+<span class="dim">Event date: March 15, 2026</span>
+
+<span class="cyan">Action Plan</span> <span class="dim">(8 workflows)</span>
+
+<span class="yellow">--- Phase 1: Immediate (this week) ---</span>
+  <span class="ok">&gt;</span> <span class="command">estate/basic-will</span>       <span class="deadline">(!) [DEADLINE: Mar 22, 2026]</span>
+    <span class="dim">Review/update your own estate documents</span>
+  <span class="ok">&gt;</span> <span class="command">benefits/ssdi-application</span>  <span class="deadline">(!) [DEADLINE: Mar 22, 2026]</span>
+    <span class="dim">Survivor benefits &mdash; notify SSA immediately</span>
+
+<span class="yellow">--- Phase 2: Within 60 days ---</span>
+  <span class="ok">&gt;</span> <span class="command">healthcare/aca-enrollment</span> <span class="deadline">(!) [DEADLINE: May 14, 2026]</span>
+    <span class="dim">Loss of spouse coverage is a qualifying event</span>
+  <span class="ok">&gt;</span> <span class="command">tax/1040</span>
+    <span class="dim">Filing status changes &mdash; may file jointly for 2026</span>
+  <span class="ok">&gt;</span> <span class="command">identity/name-change</span>
+    <span class="dim">Update documents if reverting to prior name</span>
+
+<span class="yellow">--- Phase 3: Within 6 months ---</span>
+  <span class="ok">&gt;</span> <span class="command">estate/power-of-attorney</span>
+    <span class="dim">Designate new POA agent</span>
+  <span class="ok">&gt;</span> <span class="command">retirement/ssa-estimator</span>
+    <span class="dim">Recalculate with survivor benefit options</span>
+  <span class="ok">&gt;</span> <span class="command">benefits/snap</span>
+    <span class="dim">Income change may affect eligibility</span>
+
+<span class="ok">Done.</span> <span class="dim">Run</span> <span class="command">pigeongov fill &lt;workflow-id&gt;</span> <span class="dim">to start any workflow.</span></div>
+            </div>
+            <div class="terminal-window docs-terminal" style="margin-top: 16px;">
+              <div class="terminal-titlebar">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <span class="terminal-title-text">new life events</span>
+              </div>
+              <div class="terminal-body"><span class="comment"># New life events in v0.4.0:</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">lost-health-insurance</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">had-income-change</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">arrested-or-convicted</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">natural-disaster</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">turning-18</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">turning-26</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">child-turning-18</span>
+<span class="prompt">$</span> <span class="command">npx pigeongov</span> <span class="flag">life-event</span> <span class="string">received-inheritance</span></div>
+            </div>
+          </section>
+
           <!-- ══ For Agents ══ -->
           <section id="for-agents">
             <p class="docs-eyebrow">Agent integration</p>
@@ -704,7 +1039,7 @@
   <span class="deadline">10</span>  <span class="command">timeout</span>           <span class="dim">Operation timed out.</span></div>
             </div>
 
-            <h3>MCP tools (24)</h3>
+            <h3>MCP tools (26)</h3>
             <div class="terminal-window docs-terminal">
               <div class="terminal-titlebar">
                 <div class="terminal-dot red"></div>
@@ -740,7 +1075,9 @@
   <span class="command">get-dependencies</span>      <span class="dim">Get cross-agency dependency graph for a workflow.</span>
   <span class="command">calculate-cliff</span>       <span class="dim">Calculate benefits cliff points and safe raise targets.</span>
   <span class="command">track-case</span>            <span class="dim">Track USCIS case status by receipt number.</span>
-  <span class="command">estimate-cost</span>         <span class="dim">Compare DIY vs. attorney costs for a workflow.</span></div>
+  <span class="command">estimate-cost</span>         <span class="dim">Compare DIY vs. attorney costs for a workflow.</span>
+  <span class="command">student-loan-advisor</span>  <span class="dim">SAVE transition advisor with plan comparison and PSLF tracking.</span>
+  <span class="command">calculate-state-tax</span>   <span class="dim">Run state income tax calculation for supported states.</span></div>
             </div>
 
             <h3>Agent guide</h3>

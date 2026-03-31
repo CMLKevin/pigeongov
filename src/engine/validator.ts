@@ -56,6 +56,7 @@ export function validateReturnBundle(bundle: ReturnBundle): ValidationResult {
     (bundle.form1040.lines.line1a ?? 0) +
       (bundle.form1040.lines.line2b ?? 0) +
       (bundle.form1040.lines.line3b ?? 0) +
+      (bundle.form1040.lines.line7 ?? 0) +
       (bundle.form1040.lines.line8 ?? 0),
   );
   const totalIncomeCheck = createCheck(
@@ -113,7 +114,8 @@ export function validateReturnBundle(bundle: ReturnBundle): ValidationResult {
 
   const totalTaxExpected = roundCurrency(
     Math.max(0, (bundle.form1040.lines.line16 ?? 0) - (bundle.form1040.lines.line21 ?? 0)) +
-      (bundle.form1040.lines.line17 ?? 0),
+      (bundle.form1040.lines.line17 ?? 0) +
+      (bundle.calculation.niitTax ?? 0),
   );
   const totalTaxCheck = createCheck(
     "total-tax",

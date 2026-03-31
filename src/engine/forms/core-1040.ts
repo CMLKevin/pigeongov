@@ -37,6 +37,12 @@ function orchestratorInputToCalcInput(
     dependents: input.dependents,
     federalWithheld: input.federalWithheld,
     estimatedPayments: input.estimatedPayments,
+    tipIncome: input.tipIncome,
+    overtimePay: input.overtimePay,
+    autoLoanInterest: input.autoLoanInterest,
+    taxpayerAge: input.taxpayerAge,
+    spouseAge: input.spouseAge,
+    saltDeduction: input.saltDeduction,
   };
 }
 

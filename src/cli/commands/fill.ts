@@ -38,7 +38,7 @@ import {
 } from "../../workflows/registry.js";
 import { loadWorkflowBundle, saveWorkflowBundle } from "../../workflows/io.js";
 
-const PIGEONGOV_VERSION = "0.3.3";
+const PIGEONGOV_VERSION = "0.4.0";
 
 export const fillDataSchema = z
   .object({
@@ -49,6 +49,18 @@ export const fillDataSchema = z
     importedDocuments: z.array(z.any()).default([]),
   })
   .strict();
+
+const capitalGainsInputSchema = z
+  .object({
+    shortTermGains: z.coerce.number().default(0),
+    shortTermLosses: z.coerce.number().default(0),
+    longTermGains: z.coerce.number().default(0),
+    longTermLosses: z.coerce.number().default(0),
+    qualifiedDividends: z.coerce.number().default(0),
+    carryforwardLoss: z.coerce.number().default(0),
+  })
+  .strict()
+  .optional();
 
 const legacyTaxInputDataSchema = z
   .object({
@@ -85,6 +97,19 @@ const legacyTaxInputDataSchema = z
     dependents: z.array(z.any()).default([]),
     federalWithheld: z.coerce.number().default(0),
     estimatedPayments: z.coerce.number().default(0),
+    // OBBB Act fields
+    tipIncome: z.coerce.number().default(0),
+    overtimePay: z.coerce.number().default(0),
+    autoLoanInterest: z.coerce.number().default(0),
+    taxpayerAge: z.coerce.number().default(0),
+    spouseAge: z.coerce.number().default(0),
+    saltDeduction: z.coerce.number().default(0),
+    // Capital gains
+    capitalGains: capitalGainsInputSchema,
+    // State tax fields
+    stateCode: z.string().trim().toUpperCase().optional(),
+    stateWithheld: z.coerce.number().default(0),
+    stateEstimatedPayments: z.coerce.number().default(0),
     expected: z.unknown().optional(),
   })
   .strict();
@@ -299,6 +324,16 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
           dependents: parsedLegacy.data.dependents,
           federalWithheld: parsedLegacy.data.federalWithheld,
           estimatedPayments: parsedLegacy.data.estimatedPayments,
+          tipIncome: parsedLegacy.data.tipIncome,
+          overtimePay: parsedLegacy.data.overtimePay,
+          autoLoanInterest: parsedLegacy.data.autoLoanInterest,
+          taxpayerAge: parsedLegacy.data.taxpayerAge,
+          spouseAge: parsedLegacy.data.spouseAge,
+          saltDeduction: parsedLegacy.data.saltDeduction,
+          capitalGains: parsedLegacy.data.capitalGains,
+          ...(parsedLegacy.data.stateCode ? { stateCode: parsedLegacy.data.stateCode } : {}),
+          ...(parsedLegacy.data.stateWithheld ? { stateWithheld: parsedLegacy.data.stateWithheld } : {}),
+          ...(parsedLegacy.data.stateEstimatedPayments ? { stateEstimatedPayments: parsedLegacy.data.stateEstimatedPayments } : {}),
         },
       };
     }
@@ -318,6 +353,19 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
       const num = (key: string) => Math.max(0, Number(flat[key]) || 0);
       const numSigned = (key: string) => Number(flat[key]) || 0;
       const adjustments = (flat.adjustments ?? {}) as Record<string, number>;
+
+      // Parse optional capitalGains object from flat input
+      const rawCapitalGains = flat.capitalGains as Record<string, unknown> | undefined;
+      const capitalGains = rawCapitalGains
+        ? {
+            shortTermGains: Number(rawCapitalGains.shortTermGains) || 0,
+            shortTermLosses: Number(rawCapitalGains.shortTermLosses) || 0,
+            longTermGains: Number(rawCapitalGains.longTermGains) || 0,
+            longTermLosses: Number(rawCapitalGains.longTermLosses) || 0,
+            qualifiedDividends: Number(rawCapitalGains.qualifiedDividends) || 0,
+            carryforwardLoss: Number(rawCapitalGains.carryforwardLoss) || 0,
+          }
+        : undefined;
 
       const result: BuildReturnBundleInput = {
         formId: "1040",
@@ -345,6 +393,16 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
           dependents,
           federalWithheld: num("federalWithheld"),
           estimatedPayments: num("estimatedPayments"),
+          tipIncome: num("tipIncome"),
+          overtimePay: num("overtimePay"),
+          autoLoanInterest: num("autoLoanInterest"),
+          taxpayerAge: num("taxpayerAge"),
+          spouseAge: num("spouseAge"),
+          saltDeduction: num("saltDeduction"),
+          capitalGains,
+          ...(flat.stateCode ? { stateCode: String(flat.stateCode).toUpperCase() } : {}),
+          ...(flat.stateWithheld ? { stateWithheld: num("stateWithheld") } : {}),
+          ...(flat.stateEstimatedPayments ? { stateEstimatedPayments: num("stateEstimatedPayments") } : {}),
         },
       };
 
@@ -358,6 +416,9 @@ export async function loadWorkflowInput(dataPath: string): Promise<BuildReturnBu
         "wages", "taxableInterest", "ordinaryDividends", "scheduleCNet",
         "otherIncome", "adjustments", "useItemizedDeductions", "itemizedDeductions",
         "federalWithheld", "estimatedPayments",
+        "tipIncome", "overtimePay", "autoLoanInterest", "taxpayerAge", "spouseAge", "saltDeduction",
+        "capitalGains",
+        "stateCode", "stateWithheld", "stateEstimatedPayments",
       ]);
       const unknownKeys = Object.keys(flat).filter((k) => !knownKeys.has(k));
       if (unknownKeys.length > 0) {

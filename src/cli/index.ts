@@ -33,13 +33,15 @@ import { registerTrackCommand } from "./commands/track.js";
 import { registerCostCommand } from "./commands/cost.js";
 import { registerGuideCommand } from "./commands/guide.js";
 import { registerExampleCommand } from "./commands/example.js";
+import { registerStudentLoansCommand } from "./commands/student-loans.js";
+import { registerStateTaxCommand } from "./commands/state-tax.js";
 
 export async function runCli(argv: string[]): Promise<void> {
   const program = new Command();
   program
     .name("pigeongov")
     .description("Local-first CLI for government workflows, packets, and forms")
-    .version("0.3.3");
+    .version("0.4.0");
 
   // Global output options
   program.addOption(new Option("--json", "Output structured JSON to stdout").default(false));
@@ -101,6 +103,8 @@ export async function runCli(argv: string[]): Promise<void> {
   registerCostCommand(program);
   registerGuideCommand(program);
   registerExampleCommand(program);
+  registerStudentLoansCommand(program);
+  registerStateTaxCommand(program);
 
   await program.parseAsync(argv);
 }

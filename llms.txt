@@ -1,6 +1,7 @@
-# PigeonGov
+# PigeonGov v0.4.0
 
 > Local-first, privacy-preserving government workflow platform for U.S. forms and applications
+> 36 workflows | 26 MCP tools | 20 life events | 13 domains
 
 ## Quick Start
 - Install: `npm install -g pigeongov`
@@ -10,12 +11,12 @@
 - MCP server: `pigeongov serve --port 3847`
 
 ## Domains
-- tax: Federal and state tax returns
+- tax: Federal and state tax returns, capital gains (Schedule D/8949), OBBB Act deductions, 10-state tax integration
 - immigration: Visa, naturalization, work authorization
 - healthcare: ACA enrollment, Medicare
 - unemployment: Benefit claims
-- education: FAFSA, student loans, 529 plans
-- benefits: SNAP, Medicaid, Section 8, WIC, LIHEAP, SSDI
+- education: FAFSA, student loans (SAVE transition, PSLF tracking), 529 plans
+- benefits: SNAP, Medicaid, Section 8, WIC, LIHEAP, SSDI, SSI, TANF
 - veterans: Disability claims, GI Bill, VA healthcare
 - identity: Passport, name change, voter registration, Real ID
 - legal: Small claims, expungement, child support modification
@@ -31,18 +32,22 @@
 - Use `pigeongov schemas --workflow <id> --json` for input/output shapes
 - Use `pigeongov start <workflow-id> --json` to get starter data template
 - Pipe commands: `pigeongov extract doc.pdf --json | pigeongov fill tax/1040 --stdin --json`
+- Temporal deadlines: use `--date <YYYY-MM-DD>` flag to check deadlines relative to a specific date
+- Dependency ordering: workflows expose prerequisite chains for multi-step plans
 
 ## Key Commands
-- `pigeongov list [--domain <d>] --json` — list workflows with metadata
+- `pigeongov list [--domain <d>] --json` — list 36 workflows with metadata
 - `pigeongov fill <id> --input <file> --json` — execute workflow from JSON input
 - `pigeongov validate <bundle.json> --json` — validate a saved bundle
 - `pigeongov review <bundle.json> --json` — get review summary
 - `pigeongov extract <pdf...> --json` — extract data from documents
-- `pigeongov deadlines [--workflow <id>] --json` — upcoming deadlines
+- `pigeongov deadlines [--workflow <id>] [--date <YYYY-MM-DD>] --json` — upcoming deadlines with temporal flag
 - `pigeongov fees [--workflow <id>] --json` — filing fees
 - `pigeongov glossary <term> --json` — explain government terminology
 - `pigeongov screen --json` — universal eligibility screener
-- `pigeongov life-event <event> --json` — action plan for life events
+- `pigeongov life-event <event> --json` — action plan for 20 life events
+- `pigeongov student-loans transition|pslf|compare --json` — SAVE transition, PSLF tracking, IDR plan comparison
+- `pigeongov state-tax [state-code]|list --json` — state income tax calculator (CA, NY, IL, PA, OH, GA, MI, NC, NJ, VA)
 
 ## Privacy
 All processing is local. No cloud uploads. No telemetry. No PII in logs. Never auto-submits to any government system.

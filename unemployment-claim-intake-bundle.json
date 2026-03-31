@@ -1,0 +1,150 @@
+{
+  "workflowId": "unemployment/claim-intake",
+  "domain": "unemployment",
+  "title": "Unemployment claim intake",
+  "summary": "State claim intake organizer for identity, wage, and separation facts. PigeonGov does not submit the claim.",
+  "applicant": {
+    "firstName": "Maria",
+    "lastName": "Santos",
+    "ssn": "123-45-6789",
+    "address": {
+      "street1": "456 Oak Avenue",
+      "city": "Sacramento",
+      "state": "CA",
+      "zipCode": "95814"
+    }
+  },
+  "household": [],
+  "evidence": [
+    {
+      "id": "identity",
+      "label": "Identity proof",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "wages",
+      "label": "Wage proof",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    },
+    {
+      "id": "separation-notice",
+      "label": "Separation notice or termination letter",
+      "required": true,
+      "status": "provided",
+      "source": "user-input"
+    }
+  ],
+  "answers": {
+    "applicant": {
+      "firstName": "Maria",
+      "lastName": "Santos",
+      "ssn": "123-45-6789",
+      "address": {
+        "street1": "456 Oak Avenue",
+        "city": "Sacramento",
+        "state": "CA",
+        "zipCode": "95814"
+      }
+    },
+    "stateOfClaim": "CA",
+    "lastEmployerName": "Acme Corp",
+    "lastDayWorked": "2026-03-15",
+    "separationReason": "laid_off",
+    "wagesLast12Months": 80000,
+    "receivingSeverance": false,
+    "availableForWork": true,
+    "identityProofAvailable": true,
+    "wageProofAvailable": true,
+    "separationNoticeAvailable": true
+  },
+  "derived": {
+    "monthlyAverageWages": 6666.666666666667,
+    "readinessState": "review-ready",
+    "separationTrack": "laid_off"
+  },
+  "validation": {
+    "checks": [
+      {
+        "id": "wage-proof",
+        "label": "Wage proof available",
+        "passed": true,
+        "severity": "warning",
+        "message": "Collect wage statements or W-2s before claim review."
+      },
+      {
+        "id": "availability",
+        "label": "Available for work",
+        "passed": true,
+        "severity": "error",
+        "message": "Claimant must usually certify availability for work."
+      },
+      {
+        "id": "employer",
+        "label": "Employer identified",
+        "passed": true,
+        "severity": "error",
+        "message": "Provide the last employer name."
+      }
+    ],
+    "flaggedFields": []
+  },
+  "review": {
+    "headline": "Claim readiness: ready for state portal review (3/3 evidence items ready)",
+    "notes": [
+      "State of claim: CA.",
+      "Last employer: Acme Corp.",
+      "Wages in last 12 months: $80,000.00."
+    ],
+    "flaggedFields": []
+  },
+  "outputArtifacts": [
+    {
+      "kind": "bundle",
+      "label": "Workflow bundle JSON",
+      "format": "json",
+      "path": "unemployment-claim-intake-bundle.json"
+    },
+    {
+      "kind": "review",
+      "label": "Review PDF",
+      "format": "pdf",
+      "path": "unemployment-claim-intake-review.pdf"
+    },
+    {
+      "kind": "checklist",
+      "label": "Evidence checklist",
+      "format": "checklist",
+      "content": [
+        {
+          "id": "identity",
+          "label": "Identity proof",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "wages",
+          "label": "Wage proof",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        },
+        {
+          "id": "separation-notice",
+          "label": "Separation notice or termination letter",
+          "required": true,
+          "status": "provided",
+          "source": "user-input"
+        }
+      ]
+    }
+  ],
+  "provenance": [
+    "workflow-registry",
+    "unemployment-claim-model"
+  ]
+}

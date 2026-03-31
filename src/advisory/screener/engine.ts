@@ -304,6 +304,95 @@ const ELIGIBILITY_CHECKS: EligibilityChecker[] = [
     },
   },
   {
+    workflowId: "benefits/ssi",
+    check: (input) => {
+      const hasElderly = input.ages.some((age) => age >= 65);
+      const isDisabledOrElderly = input.hasDisability || hasElderly;
+      const pct = fplPercentage(input.annualHouseholdIncome, input.householdSize);
+      // SSI uses individual FBR (~74% FPL), but screener works at household level
+      // Use a generous threshold for screening purposes
+      if (isDisabledOrElderly && pct <= 100) {
+        return {
+          workflowId: "benefits/ssi",
+          eligible: "likely",
+          confidence: 0.7,
+          reason: `${hasElderly ? "Age 65+ " : ""}${input.hasDisability ? "disabled " : ""}with low income (${Math.round(pct)}% FPL) — SSI provides cash assistance and automatic Medicaid in most states`,
+          nextSteps: [
+            "Verify countable assets are under $2,000 (individual) or $3,000 (couple)",
+            "Apply at your local Social Security office",
+          ],
+        };
+      }
+      if (isDisabledOrElderly && pct <= 150) {
+        return {
+          workflowId: "benefits/ssi",
+          eligible: "possible",
+          confidence: 0.4,
+          reason: `${hasElderly ? "Age 65+ " : ""}${input.hasDisability ? "disabled " : ""}— may qualify depending on countable income after exclusions and asset levels`,
+          nextSteps: ["Review SSI income exclusion rules — earned income has generous deductions"],
+        };
+      }
+      if (!isDisabledOrElderly) {
+        return {
+          workflowId: "benefits/ssi",
+          eligible: "ineligible",
+          confidence: 0.9,
+          reason: "SSI requires age 65+, blindness, or disability",
+          nextSteps: [],
+        };
+      }
+      return {
+        workflowId: "benefits/ssi",
+        eligible: "unlikely",
+        confidence: 0.7,
+        reason: `Income at ${Math.round(pct)}% FPL — likely above SSI limits`,
+        nextSteps: [],
+      };
+    },
+  },
+  {
+    workflowId: "benefits/tanf",
+    check: (input) => {
+      const hasChildren = input.ages.some((age) => age < 18);
+      const pct = fplPercentage(input.annualHouseholdIncome, input.householdSize);
+
+      if (!hasChildren) {
+        return {
+          workflowId: "benefits/tanf",
+          eligible: "ineligible",
+          confidence: 0.95,
+          reason: "TANF requires dependent children under 18 in the household",
+          nextSteps: [],
+        };
+      }
+      if (pct <= 50) {
+        return {
+          workflowId: "benefits/tanf",
+          eligible: "likely",
+          confidence: 0.7,
+          reason: `Family with children, income at ${Math.round(pct)}% FPL (below ~50% FPL threshold). TANF receipt also qualifies for SNAP.`,
+          nextSteps: ["Apply at your state's TANF office (often called CalWORKs, TAFDC, etc.)", "Gather proof of income and children's documentation"],
+        };
+      }
+      if (pct <= 75) {
+        return {
+          workflowId: "benefits/tanf",
+          eligible: "possible",
+          confidence: 0.4,
+          reason: `Family with children, income at ${Math.round(pct)}% FPL — some states have higher TANF income limits`,
+          nextSteps: ["Check your state's specific TANF income limits"],
+        };
+      }
+      return {
+        workflowId: "benefits/tanf",
+        eligible: "unlikely",
+        confidence: 0.7,
+        reason: `Income at ${Math.round(pct)}% FPL — above typical TANF limits (~50% FPL)`,
+        nextSteps: [],
+      };
+    },
+  },
+  {
     workflowId: "education/fafsa",
     check: (input) => {
       const hasStudentAge = input.ages.some((age) => age >= 16 && age <= 50);

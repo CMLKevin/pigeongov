@@ -51,7 +51,24 @@ export const taxWorkflows = {
       itemizedDeductions: 0,
       federalWithheld: 0,
       estimatedPayments: 0,
-    } satisfies TaxWorkflowInput,
+      tipIncome: 0,
+      overtimePay: 0,
+      autoLoanInterest: 0,
+      taxpayerAge: 0,
+      spouseAge: 0,
+      saltDeduction: 0,
+      capitalGains: {
+        shortTermGains: 0,
+        shortTermLosses: 0,
+        longTermGains: 0,
+        longTermLosses: 0,
+        qualifiedDividends: 0,
+        carryforwardLoss: 0,
+      },
+      stateCode: "",
+      stateWithheld: 0,
+      stateEstimatedPayments: 0,
+    } as TaxWorkflowInput & { stateCode: string; stateWithheld: number; stateEstimatedPayments: number },
     sections: [
       {
         id: "identity",
@@ -85,8 +102,51 @@ export const taxWorkflows = {
           { key: "otherIncome", label: "Other income", type: "currency" },
         ],
       },
+      {
+        id: "obbb-deductions",
+        title: "OBBB Act Deductions",
+        description: "New above-the-line deductions from the One Big Beautiful Bill Act.",
+        fields: [
+          { key: "tipIncome", label: "W-2 tip income", type: "currency", helpText: "Reported tips (up to $25,000 deductible if AGI < $160K)" },
+          { key: "overtimePay", label: "Overtime pay", type: "currency", helpText: "W-2 overtime (up to $10,000 deductible if AGI < $160K)" },
+          { key: "autoLoanInterest", label: "Auto loan interest (US vehicle)", type: "currency", helpText: "Interest on US-manufactured vehicle loan (up to $10,000)" },
+          { key: "saltDeduction", label: "SALT deduction", type: "currency", helpText: "State and local taxes paid (capped at $40K MFJ / $20K MFS)" },
+          { key: "taxpayerAge", label: "Taxpayer age", type: "number", helpText: "Age 65+ qualifies for additional standard deduction" },
+          { key: "spouseAge", label: "Spouse age", type: "number", helpText: "For MFJ: spouse age 65+ adds $1,600 to standard deduction" },
+        ],
+      },
+      {
+        id: "capital-gains",
+        title: "Capital Gains",
+        description: "Report capital gains, losses, and qualified dividends from investments.",
+        fields: [
+          { key: "capitalGains.shortTermGains", label: "Short-term capital gains", type: "currency", helpText: "Gains from assets held one year or less" },
+          { key: "capitalGains.shortTermLosses", label: "Short-term capital losses", type: "currency", helpText: "Losses from assets held one year or less" },
+          { key: "capitalGains.longTermGains", label: "Long-term capital gains", type: "currency", helpText: "Gains from assets held more than one year" },
+          { key: "capitalGains.longTermLosses", label: "Long-term capital losses", type: "currency", helpText: "Losses from assets held more than one year" },
+          { key: "capitalGains.qualifiedDividends", label: "Qualified dividends", type: "currency", helpText: "Dividends taxed at the lower long-term capital gains rate" },
+          { key: "capitalGains.carryforwardLoss", label: "Capital loss carryforward", type: "currency", helpText: "Unused capital losses from prior years" },
+        ],
+      },
+      {
+        id: "state-tax",
+        title: "State Tax",
+        description: "State income tax information.",
+        fields: [
+          { key: "stateCode", label: "State of residence", type: "text" },
+          { key: "stateWithheld", label: "State tax withheld", type: "currency" },
+          { key: "stateEstimatedPayments", label: "State estimated payments", type: "currency" },
+        ],
+      },
     ],
     buildBundle(input: TaxWorkflowInput): WorkflowBundle {
+      // Extract state-tax fields from input (may come from starter data)
+      const rawInput = input as TaxWorkflowInput & {
+        stateCode?: string;
+        stateWithheld?: number;
+        stateEstimatedPayments?: number;
+      };
+
       const calculation = calculateFederalTax({
         filingStatus: input.filingStatus,
         wages: input.wages,
@@ -100,6 +160,16 @@ export const taxWorkflows = {
         dependents: input.dependents,
         federalWithheld: input.federalWithheld,
         estimatedPayments: input.estimatedPayments,
+        tipIncome: input.tipIncome,
+        overtimePay: input.overtimePay,
+        autoLoanInterest: input.autoLoanInterest,
+        taxpayerAge: input.taxpayerAge,
+        spouseAge: input.spouseAge,
+        saltDeduction: input.saltDeduction,
+        capitalGains: input.capitalGains,
+        ...(rawInput.stateCode ? { stateCode: rawInput.stateCode } : {}),
+        ...(rawInput.stateWithheld ? { stateWithheld: rawInput.stateWithheld } : {}),
+        ...(rawInput.stateEstimatedPayments ? { stateEstimatedPayments: rawInput.stateEstimatedPayments } : {}),
       });
 
       const bundleInput = {
@@ -132,6 +202,16 @@ export const taxWorkflows = {
           dependents: input.dependents,
           federalWithheld: input.federalWithheld,
           estimatedPayments: input.estimatedPayments,
+          tipIncome: input.tipIncome,
+          overtimePay: input.overtimePay,
+          autoLoanInterest: input.autoLoanInterest,
+          taxpayerAge: input.taxpayerAge,
+          spouseAge: input.spouseAge,
+          saltDeduction: input.saltDeduction,
+          capitalGains: input.capitalGains,
+          ...(rawInput.stateCode ? { stateCode: rawInput.stateCode } : {}),
+          ...(rawInput.stateWithheld ? { stateWithheld: rawInput.stateWithheld } : {}),
+          ...(rawInput.stateEstimatedPayments ? { stateEstimatedPayments: rawInput.stateEstimatedPayments } : {}),
         },
         ...(input.spouse ? { spouse: input.spouse } : {}),
       };
@@ -170,6 +250,16 @@ export const taxWorkflows = {
             `Gross income ${currency(calculation.grossIncome)}`,
             `Taxable income ${currency(calculation.taxableIncome)}`,
             `Federal tax ${currency(calculation.totalTax)}`,
+            ...(calculation.stateTax
+              ? [
+                  `State tax (${calculation.stateTax.state}) ${currency(calculation.stateTax.stateTax)}`,
+                  ...(calculation.stateTax.stateRefund > 0
+                    ? [`State refund ${currency(calculation.stateTax.stateRefund)}`]
+                    : calculation.stateTax.stateOwed > 0
+                      ? [`State owed ${currency(calculation.stateTax.stateOwed)}`]
+                      : []),
+                ]
+              : []),
           ],
           flaggedFields: validation.flaggedFields,
         },
