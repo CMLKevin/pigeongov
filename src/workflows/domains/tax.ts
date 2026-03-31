@@ -276,6 +276,12 @@ export const taxWorkflows = {
             format: "pdf",
             path: "1040-2025-filled.pdf",
           },
+          {
+            kind: "form",
+            label: "Form 1040 PDF (draft)",
+            format: "pdf",
+            path: "1040-2025-filled-form.pdf",
+          },
         ],
         provenance: ["calculation-engine", "field-mapper", "validator"],
         filledForm: bundle,
