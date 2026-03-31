@@ -2,6 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import type { WorkflowBundle, ValidationFlag } from "@/lib/types";
+import { CrossDomainInsights, generateMockInsights } from "@/components/cross-domain-insights";
+import { SharePanel } from "@/components/share-panel";
+import type { ShareableActionItem } from "@/lib/share";
 
 // ---------------------------------------------------------------------------
 // Severity helpers
@@ -459,6 +462,12 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
           </button>
         </div>
 
+        {/* Cross-Domain Insights */}
+        <CrossDomainInsightsSection bundle={bundle} />
+
+        {/* Share Panel */}
+        <ShareSection bundle={bundle} />
+
         {/* Provenance */}
         {bundle.provenance.length > 0 && (
           <div className="mt-8 text-center">
@@ -468,6 +477,56 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Cross-Domain Insights Section
+// ---------------------------------------------------------------------------
+
+function CrossDomainInsightsSection({ bundle }: { bundle: WorkflowBundle }) {
+  const insights = useMemo(
+    () => generateMockInsights(bundle.workflowId, bundle.domain),
+    [bundle.workflowId, bundle.domain]
+  );
+
+  if (insights.insights.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <CrossDomainInsights insights={insights} />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Share Section
+// ---------------------------------------------------------------------------
+
+function ShareSection({ bundle }: { bundle: WorkflowBundle }) {
+  const shareData = useMemo(() => {
+    const items: ShareableActionItem[] = bundle.evidence.map((e) => ({
+      id: e.id,
+      label: e.label,
+      status: e.status === "provided" ? ("complete" as const) : ("pending" as const),
+      phase: 1,
+      phaseLabel: "Evidence",
+    }));
+
+    return {
+      title: `${bundle.title} \u2014 Results`,
+      source: bundle.workflowId,
+      items,
+      flags: bundle.validation.flaggedFields.length > 0
+        ? [`${bundle.validation.flaggedFields.length} flagged field(s)`]
+        : undefined,
+    };
+  }, [bundle]);
+
+  return (
+    <div className="mb-6">
+      <SharePanel data={shareData} />
     </div>
   );
 }
