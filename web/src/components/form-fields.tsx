@@ -18,23 +18,23 @@ interface FieldProps {
 // ---------------------------------------------------------------------------
 
 const inputBase =
-  "w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted " +
+  "w-full rounded-lg border-2 border-[#3d2a7a] bg-[#1a1040] px-4 py-3 text-white font-mono placeholder:text-[#6b5b8a] " +
   "transition-all duration-200 " +
-  "focus:border-pigeon-purple focus:outline-none focus:ring-2 focus:ring-pigeon-purple/40";
+  "focus:border-[#4ade80] focus:outline-none focus:ring-2 focus:ring-[#4ade80]/20";
 
-const labelBase = "block text-sm font-medium text-muted mb-1.5";
+const labelBase = "block text-sm font-semibold text-[#c4b5fd] font-mono uppercase tracking-wider mb-1.5";
 
 function HelpText({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <p className="mt-1 text-xs text-muted/70 leading-relaxed">{text}</p>
+    <p className="mt-1 text-xs text-[#9d8ec2] font-mono leading-relaxed">{text}</p>
   );
 }
 
 function ErrorText({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+    <p className="mt-1.5 text-xs text-[#f472b6] font-mono flex items-center gap-1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
@@ -69,7 +69,7 @@ function TextField({ field, value, error, onChange }: FieldProps) {
         value={(value as string) ?? ""}
         placeholder={field.placeholder}
         onChange={(e) => onChange(field.key, e.target.value)}
-        className={`${inputBase} ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+        className={`${inputBase} ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
         aria-describedby={
           field.helpText ? `${field.key}-help` : undefined
         }
@@ -98,7 +98,7 @@ function TextareaField({ field, value, error, onChange }: FieldProps) {
         placeholder={field.placeholder}
         rows={4}
         onChange={(e) => onChange(field.key, e.target.value)}
-        className={`${inputBase} resize-y min-h-[100px] ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+        className={`${inputBase} resize-y min-h-[100px] ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
         aria-describedby={
           field.helpText ? `${field.key}-help` : undefined
         }
@@ -121,7 +121,7 @@ function CurrencyField({ field, value, error, onChange }: FieldProps) {
         {field.label}
       </label>
       <div className="relative">
-        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted text-sm font-medium select-none">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4ade80] text-sm font-bold font-mono select-none">
           $
         </span>
         <input
@@ -135,7 +135,7 @@ function CurrencyField({ field, value, error, onChange }: FieldProps) {
           onChange={(e) =>
             onChange(field.key, e.target.value === "" ? 0 : parseFloat(e.target.value))
           }
-          className={`${inputBase} pl-8 tabular-nums ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+          className={`${inputBase} pl-8 tabular-nums ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
           aria-describedby={
             field.helpText ? `${field.key}-help` : undefined
           }
@@ -167,7 +167,7 @@ function NumberField({ field, value, error, onChange }: FieldProps) {
         onChange={(e) =>
           onChange(field.key, e.target.value === "" ? 0 : parseFloat(e.target.value))
         }
-        className={`${inputBase} tabular-nums ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+        className={`${inputBase} tabular-nums ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
         aria-describedby={
           field.helpText ? `${field.key}-help` : undefined
         }
@@ -195,7 +195,7 @@ function DateField({ field, value, error, onChange }: FieldProps) {
         type="date"
         value={(value as string) ?? ""}
         onChange={(e) => onChange(field.key, e.target.value)}
-        className={`${inputBase} ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+        className={`${inputBase} ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
         aria-describedby={
           field.helpText ? `${field.key}-help` : undefined
         }
@@ -223,7 +223,7 @@ function SelectField({ field, value, error, onChange }: FieldProps) {
           name={field.key}
           value={(value as string) ?? ""}
           onChange={(e) => onChange(field.key, e.target.value)}
-          className={`${inputBase} appearance-none pr-10 ${error ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/40" : ""}`}
+          className={`${inputBase} appearance-none pr-10 ${error ? "border-[#f472b6] focus:border-[#f472b6] focus:ring-[#f472b6]/30" : ""}`}
           aria-describedby={
             field.helpText ? `${field.key}-help` : undefined
           }
@@ -242,7 +242,7 @@ function SelectField({ field, value, error, onChange }: FieldProps) {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
           fill="currentColor"
-          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted"
+          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4ade80]"
         >
           <path
             fillRule="evenodd"
@@ -273,7 +273,7 @@ function ConfirmField({ field, value, error, onChange }: FieldProps) {
             type="checkbox"
             checked={checked}
             onChange={(e) => onChange(field.key, e.target.checked)}
-            className="h-5 w-5 rounded border-border bg-background text-pigeon-purple focus:ring-2 focus:ring-pigeon-purple/40 cursor-pointer accent-pigeon-purple"
+            className="h-5 w-5 rounded border-2 border-[#3d2a7a] bg-[#1a1040] text-[#4ade80] focus:ring-2 focus:ring-[#4ade80]/20 cursor-pointer accent-[#4ade80]"
             aria-describedby={
               field.helpText ? `${field.key}-help` : undefined
             }
@@ -282,7 +282,7 @@ function ConfirmField({ field, value, error, onChange }: FieldProps) {
         </div>
         <label
           htmlFor={field.key}
-          className="text-sm text-muted cursor-pointer select-none leading-relaxed"
+          className="text-sm text-[#c4b5fd] font-mono cursor-pointer select-none leading-relaxed"
         >
           {field.label}
         </label>

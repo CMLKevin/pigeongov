@@ -48,13 +48,13 @@ function StatPill({
   variant?: "default" | "good" | "bad";
 }) {
   const colors = {
-    default: "bg-white/5 text-white",
-    good: "bg-emerald-500/10 text-emerald-400",
-    bad: "bg-red-500/10 text-red-400",
+    default: "bg-[#251660] border-2 border-[#3d2a7a] text-white",
+    good: "bg-[#4ade80]/10 border-2 border-[#4ade80]/40 text-[#4ade80]",
+    bad: "bg-[#f472b6]/10 border-2 border-[#f472b6]/40 text-[#f472b6]",
   };
   return (
     <div className={`rounded-lg px-4 py-3 ${colors[variant]}`}>
-      <div className="text-[11px] uppercase tracking-wider text-muted mb-1">
+      <div className="text-[11px] uppercase tracking-wider text-[#9d8ec2] font-mono mb-1">
         {label}
       </div>
       <div className="text-lg font-mono font-bold">{value}</div>
@@ -70,7 +70,7 @@ function FlagCard({ flag }: { flag: ValidationFlag }) {
   const config = severityConfig[flag.severity];
   return (
     <div
-      className={`rounded-lg border ${config.border} ${config.bg} px-4 py-3`}
+      className={`rounded-lg border-l-4 border ${config.border} ${config.bg} px-4 py-3`}
     >
       <div className="flex items-start gap-2">
         <svg
@@ -119,7 +119,7 @@ function CheckRow({
     <div className="flex items-start gap-3 py-2">
       <div
         className={`flex h-5 w-5 items-center justify-center rounded-full flex-shrink-0 mt-0.5 ${
-          check.passed ? "bg-emerald-500/20" : "bg-red-500/20"
+          check.passed ? "bg-[#4ade80]/20" : "bg-red-500/20"
         }`}
       >
         {check.passed ? (
@@ -127,7 +127,7 @@ function CheckRow({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
             fill="currentColor"
-            className="h-3 w-3 text-emerald-400"
+            className="h-3 w-3 text-[#4ade80]"
           >
             <path
               fillRule="evenodd"
@@ -224,17 +224,17 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
   }, [bundle]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0f0a1f]">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Headline */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted mb-4">
+          <div className="inline-flex items-center rounded-full border-2 border-[#4ade80]/30 bg-[#4ade80]/5 px-3 py-1 text-[11px] font-mono font-semibold uppercase tracking-wider text-[#4ade80] mb-4">
             Workflow complete
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white font-mono tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white font-mono tracking-tight drop-shadow-[0_0_12px_rgba(74,222,128,0.2)]">
             {review.headline}
           </h1>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-[#9d8ec2] font-mono">
             {bundle.title} &mdash; {bundle.summary}
           </p>
         </div>
@@ -250,17 +250,17 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Notes */}
         {review.notes.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
-            <h2 className="text-sm font-semibold text-white font-mono mb-3">
+          <div className="mb-6 rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+            <h2 className="text-sm font-semibold text-[#4ade80] font-mono uppercase tracking-wider mb-3">
               Key findings
             </h2>
             <ul className="space-y-2">
               {review.notes.map((note, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2 text-sm text-foreground/80"
+                  className="flex items-start gap-2 text-sm text-[#c4b5fd] font-mono"
                 >
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-pigeon-purple flex-shrink-0" />
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#4ade80] flex-shrink-0" />
                   {note}
                 </li>
               ))}
@@ -270,16 +270,16 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Validation checks */}
         {validation.checks.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
+          <div className="mb-6 rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-white font-mono">
+              <h2 className="text-sm font-semibold text-[#4ade80] font-mono uppercase tracking-wider">
                 Validation checks
               </h2>
-              <span className="text-xs text-muted">
+              <span className="text-xs text-[#9d8ec2] font-mono">
                 {checksPassed}/{validation.checks.length} passed
               </span>
             </div>
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-[#3d2a7a]/50">
               {validation.checks.map((check) => (
                 <CheckRow key={check.id} check={check} />
               ))}
@@ -289,9 +289,9 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Flagged fields */}
         {validation.flaggedFields.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
+          <div className="mb-6 rounded-xl border-2 border-[#f472b6]/30 bg-[#1a1040] p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-white font-mono">
+              <h2 className="text-sm font-semibold text-[#f472b6] font-mono uppercase tracking-wider">
                 Flagged fields
               </h2>
               <div className="flex gap-2 text-xs">
@@ -317,8 +317,8 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Evidence tracker */}
         {bundle.evidence.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
-            <h2 className="text-sm font-semibold text-white font-mono mb-3">
+          <div className="mb-6 rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+            <h2 className="text-sm font-semibold text-[#4ade80] font-mono uppercase tracking-wider mb-3">
               Evidence checklist
             </h2>
             <div className="space-y-2">
@@ -329,30 +329,30 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
                 >
                   <div className="flex items-center gap-2">
                     <div
-                      className={`h-2 w-2 rounded-full ${
+                      className={`h-2.5 w-2.5 rounded-full ${
                         item.status === "provided"
-                          ? "bg-emerald-400"
+                          ? "bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.4)]"
                           : item.status === "review"
                             ? "bg-amber-400"
-                            : "bg-red-400"
+                            : "bg-[#3d2a7a]"
                       }`}
                     />
-                    <span className="text-sm text-foreground/80">
+                    <span className="text-sm text-[#c4b5fd] font-mono">
                       {item.label}
                     </span>
                     {item.required && (
-                      <span className="text-[10px] text-muted uppercase tracking-wider">
+                      <span className="text-[10px] text-[#f472b6] font-mono uppercase tracking-wider">
                         required
                       </span>
                     )}
                   </div>
                   <span
-                    className={`text-xs font-medium ${
+                    className={`text-xs font-mono font-medium ${
                       item.status === "provided"
-                        ? "text-emerald-400"
+                        ? "text-[#4ade80]"
                         : item.status === "review"
                           ? "text-amber-400"
-                          : "text-red-400"
+                          : "text-[#9d8ec2]/40"
                     }`}
                   >
                     {item.status}
@@ -365,15 +365,15 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Output artifacts */}
         {bundle.outputArtifacts.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
-            <h2 className="text-sm font-semibold text-white font-mono mb-3">
+          <div className="mb-6 rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+            <h2 className="text-sm font-semibold text-[#c4b5fd] font-mono uppercase tracking-wider mb-3">
               Output artifacts
             </h2>
             <div className="space-y-2">
               {bundle.outputArtifacts.map((artifact, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2"
+                  className="flex items-center justify-between rounded-lg bg-[#251660] border border-[#3d2a7a] px-3 py-2"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-mono text-muted uppercase">
@@ -394,14 +394,14 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
 
         {/* Household members */}
         {bundle.household.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border bg-surface p-6">
-            <h2 className="text-sm font-semibold text-white font-mono mb-3">
+          <div className="mb-6 rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+            <h2 className="text-sm font-semibold text-[#c4b5fd] font-mono uppercase tracking-wider mb-3">
               Household
             </h2>
             <div className="space-y-2">
               {bundle.household.map((member, i) => (
                 <div key={i} className="flex items-center gap-3 py-1">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-pigeon-purple/20 text-[11px] font-bold text-pigeon-purple">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#8b5cf6]/20 border border-[#8b5cf6]/30 text-[11px] font-bold font-mono text-[#c4b5fd]">
                     {member.name?.[0]?.toUpperCase() ?? "?"}
                   </div>
                   <div>
@@ -421,12 +421,12 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
           <button
             type="button"
             onClick={() => setShowFullBundle((v) => !v)}
-            className="text-xs text-muted hover:text-pigeon-purple transition-colors"
+            className="text-xs text-[#9d8ec2] font-mono hover:text-[#4ade80] transition-colors"
           >
             {showFullBundle ? "Hide" : "Show"} raw bundle JSON
           </button>
           {showFullBundle && (
-            <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-pigeon-darker p-4 text-xs text-muted font-mono border border-white/[0.04]">
+            <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-[#0f0a1f] p-4 text-xs text-[#4ade80]/80 font-mono border-2 border-[#3d2a7a]">
               {JSON.stringify(bundle, null, 2)}
             </pre>
           )}
@@ -437,7 +437,7 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
           <button
             type="button"
             onClick={handleDownloadJson}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-pigeon-purple to-pigeon-pink px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-pigeon-purple/25 transition-all duration-200 hover:from-pigeon-purple/80 hover:to-pigeon-pink/80"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#4ade80] to-[#22d3ee] px-6 py-2.5 text-sm font-mono font-bold text-[#0f0a1f] shadow-lg shadow-[#4ade80]/25 transition-all duration-200 hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -453,7 +453,7 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
           <button
             type="button"
             onClick={onStartOver}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-6 py-2.5 text-sm font-medium text-pigeon-purple hover:bg-white/5 transition-all duration-200"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border-2 border-[#8b5cf6]/40 px-6 py-2.5 text-sm font-mono font-medium text-[#c4b5fd] hover:border-[#8b5cf6] hover:bg-[#8b5cf6]/10 transition-all duration-200"
           >
             Start over
           </button>
@@ -462,7 +462,7 @@ export function WorkflowReview({ bundle, onStartOver }: WorkflowReviewProps) {
         {/* Provenance */}
         {bundle.provenance.length > 0 && (
           <div className="mt-8 text-center">
-            <p className="text-[11px] text-muted/40">
+            <p className="text-[11px] text-[#9d8ec2]/40 font-mono">
               Provenance: {bundle.provenance.join(" → ")}
             </p>
           </div>

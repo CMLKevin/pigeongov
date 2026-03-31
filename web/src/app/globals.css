@@ -1,28 +1,33 @@
 @import "tailwindcss";
 @source "../../src/**/*.{ts,tsx}";
 
-/* ── PigeonGov Design Tokens ─────────────────────────────────── */
+/* ── PigeonGov × Charm Crush Design Tokens ─────────────────── */
 @theme inline {
-  --color-background: #13131f;
-  --color-foreground: #e4e4eb;
-  --color-surface: #252538;
-  --color-surface-hover: #2f2f48;
-  --color-muted: #a0a0b8;
-  --color-border: #363650;
+  /* Backgrounds — deep purple, not grey */
+  --color-background: #0f0a1f;
+  --color-foreground: #f0f0f5;
+  --color-surface: #1a1040;
+  --color-surface-hover: #251660;
+  --color-muted: #9d8ec2;
+  --color-border: #3d2a7a;
 
-  --color-pigeon-purple: #6c3aed;
-  --color-pigeon-pink: #ec4899;
-  --color-pigeon-cyan: #06b6d4;
-  --color-pigeon-dark: #1e1e2e;
-  --color-pigeon-darker: #13131f;
-  --color-pigeon-surface: #252538;
-  --color-pigeon-muted: #a0a0b8;
+  /* Brand — mint green + hot pink + purple */
+  --color-pigeon-green: #4ade80;
+  --color-pigeon-pink: #f472b6;
+  --color-pigeon-purple: #8b5cf6;
+  --color-pigeon-cyan: #22d3ee;
+
+  /* Legacy aliases */
+  --color-pigeon-dark: #0f0a1f;
+  --color-pigeon-darker: #0a0618;
+  --color-pigeon-surface: #1a1040;
+  --color-pigeon-muted: #9d8ec2;
 
   --color-urgent: #ef4444;
   --color-urgent-border: #dc2626;
 
-  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
+  --font-sans: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -33,12 +38,80 @@ html {
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
 }
 
-/* ── Blinking cursor (matches the existing site) ─────────────── */
+/* ── Charm hatching pattern overlay ──────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 92, 246, 0.5) 2px,
+    rgba(139, 92, 246, 0.5) 4px
+  );
+}
+
+/* ── Neon glow utilities ─────────────────────────────────────── */
+.glow-green {
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5), 0 0 40px rgba(74, 222, 128, 0.2);
+}
+
+.glow-pink {
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.5), 0 0 40px rgba(244, 114, 182, 0.2);
+}
+
+.glow-purple {
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.2);
+}
+
+/* Box glow — registered as @utility so hover: variant works */
+@utility box-glow-green {
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.15), 0 0 45px rgba(74, 222, 128, 0.05);
+}
+
+@utility box-glow-pink {
+  box-shadow: 0 0 15px rgba(244, 114, 182, 0.15), 0 0 45px rgba(244, 114, 182, 0.05);
+}
+
+@utility box-glow-purple {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15), 0 0 45px rgba(139, 92, 246, 0.05);
+}
+
+/* ── Hatching pattern for cards ──────────────────────────────── */
+.hatch-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(139, 92, 246, 0.08) 4px,
+    rgba(139, 92, 246, 0.08) 8px
+  );
+}
+
+.hatch-green {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(74, 222, 128, 0.06) 4px,
+    rgba(74, 222, 128, 0.06) 8px
+  );
+}
+
+/* ── Blinking cursor ─────────────────────────────────────────── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -48,19 +121,52 @@ body {
   animation: blink 1s step-end infinite;
 }
 
+/* ── Gradient text ───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #4ade80, #22d3ee, #8b5cf6, #f472b6);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Animated gradient border ────────────────────────────────── */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, #4ade80, #8b5cf6, #f472b6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 /* ── Selection ────────────────────────────────────────────────── */
 ::selection {
-  background: var(--color-pigeon-purple);
+  background: rgba(74, 222, 128, 0.3);
   color: white;
 }
 
-/* ── Focus ring ───────────────────────────────────────────────── */
+/* ── Focus ring — green, not purple ──────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-pigeon-purple);
+  outline: 2px solid var(--color-pigeon-green);
   outline-offset: 2px;
 }
 
-/* ── Scrollbar ────────────────────────────────────────────────── */
+/* ── Scrollbar — purple gradient ─────────────────────────────── */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -71,10 +177,35 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: linear-gradient(var(--color-pigeon-purple), var(--color-pigeon-pink));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-muted);
+  background: linear-gradient(var(--color-pigeon-green), var(--color-pigeon-cyan));
+}
+
+/* ── Pulse animation for urgent items ────────────────────────── */
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+.urgent-pulse {
+  animation: urgentPulse 2s ease-in-out infinite;
+}
+
+/* ── Scan line effect for terminal areas ─────────────────────── */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.05) 2px,
+    rgba(0, 0, 0, 0.05) 4px
+  );
 }

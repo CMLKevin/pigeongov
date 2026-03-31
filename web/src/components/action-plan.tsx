@@ -13,13 +13,13 @@ function deadlineStatusConfig(status: string) {
     case 'overdue':
       return { bg: 'bg-red-500/20', text: 'text-red-400', label: 'OVERDUE' };
     case 'urgent':
-      return { bg: 'bg-red-500/10', text: 'text-urgent', label: 'URGENT' };
+      return { bg: 'bg-amber-500/15', text: 'text-amber-400', label: 'URGENT' };
     case 'upcoming':
-      return { bg: 'bg-yellow-500/10', text: 'text-yellow-400', label: 'UPCOMING' };
+      return { bg: 'bg-[#4ade80]/10', text: 'text-[#4ade80]', label: 'UPCOMING' };
     case 'distant':
-      return { bg: 'bg-green-500/10', text: 'text-green-400', label: 'ON TRACK' };
+      return { bg: 'bg-[#4ade80]/10', text: 'text-[#4ade80]', label: 'ON TRACK' };
     default:
-      return { bg: 'bg-surface', text: 'text-muted', label: status };
+      return { bg: 'bg-[#251660]', text: 'text-[#9d8ec2]', label: status };
   }
 }
 
@@ -67,18 +67,18 @@ function WorkflowCard({ workflow }: { workflow: PlannedWorkflow }) {
   return (
     <div
       className={cn(
-        'rounded-xl border bg-surface p-4 transition-all hover:bg-surface-hover',
-        isUrgent ? 'border-urgent/50' : 'border-border'
+        'rounded-xl border-2 bg-[#1a1040] p-4 transition-all hover:bg-[#251660]',
+        isUrgent ? 'border-red-500/50 urgent-pulse' : 'border-[#3d2a7a]'
       )}
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-3">
           <PriorityDots priority={workflow.priority} />
           <div>
-            <h4 className="text-foreground font-semibold">
+            <h4 className="text-white font-mono font-semibold">
               {workflowDisplayName(workflow.workflowId)}
             </h4>
-            <p className="text-xs text-muted font-mono">{workflow.workflowId}</p>
+            <p className="text-xs text-[#9d8ec2] font-mono">{workflow.workflowId}</p>
           </div>
         </div>
 
@@ -107,11 +107,11 @@ function WorkflowCard({ workflow }: { workflow: PlannedWorkflow }) {
         )}
       </div>
 
-      <p className="text-sm text-muted leading-relaxed">{workflow.notes}</p>
+      <p className="text-sm text-[#c4b5fd]/80 font-mono leading-relaxed">{workflow.notes}</p>
 
       {workflow.dependsOn.length > 0 && (
-        <p className="text-xs text-muted mt-2">
-          <span className="text-pigeon-cyan">&rarr;</span> after:{' '}
+        <p className="text-xs text-[#9d8ec2] font-mono mt-2">
+          <span className="text-[#8b5cf6]/60">&rarr;</span> after:{' '}
           {workflow.dependsOn.join(', ')}
         </p>
       )}
@@ -122,10 +122,10 @@ function WorkflowCard({ workflow }: { workflow: PlannedWorkflow }) {
         </p>
       )}
 
-      <div className="mt-3 pt-3 border-t border-border">
+      <div className="mt-3 pt-3 border-t border-[#3d2a7a]">
         <a
           href={`/workflows/${workflow.workflowId}`}
-          className="text-pigeon-purple hover:text-pigeon-purple/80 text-sm font-medium transition-colors"
+          className="text-[#4ade80] hover:text-[#4ade80]/80 text-sm font-mono font-medium transition-colors"
         >
           Start workflow &rarr;
         </a>
@@ -152,20 +152,20 @@ export function ActionPlan({ plan, className }: ActionPlanProps) {
   return (
     <div className={cn('space-y-8', className)}>
       {/* Summary stats */}
-      <div className="flex flex-wrap items-center gap-4 text-sm">
-        <span className="text-muted">
-          <span className="text-foreground font-semibold">{plan.totalWorkflows}</span>{' '}
+      <div className="flex flex-wrap items-center gap-4 text-sm font-mono">
+        <span className="text-[#9d8ec2]">
+          <span className="text-[#4ade80] font-semibold">{plan.totalWorkflows}</span>{' '}
           workflows
         </span>
-        <span className="text-border">|</span>
-        <span className="text-muted">
-          <span className="text-foreground font-semibold">{phases.size}</span> phases
+        <span className="text-[#3d2a7a]">|</span>
+        <span className="text-[#9d8ec2]">
+          <span className="text-[#4ade80] font-semibold">{phases.size}</span> phases
         </span>
         {plan.estimatedHours != null && (
           <>
-            <span className="text-border">|</span>
-            <span className="text-muted">
-              ~<span className="text-foreground font-semibold">{plan.estimatedHours}</span>{' '}
+            <span className="text-[#3d2a7a]">|</span>
+            <span className="text-[#9d8ec2]">
+              ~<span className="text-[#4ade80] font-semibold">{plan.estimatedHours}</span>{' '}
               hours estimated
             </span>
           </>
@@ -174,8 +174,8 @@ export function ActionPlan({ plan, className }: ActionPlanProps) {
 
       {/* Deadline summary bar */}
       {plan.deadlineSummary && (
-        <div className="rounded-xl border border-border bg-surface p-4">
-          <h3 className="font-mono text-sm text-muted uppercase tracking-wider mb-3">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-4">
+          <h3 className="font-mono text-sm text-[#c4b5fd] uppercase tracking-wider mb-3">
             Deadline Summary
           </h3>
           <div className="flex flex-wrap gap-4 text-sm">
@@ -207,10 +207,10 @@ export function ActionPlan({ plan, className }: ActionPlanProps) {
       {[...phases.entries()].map(([phaseNum, { label, workflows }]) => (
         <div key={phaseNum}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-pigeon-purple/20 text-pigeon-purple flex items-center justify-center text-sm font-mono font-bold">
+            <div className="w-8 h-8 rounded-full bg-[#4ade80]/10 border-2 border-[#4ade80]/30 text-[#4ade80] flex items-center justify-center text-sm font-mono font-bold">
               {phaseNum}
             </div>
-            <h3 className="font-mono text-lg text-foreground font-semibold">
+            <h3 className="font-mono text-lg text-[#4ade80] font-semibold">
               {label}
             </h3>
           </div>
@@ -224,7 +224,7 @@ export function ActionPlan({ plan, className }: ActionPlanProps) {
 
       {/* Urgent warning banner */}
       {plan.hasUrgentDeadlines && (
-        <div className="bg-urgent/10 border border-urgent/30 rounded-xl p-4 text-urgent text-sm">
+        <div className="bg-red-500/10 border-2 border-red-500/40 rounded-xl p-4 text-red-400 text-sm font-mono urgent-pulse">
           <span className="font-semibold">&#9888; Some workflows have urgent deadlines</span>{' '}
           &mdash; start immediately to avoid penalties or lost benefits.
         </div>

@@ -70,7 +70,7 @@ export default function TransitionResults({ result, input }: Props) {
                       {isPast ? "PAST DUE" : action.deadline}
                     </span>
                   </div>
-                  <p className="mt-2 text-xs text-[#6b6b8a] leading-relaxed">
+                  <p className="mt-2 text-xs text-[#9d8ec2] font-mono leading-relaxed">
                     {action.consequence}
                   </p>
                 </div>
@@ -83,11 +83,11 @@ export default function TransitionResults({ result, input }: Props) {
       {/* ----- Plan comparison table ----- */}
       {result.planComparison.length > 0 && (
         <section>
-          <h2 className="mb-4 text-lg font-bold text-white">Plan Comparison</h2>
-          <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#252538]">
-            <table className="w-full text-sm">
+          <h2 className="mb-4 text-lg font-mono font-bold text-white">Plan Comparison</h2>
+          <div className="overflow-x-auto rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040]">
+            <table className="w-full text-sm font-mono">
               <thead>
-                <tr className="border-b border-white/10 text-[#6b6b8a]">
+                <tr className="border-b-2 border-[#3d2a7a] text-[#9d8ec2]">
                   <th className="px-5 py-3 text-left font-medium">Plan</th>
                   <th className="px-5 py-3 text-right font-medium">Monthly</th>
                   <th className="px-5 py-3 text-right font-medium">
@@ -114,7 +114,7 @@ export default function TransitionResults({ result, input }: Props) {
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-xs text-[#6b6b8a]">
+          <p className="mt-2 text-xs text-[#9d8ec2] font-mono">
             Based on ${input.loanBalance.toLocaleString()} balance,{" "}
             {(input.interestRate * 100).toFixed(1)}% rate, $
             {input.annualIncome.toLocaleString()}/yr income, household of{" "}
@@ -124,19 +124,19 @@ export default function TransitionResults({ result, input }: Props) {
       )}
 
       {/* ----- PSLF section ----- */}
-      <section className="rounded-xl border border-white/10 bg-[#252538] p-6">
-        <h2 className="mb-4 text-lg font-bold text-white">
+      <section className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+        <h2 className="mb-4 text-lg font-mono font-bold text-white">
           Public Service Loan Forgiveness (PSLF)
         </h2>
         {result.pslf.eligible ? (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/10">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#4ade80]/10 border border-[#4ade80]/30">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
                   fill="currentColor"
-                  className="h-4 w-4 text-green-400"
+                  className="h-4 w-4 text-[#4ade80]"
                 >
                   <path
                     fillRule="evenodd"
@@ -145,14 +145,14 @@ export default function TransitionResults({ result, input }: Props) {
                   />
                 </svg>
               </span>
-              <span className="text-sm font-medium text-green-400">
+              <span className="text-sm font-mono font-medium text-[#4ade80]">
                 You appear eligible for PSLF
               </span>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-lg bg-[#1a1a2e] p-4">
-                <p className="text-xs text-[#6b6b8a]">Payments remaining</p>
+              <div className="rounded-lg bg-[#0f0a1f] border border-[#3d2a7a] p-4">
+                <p className="text-xs text-[#9d8ec2] font-mono">Payments remaining</p>
                 <p className="mt-1 text-2xl font-bold tabular-nums text-white">
                   {result.pslf.paymentsRemaining}
                   <span className="text-sm font-normal text-[#6b6b8a]">
@@ -162,9 +162,9 @@ export default function TransitionResults({ result, input }: Props) {
                 </p>
               </div>
               {result.pslf.estimatedForgivenessDate && (
-                <div className="rounded-lg bg-[#1a1a2e] p-4">
-                  <p className="text-xs text-[#6b6b8a]">Est. forgiveness</p>
-                  <p className="mt-1 text-lg font-semibold text-green-400">
+                <div className="rounded-lg bg-[#0f0a1f] border border-[#3d2a7a] p-4">
+                  <p className="text-xs text-[#9d8ec2] font-mono">Est. forgiveness</p>
+                  <p className="mt-1 text-lg font-mono font-semibold text-[#4ade80]">
                     {result.pslf.estimatedForgivenessDate}
                   </p>
                 </div>
@@ -172,7 +172,7 @@ export default function TransitionResults({ result, input }: Props) {
               {result.pslf.atRisk && (
                 <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-4">
                   <p className="text-xs text-amber-400">Risk detected</p>
-                  <p className="mt-1 text-xs text-[#a0a0b8] leading-relaxed">
+                  <p className="mt-1 text-xs text-[#c4b5fd] font-mono leading-relaxed">
                     {result.pslf.riskReason}
                   </p>
                 </div>
@@ -181,17 +181,17 @@ export default function TransitionResults({ result, input }: Props) {
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1a1a2e]">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f0a1f] border border-[#3d2a7a]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
                 fill="currentColor"
-                className="h-4 w-4 text-[#6b6b8a]"
+                className="h-4 w-4 text-[#9d8ec2]"
               >
                 <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
               </svg>
             </span>
-            <span className="text-sm text-[#6b6b8a]">
+            <span className="text-sm text-[#9d8ec2] font-mono">
               Not eligible for PSLF based on current employer type
             </span>
           </div>
@@ -200,7 +200,7 @@ export default function TransitionResults({ result, input }: Props) {
 
       {/* ----- Consolidation deadline ----- */}
       {result.consolidationDeadline && (
-        <div className="rounded-xl border-2 border-red-500/50 bg-red-500/5 p-6">
+        <div className="rounded-xl border-2 border-red-500/50 bg-red-500/5 p-6 urgent-pulse">
           <div className="flex items-start gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -218,7 +218,7 @@ export default function TransitionResults({ result, input }: Props) {
               <p className="text-base font-bold text-red-400">
                 Consolidation Deadline: {result.consolidationDeadline}
               </p>
-              <p className="mt-1 text-sm text-[#a0a0b8]">
+              <p className="mt-1 text-sm text-[#c4b5fd] font-mono">
                 Parent PLUS loans must be consolidated via Direct Consolidation
                 Loan before this date to preserve access to IBR. After this
                 date, only ICR (the most expensive IDR plan) will be available.
@@ -229,9 +229,9 @@ export default function TransitionResults({ result, input }: Props) {
       )}
 
       {/* ----- Recommendation ----- */}
-      <section className="rounded-xl border border-[#6c3aed]/30 bg-[#6c3aed]/5 p-6">
-        <h2 className="mb-2 text-base font-bold text-white">Recommendation</h2>
-        <p className="text-sm text-[#c4c4d4] leading-relaxed">
+      <section className="rounded-xl border-2 border-[#4ade80]/30 bg-[#4ade80]/5 p-6">
+        <h2 className="mb-2 text-base font-mono font-bold text-[#4ade80]">Recommendation</h2>
+        <p className="text-sm text-[#c4b5fd] font-mono leading-relaxed">
           {result.recommendation}
         </p>
       </section>
@@ -253,37 +253,37 @@ function PlanRow({
   isLowestTotal: boolean;
 }) {
   return (
-    <tr className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+    <tr className="border-b border-[#3d2a7a]/50 last:border-0 hover:bg-[#251660]/50 transition-colors">
       <td className="px-5 py-3.5 font-medium text-white">{plan.plan}</td>
       <td
         className={`px-5 py-3.5 text-right tabular-nums ${
-          isLowestMonthly ? "text-green-400 font-semibold" : "text-[#c4c4d4]"
+          isLowestMonthly ? "text-[#4ade80] font-semibold" : "text-[#c4b5fd]"
         }`}
       >
         ${plan.monthlyPayment.toLocaleString()}
       </td>
       <td
         className={`px-5 py-3.5 text-right tabular-nums ${
-          isLowestTotal ? "text-green-400 font-semibold" : "text-[#c4c4d4]"
+          isLowestTotal ? "text-[#4ade80] font-semibold" : "text-[#c4b5fd]"
         }`}
       >
         ${plan.totalPaid.toLocaleString()}
       </td>
       <td className="px-5 py-3.5 text-right tabular-nums">
         {plan.forgivenessAmount > 0 ? (
-          <span className="text-cyan-400">
+          <span className="text-[#22d3ee]">
             ${plan.forgivenessAmount.toLocaleString()}
           </span>
         ) : (
-          <span className="text-[#6b6b8a]">&mdash;</span>
+          <span className="text-[#3d2a7a]">&mdash;</span>
         )}
       </td>
-      <td className="px-5 py-3.5 text-right tabular-nums text-[#c4c4d4]">
+      <td className="px-5 py-3.5 text-right tabular-nums text-[#c4b5fd]">
         {plan.forgivenessDate ?? (
-          <span className="text-[#6b6b8a]">&mdash;</span>
+          <span className="text-[#3d2a7a]">&mdash;</span>
         )}
       </td>
-      <td className="px-5 py-3.5 text-right tabular-nums text-[#c4c4d4]">
+      <td className="px-5 py-3.5 text-right tabular-nums text-[#c4b5fd]">
         {plan.yearsToPayoff}
       </td>
     </tr>

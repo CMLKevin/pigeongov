@@ -83,28 +83,28 @@ export function ScreenerClient() {
       <div className="space-y-8">
         {/* Headline value */}
         {likely.length > 0 && (
-          <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6 text-center">
-            <p className="text-sm text-green-400 font-mono uppercase tracking-wider mb-2">
+          <div className="rounded-xl border-2 border-[#4ade80]/40 bg-[#4ade80]/5 p-6 text-center shadow-[0_0_32px_-8px_rgba(74,222,128,0.2)]">
+            <p className="text-sm text-[#4ade80] font-mono uppercase tracking-wider mb-2">
               Estimated unclaimed annual value
             </p>
-            <p className="text-4xl sm:text-5xl font-bold text-green-400 tabular-nums">
-              ~{formatCurrency(annualValue)}<span className="text-lg text-green-400/60">/year</span>
+            <p className="text-4xl sm:text-5xl font-mono font-bold text-[#4ade80] tabular-nums drop-shadow-[0_0_16px_rgba(74,222,128,0.3)]">
+              ~{formatCurrency(annualValue)}<span className="text-lg text-[#4ade80]/60">/year</span>
             </p>
-            <p className="text-sm text-muted mt-2">
+            <p className="text-sm text-[#c4b5fd] font-mono mt-2">
               across {likely.length} program{likely.length !== 1 ? 's' : ''} you likely qualify for
             </p>
           </div>
         )}
 
         {results.length === 0 && (
-          <div className="rounded-xl border border-border bg-surface p-6 text-center">
-            <p className="text-foreground font-semibold mb-2">
+          <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6 text-center">
+            <p className="text-white font-mono font-semibold mb-2">
               No likely program eligibility found
             </p>
-            <p className="text-muted text-sm">
+            <p className="text-[#9d8ec2] text-sm font-mono">
               This screener covers common federal programs. State and local programs
               may be available. Try the{' '}
-              <Link href="/cliff" className="text-pigeon-pink hover:underline">
+              <Link href="/cliff" className="text-[#f472b6] hover:underline">
                 benefits cliff calculator
               </Link>{' '}
               to see what you currently qualify for.
@@ -115,8 +115,8 @@ export function ScreenerClient() {
         {/* Likely eligible */}
         {likely.length > 0 && (
           <div>
-            <h3 className="text-sm font-mono text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
+            <h3 className="text-sm font-mono text-[#4ade80] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.4)]" />
               Likely Eligible ({likely.length})
             </h3>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -130,8 +130,8 @@ export function ScreenerClient() {
         {/* Worth investigating */}
         {possible.length > 0 && (
           <div>
-            <h3 className="text-sm font-mono text-yellow-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-yellow-500" />
+            <h3 className="text-sm font-mono text-[#8b5cf6] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#8b5cf6]" />
               Worth Investigating ({possible.length})
             </h3>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -145,10 +145,10 @@ export function ScreenerClient() {
         {/* Unlikely -- collapsed by default */}
         {unlikely.length > 0 && (
           <details className="group">
-            <summary className="text-sm font-mono text-muted uppercase tracking-wider cursor-pointer flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-muted/40" />
+            <summary className="text-sm font-mono text-[#6b5b8a] uppercase tracking-wider cursor-pointer flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#3d2a7a]/60" />
               Unlikely ({unlikely.length})
-              <span className="text-xs text-muted ml-1 group-open:hidden">
+              <span className="text-xs text-[#6b5b8a] ml-1 group-open:hidden">
                 (click to expand)
               </span>
             </summary>
@@ -161,18 +161,18 @@ export function ScreenerClient() {
         )}
 
         {/* Cross-link to cliff calculator */}
-        <div className="rounded-xl border border-border bg-surface p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="text-foreground font-semibold">
+            <p className="text-white font-mono font-semibold">
               Worried about losing benefits if you earn more?
             </p>
-            <p className="text-muted text-sm">
+            <p className="text-[#9d8ec2] text-sm font-mono">
               The cliff calculator shows exactly where benefits drop off.
             </p>
           </div>
           <Link
             href="/cliff"
-            className="shrink-0 bg-gradient-to-r from-pigeon-purple to-pigeon-pink text-white rounded-lg px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
+            className="shrink-0 bg-gradient-to-r from-[#4ade80] to-[#22d3ee] text-[#0f0a1f] rounded-lg px-5 py-2.5 text-sm font-mono font-bold transition-all hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)]"
           >
             Calculate my cliff
           </Link>
@@ -182,7 +182,7 @@ export function ScreenerClient() {
         <div className="text-center">
           <button
             onClick={() => setResults(null)}
-            className="text-sm text-muted hover:text-foreground transition-colors"
+            className="text-sm text-[#9d8ec2] font-mono hover:text-[#4ade80] transition-colors"
           >
             &larr; Change answers and re-run
           </button>
@@ -195,11 +195,11 @@ export function ScreenerClient() {
   return (
     <div className="grid gap-8 lg:grid-cols-5">
       <div className="lg:col-span-3">
-        <div className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-          <h2 className="text-xl font-semibold text-foreground mb-1">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6 sm:p-8">
+          <h2 className="text-xl font-mono font-bold text-white mb-1">
             Household Information
           </h2>
-          <p className="text-muted text-sm mb-6">
+          <p className="text-[#9d8ec2] text-sm font-mono mb-6">
             Answer these questions to check eligibility across SNAP, Medicaid,
             TANF, WIC, SSI, LIHEAP, ACA subsidies, and more.
           </p>
@@ -221,11 +221,11 @@ export function ScreenerClient() {
       </div>
 
       <div className="lg:col-span-2 space-y-4">
-        <div className="rounded-xl border border-border bg-surface p-5">
-          <h3 className="font-mono text-sm text-pigeon-cyan uppercase tracking-wider mb-3">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-5">
+          <h3 className="font-mono text-sm text-[#4ade80] uppercase tracking-wider mb-3">
             What we check
           </h3>
-          <ul className="space-y-2 text-sm text-muted">
+          <ul className="space-y-2 text-sm text-[#c4b5fd] font-mono">
             {[
               'SNAP (food stamps)',
               'Medicaid & CHIP',
@@ -240,18 +240,18 @@ export function ScreenerClient() {
               'FAFSA financial aid',
             ].map((program) => (
               <li key={program} className="flex items-center gap-2">
-                <span className="text-pigeon-cyan">&#10003;</span>
+                <span className="text-[#4ade80]">&#10003;</span>
                 {program}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-border bg-surface p-5">
-          <h3 className="font-mono text-sm text-pigeon-purple uppercase tracking-wider mb-3">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-5">
+          <h3 className="font-mono text-sm text-[#8b5cf6] uppercase tracking-wider mb-3">
             Privacy
           </h3>
-          <p className="text-sm text-muted leading-relaxed">
+          <p className="text-sm text-[#c4b5fd] font-mono leading-relaxed">
             All calculations happen on the server. We don&apos;t store your data,
             sell it, or send it to third parties. Your answers are saved to your
             browser&apos;s localStorage only.

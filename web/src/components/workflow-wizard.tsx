@@ -119,9 +119,9 @@ function StepIndicator({
     <div className="mb-8">
       {/* Progress bar */}
       <div className="relative mb-4">
-        <div className="h-1.5 w-full rounded-full bg-surface">
+        <div className="h-2 w-full rounded-full bg-[#0f0a1f]">
           <div
-            className="h-1.5 rounded-full bg-gradient-to-r from-pigeon-purple to-pigeon-pink transition-all duration-500 ease-out"
+            className="h-2 rounded-full bg-gradient-to-r from-[#4ade80] to-[#22d3ee] transition-all duration-500 ease-out"
             style={{
               width: `${((currentStep + 1) / sections.length) * 100}%`,
             }}
@@ -142,22 +142,22 @@ function StepIndicator({
               onClick={() => onStepClick(i)}
               disabled={i > currentStep + 1}
               className={`
-                inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200
+                inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-mono font-medium transition-all duration-200 border-2
                 ${
                   isActive
-                    ? "bg-pigeon-purple text-white shadow-lg shadow-pigeon-purple/25"
+                    ? "border-[#4ade80] bg-[#4ade80]/10 text-[#4ade80] shadow-lg shadow-[#4ade80]/15"
                     : isCompleted
-                      ? "bg-pigeon-purple/20 text-pigeon-purple hover:bg-pigeon-purple/30 cursor-pointer"
-                      : "bg-surface text-muted cursor-not-allowed"
+                      ? "border-[#8b5cf6]/40 bg-[#8b5cf6]/10 text-[#c4b5fd] hover:border-[#8b5cf6] cursor-pointer"
+                      : "border-[#3d2a7a]/30 bg-[#0f0a1f] text-[#6b5b8a] cursor-not-allowed"
                 }
               `}
             >
               <span
                 className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${
                   isActive
-                    ? "bg-white/20"
+                    ? "bg-[#4ade80]/20"
                     : isCompleted
-                      ? "bg-pigeon-purple/40"
+                      ? "bg-[#8b5cf6]/40"
                       : "bg-white/5"
                 }`}
               >
@@ -199,8 +199,8 @@ function ResumeBanner({
   onDiscard: () => void;
 }) {
   return (
-    <div className="mb-6 flex items-center justify-between rounded-lg border border-pigeon-purple/30 bg-pigeon-purple/10 px-4 py-3">
-      <div className="flex items-center gap-2 text-sm text-pigeon-purple">
+    <div className="mb-6 flex items-center justify-between rounded-lg border-2 border-[#4ade80]/40 bg-[#4ade80]/5 px-4 py-3">
+      <div className="flex items-center gap-2 text-sm text-[#4ade80] font-mono">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -219,14 +219,14 @@ function ResumeBanner({
         <button
           type="button"
           onClick={onDiscard}
-          className="rounded-md px-3 py-1 text-xs text-muted hover:text-foreground transition-colors"
+          className="rounded-md px-3 py-1 text-xs font-mono text-[#9d8ec2] hover:text-white transition-colors"
         >
           Start fresh
         </button>
         <button
           type="button"
           onClick={onResume}
-          className="rounded-md bg-pigeon-purple px-3 py-1 text-xs text-white hover:bg-pigeon-purple/80 transition-colors"
+          className="rounded-md bg-[#4ade80] px-3 py-1 text-xs font-mono font-semibold text-[#0f0a1f] hover:bg-[#4ade80]/80 transition-colors"
         >
           Resume
         </button>
@@ -424,19 +424,19 @@ export function WorkflowWizard({
   const domainColors = useMemo(
     () =>
       ({
-        tax: "bg-emerald-500/20 text-emerald-400",
-        immigration: "bg-blue-500/20 text-blue-400",
-        healthcare: "bg-rose-500/20 text-rose-400",
-        unemployment: "bg-amber-500/20 text-amber-400",
-        business: "bg-violet-500/20 text-violet-400",
-        permits: "bg-orange-500/20 text-orange-400",
-        education: "bg-sky-500/20 text-sky-400",
-        retirement: "bg-teal-500/20 text-teal-400",
-        identity: "bg-indigo-500/20 text-indigo-400",
-        benefits: "bg-lime-500/20 text-lime-400",
-        veterans: "bg-red-500/20 text-red-400",
-        legal: "bg-slate-500/20 text-slate-400",
-        estate: "bg-purple-500/20 text-purple-400",
+        tax: "bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/30",
+        immigration: "bg-blue-400/20 text-blue-300 border border-blue-400/30",
+        healthcare: "bg-[#f472b6]/20 text-[#f472b6] border border-[#f472b6]/30",
+        unemployment: "bg-amber-400/20 text-amber-300 border border-amber-400/30",
+        business: "bg-[#8b5cf6]/20 text-[#c4b5fd] border border-[#8b5cf6]/30",
+        permits: "bg-orange-400/20 text-orange-300 border border-orange-400/30",
+        education: "bg-cyan-400/20 text-cyan-300 border border-cyan-400/30",
+        retirement: "bg-teal-400/20 text-teal-300 border border-teal-400/30",
+        identity: "bg-indigo-400/20 text-indigo-300 border border-indigo-400/30",
+        benefits: "bg-lime-400/20 text-lime-300 border border-lime-400/30",
+        veterans: "bg-red-400/20 text-red-300 border border-red-400/30",
+        legal: "bg-slate-400/20 text-slate-300 border border-slate-400/30",
+        estate: "bg-purple-400/20 text-purple-300 border border-purple-400/30",
       }) as Record<string, string>,
     []
   );
@@ -461,13 +461,13 @@ export function WorkflowWizard({
   // Render
   // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0f0a1f]">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${domainColors[domain] ?? "bg-white/10 text-muted"}`}
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider ${domainColors[domain] ?? "bg-[#8b5cf6]/20 text-[#c4b5fd] border border-[#8b5cf6]/30"}`}
             >
               {domain}
             </span>
@@ -493,14 +493,14 @@ export function WorkflowWizard({
         />
 
         {/* Section card */}
-        <div className="rounded-xl border border-border bg-surface p-6 sm:p-8 shadow-xl">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6 sm:p-8 shadow-xl shadow-[#0f0a1f]/50">
           {/* Section header */}
           <div className="mb-6">
             <div className="flex items-baseline gap-2">
-              <span className="text-xs font-mono text-muted">
+              <span className="text-xs font-mono text-[#4ade80]">
                 {currentStep + 1}/{sections.length}
               </span>
-              <h2 className="text-lg font-semibold text-foreground font-mono">
+              <h2 className="text-xl font-bold text-white font-mono drop-shadow-[0_0_8px_rgba(74,222,128,0.15)]">
                 {section.title}
               </h2>
             </div>
@@ -538,11 +538,11 @@ export function WorkflowWizard({
               onClick={goBack}
               disabled={currentStep === 0}
               className={`
-                inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200
+                inline-flex items-center gap-2 rounded-lg border-2 px-4 py-2.5 text-sm font-mono font-medium transition-all duration-200
                 ${
                   currentStep === 0
-                    ? "text-border cursor-not-allowed"
-                    : "text-pigeon-purple hover:text-foreground hover:bg-surface-hover"
+                    ? "border-transparent text-[#3d2a7a] cursor-not-allowed"
+                    : "border-[#8b5cf6]/40 text-[#c4b5fd] hover:text-white hover:border-[#8b5cf6] hover:bg-[#8b5cf6]/10"
                 }
               `}
             >
@@ -567,10 +567,10 @@ export function WorkflowWizard({
                 onClick={handleSubmit}
                 disabled={submitting}
                 className={`
-                  inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200
-                  bg-gradient-to-r from-pigeon-purple to-pigeon-pink
-                  hover:from-pigeon-purple/80 hover:to-pigeon-pink/80
-                  shadow-lg shadow-pigeon-purple/25
+                  inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-mono font-bold text-[#0f0a1f] transition-all duration-200
+                  bg-gradient-to-r from-[#4ade80] to-[#22d3ee]
+                  hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)]
+                  shadow-lg shadow-[#4ade80]/25
                   disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               >
@@ -619,7 +619,7 @@ export function WorkflowWizard({
               <button
                 type="button"
                 onClick={goForward}
-                className="inline-flex items-center gap-2 rounded-lg bg-pigeon-purple px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-pigeon-purple/25 transition-all duration-200 hover:bg-pigeon-purple/80"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#4ade80] to-[#22d3ee] px-5 py-2.5 text-sm font-mono font-bold text-[#0f0a1f] shadow-lg shadow-[#4ade80]/25 transition-all duration-200 hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)]"
               >
                 Continue
                 <svg
@@ -641,7 +641,7 @@ export function WorkflowWizard({
 
         {/* Auto-save indicator */}
         <div className="mt-4 text-center">
-          <p className="text-[11px] text-muted/40">
+          <p className="text-[11px] text-[#9d8ec2]/50 font-mono">
             Your progress is auto-saved locally every 5 seconds.
           </p>
         </div>

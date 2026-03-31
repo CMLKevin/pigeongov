@@ -52,11 +52,11 @@ export function CliffClient() {
 
   return (
     <div className="max-w-lg">
-      <div className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-foreground mb-1">
+      <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6 sm:p-8">
+        <h2 className="text-xl font-mono font-bold text-white mb-1">
           Household basics
         </h2>
-        <p className="text-muted text-sm mb-6">
+        <p className="text-[#9d8ec2] text-sm font-mono mb-6">
           We only need three numbers to model your benefits cliff.
         </p>
 
@@ -144,14 +144,14 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
   return (
     <div className="space-y-8">
       {/* Income slider */}
-      <div className="rounded-xl border border-border bg-surface p-6">
+      <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
         <div className="flex items-center justify-between mb-3">
-          <label className="text-sm font-medium text-muted">
+          <label className="text-sm font-mono font-semibold text-[#c4b5fd] uppercase tracking-wider">
             Adjust annual income
           </label>
           <span className={cn(
-            'text-lg font-bold tabular-nums',
-            isRecalculating ? 'text-muted animate-pulse' : 'text-foreground'
+            'text-lg font-mono font-bold tabular-nums',
+            isRecalculating ? 'text-[#9d8ec2] animate-pulse' : 'text-[#4ade80]'
           )}>
             {formatCurrency(sliderIncome)}
           </span>
@@ -163,22 +163,22 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
           step={500}
           value={sliderIncome}
           onChange={handleSliderChange}
-          className="w-full h-2 bg-border rounded-lg appearance-none cursor-pointer accent-pigeon-purple"
+          className="w-full h-2 bg-[#0f0a1f] rounded-lg appearance-none cursor-pointer accent-[#4ade80]"
         />
-        <div className="flex justify-between text-xs text-muted mt-1">
+        <div className="flex justify-between text-xs text-[#9d8ec2] font-mono mt-1">
           <span>$0</span>
           <span>{formatCurrency(sliderMax)}</span>
         </div>
       </div>
 
       {/* Current benefits summary */}
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h3 className="font-mono text-sm text-pigeon-cyan uppercase tracking-wider mb-4">
+      <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+        <h3 className="font-mono text-sm text-[#4ade80] uppercase tracking-wider mb-4">
           Current Benefits at {formatCurrency(result.currentIncome)}/yr
         </h3>
 
         {result.currentBenefits.length === 0 ? (
-          <p className="text-muted text-sm">
+          <p className="text-[#9d8ec2] text-sm font-mono">
             No federal benefit eligibility at this income level.
           </p>
         ) : (
@@ -189,20 +189,20 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
                   key={b.program}
                   className="flex items-center justify-between text-sm"
                 >
-                  <span className="text-foreground">{b.program}</span>
-                  <span className="text-green-400 font-medium tabular-nums">
+                  <span className="text-white font-mono">{b.program}</span>
+                  <span className="text-[#4ade80] font-mono font-medium tabular-nums">
                     {formatCurrency(b.monthlyValue)}/mo
                   </span>
                 </div>
               ))}
             </div>
-            <div className="border-t border-border pt-3 flex items-center justify-between">
-              <span className="text-foreground font-semibold">Total</span>
-              <span className="text-green-400 font-bold text-lg tabular-nums">
+            <div className="border-t border-[#3d2a7a] pt-3 flex items-center justify-between">
+              <span className="text-white font-mono font-semibold">Total</span>
+              <span className="text-[#4ade80] font-mono font-bold text-lg tabular-nums">
                 {formatCurrency(totalMonthly)}/mo
               </span>
             </div>
-            <p className="text-muted text-xs mt-2">
+            <p className="text-[#9d8ec2] text-xs font-mono mt-2">
               {formatCurrency(totalMonthly * 12)}/year in benefits
             </p>
           </>
@@ -211,27 +211,27 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
 
       {/* Cliff points table */}
       {result.cliffPoints.length > 0 && (
-        <div className="rounded-xl border border-border bg-surface p-6">
-          <h3 className="font-mono text-sm text-yellow-400 uppercase tracking-wider mb-4">
+        <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
+          <h3 className="font-mono text-sm text-[#f472b6] uppercase tracking-wider mb-4">
             Cliff Points
           </h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-mono">
               <thead>
-                <tr className="text-left text-muted border-b border-border">
+                <tr className="text-left text-[#9d8ec2] border-b-2 border-[#3d2a7a]">
                   <th className="pb-2 pr-4">At income</th>
                   <th className="pb-2 pr-4">Lose program</th>
                   <th className="pb-2 text-right">Annual loss</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-[#3d2a7a]/50">
                 {result.cliffPoints.map((cp, i) => (
-                  <tr key={i} className="text-foreground">
+                  <tr key={i} className="text-white">
                     <td className="py-3 pr-4 tabular-nums font-medium">
                       {formatCurrency(cp.income)}/yr
                     </td>
                     <td className="py-3 pr-4">{cp.programLost}</td>
-                    <td className="py-3 text-right text-urgent tabular-nums font-medium">
+                    <td className="py-3 text-right text-red-400 tabular-nums font-medium">
                       -{formatCurrency(cp.annualLoss)}/yr
                     </td>
                   </tr>
@@ -244,19 +244,19 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
 
       {/* Safe raise threshold */}
       {result.safeRaiseThreshold > result.currentIncome && (
-        <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6">
-          <h3 className="font-mono text-sm text-green-400 uppercase tracking-wider mb-3">
+        <div className="rounded-xl border-2 border-[#4ade80]/40 bg-[#4ade80]/5 p-6 shadow-[0_0_24px_-8px_rgba(74,222,128,0.2)]">
+          <h3 className="font-mono text-sm text-[#4ade80] uppercase tracking-wider mb-3">
             Safe Raise Target
           </h3>
           <div className="flex items-baseline gap-3 mb-2">
-            <span className="text-3xl font-bold text-green-400 tabular-nums">
+            <span className="text-3xl font-mono font-bold text-[#4ade80] tabular-nums drop-shadow-[0_0_12px_rgba(74,222,128,0.3)]">
               {formatCurrency(result.safeRaiseThreshold)}
             </span>
-            <span className="text-green-400/60">/year</span>
+            <span className="text-[#4ade80]/60 font-mono">/year</span>
           </div>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-[#c4b5fd] font-mono">
             A raise of{' '}
-            <span className="text-foreground font-medium tabular-nums">
+            <span className="text-white font-medium tabular-nums">
               {formatCurrency(result.safeRaiseThreshold - result.currentIncome)}
             </span>{' '}
             would fully offset the lost benefits. Below this threshold, a raise
@@ -266,28 +266,28 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
       )}
 
       {/* Recommendation */}
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h3 className="font-mono text-sm text-pigeon-purple uppercase tracking-wider mb-3">
+      <div className="rounded-xl border-2 border-[#8b5cf6]/30 bg-[#1a1040] p-6">
+        <h3 className="font-mono text-sm text-[#8b5cf6] uppercase tracking-wider mb-3">
           Recommendation
         </h3>
-        <p className="text-muted text-sm leading-relaxed">
+        <p className="text-[#c4b5fd] text-sm font-mono leading-relaxed">
           {result.recommendation}
         </p>
       </div>
 
       {/* Cross-link to screener */}
-      <div className="rounded-xl border border-border bg-surface p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <p className="text-foreground font-semibold">
+          <p className="text-white font-mono font-semibold">
             Want to see all programs you qualify for?
           </p>
-          <p className="text-muted text-sm">
+          <p className="text-[#9d8ec2] text-sm font-mono">
             The benefits screener checks 13 federal programs with detailed next steps.
           </p>
         </div>
         <Link
           href="/screen"
-          className="shrink-0 bg-gradient-to-r from-pigeon-purple to-pigeon-pink text-white rounded-lg px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
+          className="shrink-0 bg-gradient-to-r from-[#4ade80] to-[#22d3ee] text-[#0f0a1f] rounded-lg px-5 py-2.5 text-sm font-mono font-bold transition-all hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)]"
         >
           Screen my eligibility
         </Link>
@@ -297,7 +297,7 @@ function CliffResults({ result: initialResult, household, state, onReset }: Clif
       <div className="text-center">
         <button
           onClick={onReset}
-          className="text-sm text-muted hover:text-foreground transition-colors"
+          className="text-sm text-[#9d8ec2] font-mono hover:text-[#4ade80] transition-colors"
         >
           &larr; Change inputs and re-run
         </button>

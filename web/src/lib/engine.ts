@@ -7,6 +7,10 @@
  * work and keeps the web app decoupled from engine internals.
  *
  * Every function here is async and meant for Server Components / Server Actions.
+ *
+ * Workflow descriptions and the workflow list are cached in-memory because they
+ * never change at runtime — the registry is baked into the CLI build. This
+ * turns subsequent reads into Map lookups instead of child-process spawns.
  */
 
 import { execSync } from "child_process";
@@ -29,13 +33,26 @@ function runCli(args: string): string {
   });
 }
 
+// ---------------------------------------------------------------------------
+// In-memory caches — safe because workflow definitions are immutable at runtime
+// ---------------------------------------------------------------------------
+
+const listCache = new Map<string, WorkflowSummary[]>();
+const descriptionCache = new Map<string, WorkflowDescription>();
+
 /**
  * List all available workflows.
  */
 export function listWorkflows(domain?: string): WorkflowSummary[] {
+  const cacheKey = domain ?? "__all__";
+  if (listCache.has(cacheKey)) {
+    return listCache.get(cacheKey)!;
+  }
+
   const domainFlag = domain ? ` --domain ${domain}` : "";
   const raw = runCli(`list --json${domainFlag}`);
   const parsed = JSON.parse(raw) as { workflows: WorkflowSummary[] };
+  listCache.set(cacheKey, parsed.workflows);
   return parsed.workflows;
 }
 
@@ -43,15 +60,21 @@ export function listWorkflows(domain?: string): WorkflowSummary[] {
  * Get the full description of a workflow including sections, fields, and starter data.
  */
 export function describeWorkflow(workflowId: string): WorkflowDescription {
+  if (descriptionCache.has(workflowId)) {
+    return descriptionCache.get(workflowId)!;
+  }
+
   const raw = runCli(`start ${workflowId} --json`);
   const parsed = JSON.parse(raw) as {
     workflow: WorkflowDescription;
     starterData: Record<string, unknown>;
   };
-  return {
+  const result: WorkflowDescription = {
     ...parsed.workflow,
     starterData: parsed.starterData,
   };
+  descriptionCache.set(workflowId, result);
+  return result;
 }
 
 /**

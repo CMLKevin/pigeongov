@@ -53,14 +53,14 @@ const DEFAULT_CONTEXT: HouseholdContext = {
 // ── Shared primitives ────────────────────────────────────────────────────────
 
 const inputBase =
-  'w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted ' +
+  'w-full rounded-lg border-2 border-[#3d2a7a] bg-[#1a1040] px-4 py-3 text-white font-mono placeholder:text-[#6b5b8a] ' +
   'transition-all duration-200 ' +
-  'focus:border-pigeon-purple focus:outline-none focus:ring-2 focus:ring-pigeon-purple/40';
+  'focus:border-[#4ade80] focus:outline-none focus:ring-2 focus:ring-[#4ade80]/20';
 
-const labelBase = 'block text-sm font-medium text-muted mb-1.5';
+const labelBase = 'block text-sm font-semibold text-[#c4b5fd] font-mono uppercase tracking-wider mb-1.5';
 
 const checkboxBase =
-  'h-5 w-5 rounded border-white/10 bg-[#1a1a2e] text-pigeon-purple focus:ring-2 focus:ring-pigeon-purple/40 cursor-pointer accent-pigeon-purple';
+  'h-5 w-5 rounded border-2 border-[#3d2a7a] bg-[#1a1040] text-[#4ade80] focus:ring-2 focus:ring-[#4ade80]/20 cursor-pointer accent-[#4ade80]';
 
 // ── Component ────────────────────────────────────────────────────────────────
 
@@ -122,10 +122,10 @@ export function ContextForm({
               key={n}
               type="button"
               onClick={() => update('householdSize', n)}
-              className={`w-10 h-10 rounded-lg border text-sm font-medium transition-all ${
+              className={`w-10 h-10 rounded-lg border-2 text-sm font-mono font-medium transition-all ${
                 form.householdSize === n
-                  ? 'bg-pigeon-purple border-pigeon-purple text-white'
-                  : 'bg-background border-border text-muted hover:border-pigeon-purple/50'
+                  ? 'bg-[#4ade80]/10 border-[#4ade80] text-[#4ade80]'
+                  : 'bg-[#1a1040] border-[#3d2a7a] text-[#9d8ec2] hover:border-[#4ade80]/50'
               }`}
             >
               {n}
@@ -142,7 +142,7 @@ export function ContextForm({
             : 'Approximate annual household income'}
         </label>
         <div className="relative">
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6b6b8a] text-sm font-medium select-none">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4ade80] text-sm font-bold font-mono select-none">
             $
           </span>
           <input
@@ -183,7 +183,7 @@ export function ContextForm({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
             fill="currentColor"
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b8a]"
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4ade80]"
           >
             <path
               fillRule="evenodd"
@@ -243,7 +243,7 @@ export function ContextForm({
                 placeholder="35, 33, 5, 2"
                 className={inputBase}
               />
-              <p className="mt-1 text-xs text-muted/70 leading-relaxed">
+              <p className="mt-1 text-xs text-[#9d8ec2] font-mono leading-relaxed">
                 e.g., 35, 33, 5, 2
               </p>
             </div>
@@ -366,7 +366,7 @@ function SubmitButton({ pending, label }: { pending: boolean; label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full bg-gradient-to-r from-pigeon-purple to-pigeon-pink text-white rounded-lg px-6 py-3 font-medium transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full bg-gradient-to-r from-[#4ade80] to-[#22d3ee] text-[#0f0a1f] rounded-lg px-6 py-3 font-mono font-bold transition-all hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {pending ? (
         <span className="flex items-center justify-center gap-2">
@@ -396,7 +396,7 @@ function Checkbox({
         onChange={(e) => onChange(e.target.checked)}
         className={checkboxBase}
       />
-      <span className="text-sm text-[#c4c4d4] select-none">{label}</span>
+      <span className="text-sm text-[#c4b5fd] font-mono select-none">{label}</span>
     </label>
   );
 }
@@ -407,7 +407,7 @@ function ChevronIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 16 16"
       fill="currentColor"
-      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b8a]"
+      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4ade80]"
     >
       <path
         fillRule="evenodd"

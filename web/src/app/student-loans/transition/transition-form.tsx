@@ -13,11 +13,11 @@ import TransitionResults from "./transition-results";
 // ---------------------------------------------------------------------------
 
 const inputBase =
-  "w-full rounded-lg border border-white/10 bg-[#1a1a2e] px-4 py-3 text-white placeholder:text-[#6b6b8a] " +
+  "w-full rounded-lg border-2 border-[#3d2a7a] bg-[#1a1040] px-4 py-3 text-white font-mono placeholder:text-[#6b5b8a] " +
   "transition-all duration-200 " +
-  "focus:border-[#6c3aed] focus:outline-none focus:ring-2 focus:ring-[#6c3aed]/40";
+  "focus:border-[#4ade80] focus:outline-none focus:ring-2 focus:ring-[#4ade80]/20";
 
-const labelBase = "block text-sm font-medium text-[#c4c4d4] mb-1.5";
+const labelBase = "block text-sm font-semibold text-[#c4b5fd] font-mono uppercase tracking-wider mb-1.5";
 
 const selectBase = `${inputBase} appearance-none pr-10`;
 
@@ -76,7 +76,7 @@ export default function TransitionForm() {
     <>
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* ----- Current plan & loan details ----- */}
-        <fieldset className="rounded-xl border border-white/10 bg-[#252538] p-6">
+        <fieldset className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
           <legend className="px-2 text-base font-semibold text-white">
             Loan Details
           </legend>
@@ -115,7 +115,7 @@ export default function TransitionForm() {
                 Loan balance
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6b6b8a] text-sm font-medium select-none">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4ade80] text-sm font-bold font-mono select-none">
                   $
                 </span>
                 <input
@@ -159,7 +159,7 @@ export default function TransitionForm() {
                   }
                   className={`${inputBase} pr-8 tabular-nums`}
                 />
-                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6b6b8a] text-sm font-medium select-none">
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#4ade80] text-sm font-bold font-mono select-none">
                   %
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default function TransitionForm() {
                 Annual income (AGI)
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6b6b8a] text-sm font-medium select-none">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4ade80] text-sm font-bold font-mono select-none">
                   $
                 </span>
                 <input
@@ -192,7 +192,7 @@ export default function TransitionForm() {
         </fieldset>
 
         {/* ----- Household & filing ----- */}
-        <fieldset className="rounded-xl border border-white/10 bg-[#252538] p-6">
+        <fieldset className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
           <legend className="px-2 text-base font-semibold text-white">
             Household & Filing
           </legend>
@@ -262,7 +262,7 @@ export default function TransitionForm() {
         </fieldset>
 
         {/* ----- Repayment history ----- */}
-        <fieldset className="rounded-xl border border-white/10 bg-[#252538] p-6">
+        <fieldset className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
           <legend className="px-2 text-base font-semibold text-white">
             Repayment History
           </legend>
@@ -282,7 +282,7 @@ export default function TransitionForm() {
                 }
                 className={`${inputBase} tabular-nums`}
               />
-              <p className="mt-1 text-xs text-[#6b6b8a]">
+              <p className="mt-1 text-xs text-[#9d8ec2] font-mono">
                 Total months you&apos;ve been actively making payments
               </p>
             </div>
@@ -313,7 +313,7 @@ export default function TransitionForm() {
         </fieldset>
 
         {/* ----- Parent PLUS & consolidation ----- */}
-        <fieldset className="rounded-xl border border-white/10 bg-[#252538] p-6">
+        <fieldset className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
           <legend className="px-2 text-base font-semibold text-white">
             Loan Type
           </legend>
@@ -326,14 +326,14 @@ export default function TransitionForm() {
                 onChange={(e) =>
                   update("isParentPlusLoan", e.target.checked)
                 }
-                className="mt-0.5 h-5 w-5 rounded border-white/10 bg-[#1a1a2e] text-[#6c3aed] accent-[#6c3aed] cursor-pointer"
+                className="mt-0.5 h-5 w-5 rounded border-2 border-[#3d2a7a] bg-[#1a1040] text-[#4ade80] accent-[#4ade80] cursor-pointer"
               />
               <label
                 htmlFor="isParentPlusLoan"
-                className="text-sm text-[#c4c4d4] cursor-pointer select-none"
+                className="text-sm text-[#c4b5fd] font-mono cursor-pointer select-none"
               >
                 This is a Parent PLUS loan
-                <span className="block text-xs text-[#6b6b8a] mt-0.5">
+                <span className="block text-xs text-[#9d8ec2] font-mono mt-0.5">
                   Parent PLUS loans have a July 1, 2026 consolidation deadline
                 </span>
               </label>
@@ -347,11 +347,11 @@ export default function TransitionForm() {
                 onChange={(e) =>
                   update("hasConsolidatedLoans", e.target.checked)
                 }
-                className="mt-0.5 h-5 w-5 rounded border-white/10 bg-[#1a1a2e] text-[#6c3aed] accent-[#6c3aed] cursor-pointer"
+                className="mt-0.5 h-5 w-5 rounded border-2 border-[#3d2a7a] bg-[#1a1040] text-[#4ade80] accent-[#4ade80] cursor-pointer"
               />
               <label
                 htmlFor="hasConsolidatedLoans"
-                className="text-sm text-[#c4c4d4] cursor-pointer select-none"
+                className="text-sm text-[#c4b5fd] font-mono cursor-pointer select-none"
               >
                 Already consolidated via Direct Consolidation Loan
               </label>
@@ -360,7 +360,7 @@ export default function TransitionForm() {
         </fieldset>
 
         {/* ----- Employer & PSLF ----- */}
-        <fieldset className="rounded-xl border border-white/10 bg-[#252538] p-6">
+        <fieldset className="rounded-xl border-2 border-[#3d2a7a] bg-[#1a1040] p-6">
           <legend className="px-2 text-base font-semibold text-white">
             Employment & PSLF
           </legend>
@@ -416,7 +416,7 @@ export default function TransitionForm() {
         <button
           type="submit"
           disabled={isPending || form.loanBalance <= 0 || form.annualIncome <= 0}
-          className="w-full rounded-xl bg-gradient-to-r from-[#6c3aed] to-[#d946ef] px-6 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-[0_4px_24px_-4px_rgba(108,58,237,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
+          className="w-full rounded-xl bg-gradient-to-r from-[#4ade80] to-[#22d3ee] px-6 py-4 text-base font-mono font-bold text-[#0f0a1f] shadow-lg transition-all hover:shadow-[0_0_24px_-4px_rgba(74,222,128,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
         >
           {isPending ? (
             <span className="inline-flex items-center gap-2">
@@ -449,14 +449,14 @@ export default function TransitionForm() {
 
       {/* ----- Error ----- */}
       {error && (
-        <div className="mt-8 rounded-xl border border-red-500/40 bg-red-500/5 p-5">
-          <h3 className="text-sm font-semibold text-red-400">
+        <div className="mt-8 rounded-xl border-2 border-[#f472b6]/40 bg-[#f472b6]/5 p-5">
+          <h3 className="text-sm font-mono font-semibold text-[#f472b6]">
             Analysis failed
           </h3>
-          <p className="mt-1 text-sm text-[#a0a0b8]">{error}</p>
-          <p className="mt-2 text-xs text-[#6b6b8a]">
+          <p className="mt-1 text-sm text-[#c4b5fd] font-mono">{error}</p>
+          <p className="mt-2 text-xs text-[#9d8ec2] font-mono">
             Make sure the PigeonGov engine is built (run{" "}
-            <code className="bg-[#1a1a2e] px-1.5 py-0.5 rounded text-[#c4c4d4]">
+            <code className="bg-[#0f0a1f] px-1.5 py-0.5 rounded text-[#4ade80]">
               npm run build
             </code>{" "}
             in the project root).
@@ -480,7 +480,7 @@ function ChevronIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 16 16"
       fill="currentColor"
-      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b8a]"
+      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#4ade80]"
     >
       <path
         fillRule="evenodd"
